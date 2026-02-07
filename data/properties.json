@@ -1,0 +1,152 @@
+[
+    {
+        "title": "Modern Waterfront Villa",
+        "description": "Exquisite waterfront villa with private dock and panoramic ocean views. Features open-plan living, infinity pool, and smart home integration.",
+        "price": 2500000,
+        "location": "Miami, FL",
+        "propertyType": "Villa",
+        "beds": 5,
+        "baths": 6,
+        "area": 4500,
+        "images": [
+            "https://images.unsplash.com/photo-1613977257363-707ba9348227?q=80&w=2670&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=2671&auto=format&fit=crop"
+        ],
+        "isActive": true
+    },
+    {
+        "title": "Luxury Downtown Penthouse",
+        "description": "Stunning penthouse in the heart of the city. Floor-to-ceiling windows, private terrace, and access to exclusive building amenities.",
+        "price": 1850000,
+        "location": "New York, NY",
+        "propertyType": "Apartment",
+        "beds": 3,
+        "baths": 3,
+        "area": 2800,
+        "images": [
+            "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2670&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=2580&auto=format&fit=crop"
+        ],
+        "isActive": true
+    },
+    {
+        "title": "Contemporary Family Home",
+        "description": "Spacious family home in a quiet suburban neighborhood. Large backyard, modern kitchen, and close to top-rated schools.",
+        "price": 950000,
+        "location": "Austin, TX",
+        "propertyType": "House",
+        "beds": 4,
+        "baths": 3,
+        "area": 3200,
+        "images": [
+            "https://images.unsplash.com/photo-1600596542815-2a4d04774c13?q=80&w=2675&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2653&auto=format&fit=crop"
+        ],
+        "isActive": true
+    },
+    {
+        "title": "Beverly Hills Estate",
+        "description": "Iconic estate with lush gardens, tennis court, and guest house. A true masterpiece of architecture and design.",
+        "price": 12000000,
+        "location": "Beverly Hills, CA",
+        "propertyType": "Villa",
+        "beds": 7,
+        "baths": 9,
+        "area": 12000,
+        "images": [
+            "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2670&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1600566752355-35792bedcfe1?q=80&w=2670&auto=format&fit=crop"
+        ],
+        "isActive": true
+    },
+    {
+        "title": "Seaside Cottage",
+        "description": "Charming cottage steps away from the beach. Perfect for a vacation home or rental investment.",
+        "price": 650000,
+        "location": "Cape Cod, MA",
+        "propertyType": "House",
+        "beds": 2,
+        "baths": 2,
+        "area": 1500,
+        "images": [
+            "https://images.unsplash.com/photo-1580587771525-78b9dba3b91d?q=80&w=2574&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1510798831971-661eb04b3739?q=80&w=2574&auto=format&fit=crop"
+        ],
+        "isActive": true
+    },
+    {
+        "title": "Modern Loft in Arts District",
+        "description": "Industrial-chic loft with high ceilings and exposed brick. Located in the vibrant Arts District.",
+        "price": 750000,
+        "location": "Los Angeles, CA",
+        "propertyType": "Apartment",
+        "beds": 1,
+        "baths": 1.5,
+        "area": 1200,
+        "images": [
+            "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2670&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1484154218962-a1c002085d2f?q=80&w=2670&auto=format&fit=crop"
+        ],
+        "isActive": true
+    },
+    {
+        "title": "Mountain View Retreat",
+        "description": "Secluded retreat with breathtaking mountain views. Features a cozy fireplace and large wrap-around deck.",
+        "price": 1100000,
+        "location": "Aspen, CO",
+        "propertyType": "Villa",
+        "beds": 4,
+        "baths": 3.5,
+        "area": 3500,
+        "images": [
+            "https://images.unsplash.com/photo-1513584685908-95c9e2d01b38?q=80&w=2670&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1513584685908-95c9e2d01b38?q=80&w=2670&auto=format&fit=crop"
+        ],
+        "isActive": true
+    },
+    {
+        "title": "Urban Oasis Apartment",
+        "description": "Peaceful apartment with a private garden in the city. A rare find.",
+        "price": 920000,
+        "location": "San Francisco, CA",
+        "propertyType": "Apartment",
+        "beds": 2,
+        "baths": 2,
+        "area": 1400,
+        "images": [
+            "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2670&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1502005229766-939cb9399885?q=80&w=2670&auto=format&fit=crop"
+        ],
+        "isActive": true
+    },
+    {
+        "title": "Lakefront Cabin",
+        "description": "Rustic cabin on the lake. Ideal for fishing, boating, and relaxation.",
+        "price": 450000,
+        "location": "Lake Tahoe, NV",
+        "propertyType": "House",
+        "beds": 3,
+        "baths": 2,
+        "area": 1800,
+        "images": [
+            "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=2670&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=2670&auto=format&fit=crop"
+        ],
+        "isActive": true
+    },
+    {
+        "title": "Historic Townhouse",
+        "description": "Beautifully restored historic townhouse. Original details combined with modern amenities.",
+        "price": 1600000,
+        "location": "Boston, MA",
+        "propertyType": "House",
+        "beds": 4,
+        "baths": 3,
+        "area": 2600,
+        "images": [
+            "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?q=80&w=2670&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1605146769289-440113cc3d00?q=80&w=2670&auto=format&fit=crop"
+        ],
+        "isActive": true
+    }
+]
