@@ -6,6 +6,7 @@ import dbConnect from '@/lib/db';
 import Property from '@/models/Property';
 import { ScheduleForm } from '@/components/property/ScheduleForm';
 import ImageSlider from '@/components/property/ImageSlider';
+import PropertyActions from '@/components/property/PropertyActions';
 
 
 import { Metadata } from 'next';
@@ -258,14 +259,7 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                     <div className="lg:col-span-1">
                         <div className="sticky top-28 space-y-6">
                             {/* Action Buttons */}
-                            <div className="flex gap-4">
-                                <Button variant="outline" className="flex-1 py-6 border-gray-200 dark:border-white/10">
-                                    <Share2 size={18} className="mr-2" /> Share
-                                </Button>
-                                <Button variant="outline" className="flex-1 py-6 border-gray-200 dark:border-white/10">
-                                    <Heart size={18} className="mr-2" /> Save
-                                </Button>
-                            </div>
+                            <PropertyActions propertyId={property._id} propertyTitle={property.title} />
 
                             {/* Contact Form Card */}
                             <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-gray-200 dark:border-white/10 shadow-lg p-6 md:p-8">

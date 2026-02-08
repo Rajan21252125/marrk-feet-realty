@@ -84,6 +84,23 @@ export default function SettingsPage() {
         }
     };
 
+    const handleDeleteAdmin = async (id: string) => {
+        try {
+            const res = await fetch(`/api/admin/admins/${id}`, {
+                method: 'DELETE',
+            });
+            const data = await res.json();
+            if (res.ok) {
+                toast.success('Admin deleted successfully');
+                fetchSettings(); // Refresh list
+            } else {
+                toast.error(data.error || 'Failed to delete admin');
+            }
+        } catch (error) {
+            toast.error('Failed to delete admin');
+        }
+    };
+
     if (loading) return <div className="p-8 text-center text-white">Loading...</div>;
 
     return (
@@ -197,6 +214,7 @@ export default function SettingsPage() {
                                 <th className="p-3">Email</th>
                                 <th className="p-3">Role</th>
                                 <th className="p-3">Verified</th>
+                                <th className="p-3 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="text-gray-300 text-sm">
@@ -223,11 +241,26 @@ export default function SettingsPage() {
                                             <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs">Pending</span>
                                         )}
                                     </td>
+                                    <td className="p-3 text-right">
+                                        <Button
+                                            variant="destructive"
+                                            size="sm"
+                                            className="h-8 px-3 text-xs"
+                                            disabled={session?.user?.email === admin.email}
+                                            onClick={() => {
+                                                if (confirm('Are you sure you want to delete this admin? This action cannot be undone.')) {
+                                                    handleDeleteAdmin(admin._id);
+                                                }
+                                            }}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </td>
                                 </tr>
                             ))}
                             {admins.length === 0 && (
                                 <tr>
-                                    <td colSpan={5} className="p-4 text-center text-gray-500">No admins found.</td>
+                                    <td colSpan={6} className="p-4 text-center text-gray-500">No admins found.</td>
                                 </tr>
                             )}
                         </tbody>
