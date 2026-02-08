@@ -1,5 +1,4 @@
 import winston from 'winston';
-import DailyRotateFile from 'winston-daily-rotate-file';
 import Transport from 'winston-transport';
 import Log from '@/models/Log';
 import dbConnect from '@/lib/db';
@@ -59,18 +58,24 @@ if (process.env.NODE_ENV === 'production') {
     transports.push(new MongoDBTransport());
 } else {
     // File logging with daily rotation for development
-    const fileRotateTransport = new DailyRotateFile({
-        filename: 'logs/app-%DATE%.log',
-        datePattern: 'YYYY-MM-DD',
-        maxSize: '20m',
-        maxFiles: '14d',
-        format: combine(
-            timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-            customLogFormat
-        )
-    });
-    // Explicit cast to any to avoid strict type mismatch if different winston versions
-    transports.push(fileRotateTransport as unknown as winston.transport);
+    // Dynamic require to prevent 'fs' module issues in production serverless environment
+    try {
+        const DailyRotateFile = require('winston-daily-rotate-file');
+        const fileRotateTransport = new DailyRotateFile({
+            filename: 'logs/app-%DATE%.log',
+            datePattern: 'YYYY-MM-DD',
+            maxSize: '20m',
+            maxFiles: '14d',
+            format: combine(
+                timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+                customLogFormat
+            )
+        });
+        // Explicit cast to any to avoid strict type mismatch if different winston versions
+        transports.push(fileRotateTransport as unknown as winston.transport);
+    } catch (error) {
+        console.warn('Failed to load winston-daily-rotate-file', error);
+    }
 }
 
 const logger = winston.createLogger({
