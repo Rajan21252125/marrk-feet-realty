@@ -1,9 +1,13 @@
-import mongoose from 'mongoose';
-
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/markfeet-realty';
 
 if (!MONGODB_URI) {
+    console.error('MONGODB_URI is not defined');
     throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
+} else {
+    // Do not log the full URI for security, just presence
+    if (process.env.NODE_ENV === 'production') {
+        console.log('MONGODB_URI is defined');
+    }
 }
 
 /**
