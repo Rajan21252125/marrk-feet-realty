@@ -11,6 +11,20 @@ export interface IProperty extends Document {
     area: number;
     images: string[];
     isActive: boolean;
+    furnishType?: string;
+    coveredParking?: number;
+    openParking?: number;
+    tenantPreference?: string[];
+    petFriendly?: boolean;
+    bhkType?: string;
+    ageOfProperty?: number;
+    balcony?: number;
+    floorNumber?: number;
+    totalFloors?: number;
+    facing?: string;
+    overlooking?: string[];
+    ownershipType?: string;
+    possessionStatus?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -31,6 +45,20 @@ const PropertySchema: Schema = new Schema(
         area: { type: Number, required: true },
         images: { type: [String], default: [] },
         isActive: { type: Boolean, default: true },
+        furnishType: { type: String, enum: ['Fully Furnished', 'Semi Furnished', 'Unfurnished'] },
+        coveredParking: { type: Number },
+        openParking: { type: Number },
+        tenantPreference: { type: [String] },
+        petFriendly: { type: Boolean },
+        bhkType: { type: String },
+        ageOfProperty: { type: Number },
+        balcony: { type: Number },
+        floorNumber: { type: Number },
+        totalFloors: { type: Number },
+        facing: { type: String },
+        overlooking: { type: [String] },
+        ownershipType: { type: String },
+        possessionStatus: { type: String },
     },
     { timestamps: true }
 );

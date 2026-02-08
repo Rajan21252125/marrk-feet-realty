@@ -30,6 +30,20 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
         beds: initialData?.beds || '',
         baths: initialData?.baths || '',
         area: initialData?.area || '',
+        furnishType: initialData?.furnishType || '',
+        coveredParking: initialData?.coveredParking || '',
+        openParking: initialData?.openParking || '',
+        tenantPreference: initialData?.tenantPreference || [],
+        petFriendly: initialData?.petFriendly || false,
+        bhkType: initialData?.bhkType || '',
+        ageOfProperty: initialData?.ageOfProperty || '',
+        balcony: initialData?.balcony || '',
+        floorNumber: initialData?.floorNumber || '',
+        totalFloors: initialData?.totalFloors || '',
+        facing: initialData?.facing || '',
+        overlooking: initialData?.overlooking || [],
+        ownershipType: initialData?.ownershipType || '',
+        possessionStatus: initialData?.possessionStatus || '',
     });
 
     useEffect(() => {
@@ -47,6 +61,20 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                 beds: initialData.beds || '',
                 baths: initialData.baths || '',
                 area: initialData.area || '',
+                furnishType: initialData.furnishType || '',
+                coveredParking: initialData.coveredParking || '',
+                openParking: initialData.openParking || '',
+                tenantPreference: initialData.tenantPreference || [],
+                petFriendly: initialData.petFriendly || false,
+                bhkType: initialData.bhkType || '',
+                ageOfProperty: initialData.ageOfProperty || '',
+                balcony: initialData.balcony || '',
+                floorNumber: initialData.floorNumber || '',
+                totalFloors: initialData.totalFloors || '',
+                facing: initialData.facing || '',
+                overlooking: initialData.overlooking || [],
+                ownershipType: initialData.ownershipType || '',
+                possessionStatus: initialData.possessionStatus || '',
             });
             setImages(initialData.images || []);
         }
@@ -55,6 +83,21 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleMultiSelect = (field: string, value: string) => {
+        setFormData((prev: any) => {
+            const current = prev[field] || [];
+            if (current.includes(value)) {
+                return { ...prev, [field]: current.filter((item: string) => item !== value) };
+            } else {
+                return { ...prev, [field]: [...current, value] };
+            }
+        });
+    };
+
+    const toggleBoolean = (field: string, value: boolean) => {
+        setFormData((prev) => ({ ...prev, [field]: value }));
     };
 
     const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,47 +131,28 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
 
         for (const { file } of previewImages) {
             try {
-                // 1. Get signature
-                const signRes = await fetch('/api/admin/sign-cloudinary', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ paramsToSign: { folder: 'properties' } }),
-                });
-
-                if (!signRes.ok) throw new Error('Failed to get signature');
-                const { signature, timestamp, cloud_name, api_key } = await signRes.json(); // Assuming API signature route will return cloud_name/api_key too for convenience, or we use env vars if secure.
-                // Wait, my sign route only returns signature. 
-                // I need timestamp and folder in payload to sign.
-                // And I need cloud_name to POST to.
-
-                // Let's adjust the sign route usage or logic depending on what we implemented.
-                // The sign route I implemented: returns { signature }.
-                // It signs whatever is in `paramsToSign`.
-                // So I should pass timestamp and folder there.
-
                 const timestampForUpload = Math.round(new Date().getTime() / 1000);
                 const paramsToSign = {
-                    folder: 'properties',
+                    folder: 'markfeet',
                     timestamp: timestampForUpload
                 };
 
-                const signRes2 = await fetch('/api/admin/sign-cloudinary', {
+                const signRes = await fetch('/api/admin/sign-cloudinary', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ paramsToSign }),
                 });
 
-                if (!signRes2.ok) throw new Error('Signature failed');
-                const { signature: signature2 } = await signRes2.json();
-
+                if (!signRes.ok) throw new Error('Signature failed');
+                const { signature } = await signRes.json();
 
                 // 2. Upload to Cloudinary
                 const formData = new FormData();
                 formData.append('file', file);
-                formData.append('api_key', process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY || ''); // Need public env var
+                formData.append('api_key', process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY || '');
                 formData.append('timestamp', timestampForUpload.toString());
-                formData.append('signature', signature2);
-                formData.append('folder', 'properties');
+                formData.append('signature', signature);
+                formData.append('folder', 'markfeet');
 
                 const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
                 if (!cloudName) throw new Error('Missing Cloudinary Cloud Name');
@@ -145,6 +169,7 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                 }
 
                 const data = await uploadRes.json();
+                console.log('Uploaded image:', data.secure_url);
                 uploadedUrls.push(data.secure_url);
 
             } catch (error) {
@@ -163,7 +188,10 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
         try {
             // Upload new images
             const newImageUrls = await uploadImagesToCloudinary();
+            console.log('New Image URLs:', newImageUrls);
+
             const finalImages = [...images, ...newImageUrls];
+            console.log('Final Images Payload:', finalImages);
 
             const payload = {
                 ...formData,
@@ -172,6 +200,12 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                 baths: parseInt(formData.baths),
                 area: parseInt(formData.area),
                 images: finalImages,
+                coveredParking: formData.coveredParking ? parseInt(formData.coveredParking as string) : 0,
+                openParking: formData.openParking ? parseInt(formData.openParking as string) : 0,
+                ageOfProperty: formData.ageOfProperty ? parseInt(formData.ageOfProperty as string) : 0,
+                balcony: formData.balcony ? parseInt(formData.balcony as string) : 0,
+                floorNumber: formData.floorNumber ? parseInt(formData.floorNumber as string) : 0,
+                totalFloors: formData.totalFloors ? parseInt(formData.totalFloors as string) : 0,
             };
 
             const url = initialData ? `/api/properties/${initialData._id}` : '/api/properties';
@@ -264,10 +298,10 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                 </div>
             </div>
 
-            {/* Details */}
+            {/* Property Details */}
             <div className="rounded-xl border bg-card p-6 shadow-sm">
                 <h2 className="mb-4 text-xl font-semibold">Property Details</h2>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <div>
                         <label className="mb-2 block text-sm font-medium">Type</label>
                         <select
@@ -283,6 +317,23 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                             <option value="Cottage">Cottage</option>
                             <option value="Penthouse">Penthouse</option>
                             <option value="Commercial">Commercial</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="mb-2 block text-sm font-medium">BHK Type</label>
+                        <select
+                            name="bhkType"
+                            value={formData.bhkType}
+                            onChange={handleChange}
+                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        >
+                            <option value="">Select BHK</option>
+                            <option value="1 RK">1 RK</option>
+                            <option value="1 BHK">1 BHK</option>
+                            <option value="2 BHK">2 BHK</option>
+                            <option value="3 BHK">3 BHK</option>
+                            <option value="4 BHK">4 BHK</option>
+                            <option value="4+ BHK">4+ BHK</option>
                         </select>
                     </div>
                     <div>
@@ -308,6 +359,17 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                         />
                     </div>
                     <div>
+                        <label className="mb-2 block text-sm font-medium">Balcony</label>
+                        <input
+                            name="balcony"
+                            value={formData.balcony}
+                            onChange={handleChange}
+                            type="number"
+                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            placeholder="0"
+                        />
+                    </div>
+                    <div>
                         <label className="mb-2 block text-sm font-medium">Area (sq ft)</label>
                         <input
                             name="area"
@@ -318,6 +380,237 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                             className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                             placeholder="0"
                         />
+                    </div>
+                    <div>
+                        <label className="mb-2 block text-sm font-medium">Age of Property (Years)</label>
+                        <input
+                            name="ageOfProperty"
+                            value={formData.ageOfProperty}
+                            onChange={handleChange}
+                            type="number"
+                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            placeholder="0"
+                        />
+                    </div>
+                    <div>
+                        <label className="mb-2 block text-sm font-medium">Floor Number</label>
+                        <input
+                            name="floorNumber"
+                            value={formData.floorNumber}
+                            onChange={handleChange}
+                            type="number"
+                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            placeholder="0"
+                        />
+                    </div>
+                    <div>
+                        <label className="mb-2 block text-sm font-medium">Total Floors</label>
+                        <input
+                            name="totalFloors"
+                            value={formData.totalFloors}
+                            onChange={handleChange}
+                            type="number"
+                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            placeholder="0"
+                        />
+                    </div>
+                    <div>
+                        <label className="mb-2 block text-sm font-medium">Facing</label>
+                        <select
+                            name="facing"
+                            value={formData.facing}
+                            onChange={handleChange}
+                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        >
+                            <option value="">Select Direction</option>
+                            <option value="North">North</option>
+                            <option value="South">South</option>
+                            <option value="East">East</option>
+                            <option value="West">West</option>
+                            <option value="North-East">North-East</option>
+                            <option value="North-West">North-West</option>
+                            <option value="South-East">South-East</option>
+                            <option value="South-West">South-West</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="mb-2 block text-sm font-medium">Possession Status</label>
+                        <select
+                            name="possessionStatus"
+                            value={formData.possessionStatus}
+                            onChange={handleChange}
+                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        >
+                            <option value="">Select Status</option>
+                            <option value="Ready to Move">Ready to Move</option>
+                            <option value="Under Construction">Under Construction</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="mb-2 block text-sm font-medium">Ownership Type</label>
+                        <select
+                            name="ownershipType"
+                            value={formData.ownershipType}
+                            onChange={handleChange}
+                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        >
+                            <option value="">Select Type</option>
+                            <option value="Freehold">Freehold</option>
+                            <option value="Leasehold">Leasehold</option>
+                            <option value="Co-operative Society">Co-operative Society</option>
+                            <option value="Power of Attorney">Power of Attorney</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            {/* Amenities & Features */}
+            <div className="rounded-xl border bg-card p-6 shadow-sm">
+                <h2 className="mb-4 text-xl font-semibold">Amenities & Features</h2>
+                <div className="grid gap-6">
+                    {/* Furnish Type */}
+                    <div>
+                        <label className="mb-2 block text-sm font-medium">Furnish Type</label>
+                        <div className="flex flex-wrap gap-2">
+                            {['Fully Furnished', 'Semi Furnished', 'Unfurnished'].map((type) => (
+                                <button
+                                    type="button"
+                                    key={type}
+                                    onClick={() => handleChange({ target: { name: 'furnishType', value: type } } as any)}
+                                    className={`rounded-full px-4 py-2 text-sm border transition-colors ${formData.furnishType === type
+                                        ? 'bg-primary text-primary-foreground border-primary'
+                                        : 'bg-background hover:bg-muted border-input'
+                                        }`}
+                                >
+                                    {type}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Parking */}
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <label className="mb-2 block text-sm font-medium">Covered Parking</label>
+                            <div className="flex gap-2">
+                                {[0, 1, 2, 3].map((num) => (
+                                    <button
+                                        type="button"
+                                        key={num}
+                                        onClick={() => handleChange({ target: { name: 'coveredParking', value: num } } as any)}
+                                        className={`h-10 w-10 rounded-md border text-sm flex items-center justify-center transition-colors ${
+                                            // loose check for number vs string in formData
+                                            formData.coveredParking == num
+                                                ? 'bg-primary text-primary-foreground border-primary'
+                                                : 'bg-background hover:bg-muted border-input'
+                                            }`}
+                                    >
+                                        {num}
+                                    </button>
+                                ))}
+                                <input
+                                    type="number"
+                                    name="coveredParking"
+                                    value={formData.coveredParking}
+                                    onChange={handleChange}
+                                    placeholder="3+"
+                                    className="h-10 w-16 rounded-md border border-input bg-background px-2 text-sm text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="mb-2 block text-sm font-medium">Open Parking</label>
+                            <div className="flex gap-2">
+                                {[0, 1, 2, 3].map((num) => (
+                                    <button
+                                        type="button"
+                                        key={num}
+                                        onClick={() => handleChange({ target: { name: 'openParking', value: num } } as any)}
+                                        className={`h-10 w-10 rounded-md border text-sm flex items-center justify-center transition-colors ${formData.openParking == num
+                                            ? 'bg-primary text-primary-foreground border-primary'
+                                            : 'bg-background hover:bg-muted border-input'
+                                            }`}
+                                    >
+                                        {num}
+                                    </button>
+                                ))}
+                                <input
+                                    type="number"
+                                    name="openParking"
+                                    value={formData.openParking}
+                                    onChange={handleChange}
+                                    placeholder="3+"
+                                    className="h-10 w-16 rounded-md border border-input bg-background px-2 text-sm text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Tenant Preference */}
+                    <div>
+                        <label className="mb-2 block text-sm font-medium">Preferred Tenant Type</label>
+                        <div className="flex flex-wrap gap-2">
+                            {['Family', 'Bachelors', 'Company'].map((type) => (
+                                <button
+                                    type="button"
+                                    key={type}
+                                    onClick={() => handleMultiSelect('tenantPreference', type)}
+                                    className={`rounded-full px-4 py-2 text-sm border transition-colors ${formData.tenantPreference?.includes(type)
+                                        ? 'bg-primary text-primary-foreground border-primary'
+                                        : 'bg-background hover:bg-muted border-input'
+                                        }`}
+                                >
+                                    {type}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Pet Friendly */}
+                    <div>
+                        <label className="mb-2 block text-sm font-medium">Pet Friendly?</label>
+                        <div className="flex gap-4">
+                            <button
+                                type="button"
+                                onClick={() => toggleBoolean('petFriendly', true)}
+                                className={`flex-1 rounded-md px-4 py-2 text-sm border transition-colors ${formData.petFriendly === true
+                                    ? 'bg-primary text-primary-foreground border-primary'
+                                    : 'bg-background hover:bg-muted border-input'
+                                    }`}
+                            >
+                                Yes
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => toggleBoolean('petFriendly', false)}
+                                className={`flex-1 rounded-md px-4 py-2 text-sm border transition-colors ${formData.petFriendly === false
+                                    ? 'bg-primary text-primary-foreground border-primary'
+                                    : 'bg-background hover:bg-muted border-input'
+                                    }`}
+                            >
+                                No
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Overlooking */}
+                    <div>
+                        <label className="mb-2 block text-sm font-medium">Overlooking</label>
+                        <div className="flex flex-wrap gap-2">
+                            {['Park', 'Main Road', 'Club', 'Pool', 'Garden'].map((view) => (
+                                <button
+                                    type="button"
+                                    key={view}
+                                    onClick={() => handleMultiSelect('overlooking', view)}
+                                    className={`rounded-full px-4 py-2 text-sm border transition-colors ${formData.overlooking?.includes(view)
+                                        ? 'bg-primary text-primary-foreground border-primary'
+                                        : 'bg-background hover:bg-muted border-input'
+                                        }`}
+                                >
+                                    {view}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>

@@ -41,6 +41,7 @@ export async function POST(req: Request) {
 
         await dbConnect();
         const body = await req.json();
+        logger.info(`POST /api/properties - Payload: ${JSON.stringify(body)}`);
 
         const property = await Property.create(body);
         logger.info(`POST /api/properties - Property created: ${property._id}`);

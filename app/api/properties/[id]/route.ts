@@ -13,6 +13,46 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// Helper to extract public_id from Cloudinary URL
+function extractPublicId(url: string): string | null {
+    try {
+        // Matches: .../upload/(v1234/)?(folder/public_id).jpg
+        // We need to capture everything after /upload/ (and optional version) up to the extension
+        const regex = /\/upload\/(?:v\d+\/)?(.+)\.[^.]+$/;
+        const match = url.match(regex);
+        return match ? match[1] : null;
+    } catch (error) {
+        logger.error(`Error extracting publicId from ${url}: ${error}`);
+        return null;
+    }
+}
+
+async function deleteFromCloudinary(urls: string[]) {
+    if (!urls || urls.length === 0) return;
+
+    const publicIds = urls
+        .map(url => extractPublicId(url))
+        .filter((id): id is string => id !== null);
+
+    if (publicIds.length === 0) return;
+
+    logger.info(`Deleting from Cloudinary: ${publicIds.join(', ')}`);
+
+    // Use cloudinary.api.delete_resources for batch deletion (requires Admin API)
+    // Or loop uploader.destroy. Property deletion might have many images.
+    // Let's use loop for safety if Admin API keys aren't fully set up for management (though they seem to be).
+    // Actually, uploader.destroy is safer for standard API keys.
+
+    const promises = publicIds.map(id => cloudinary.uploader.destroy(id));
+    const results = await Promise.allSettled(promises);
+
+    results.forEach((result, index) => {
+        if (result.status === 'rejected') {
+            logger.error(`Failed to delete ${publicIds[index]}: ${result.reason}`);
+        }
+    });
+}
+
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     logger.info(`GET /api/properties/${id} - Fetching property`);
@@ -44,11 +84,24 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         await dbConnect();
         const body = await req.json();
 
-        const property = await Property.findByIdAndUpdate(id, body, { new: true });
-
-        if (!property) {
+        // Check for removed images
+        const existingProperty = await Property.findById(id);
+        if (!existingProperty) {
             return NextResponse.json({ error: 'Property not found' }, { status: 404 });
         }
+
+        const oldImages: string[] = existingProperty.images || [];
+        const newImages: string[] = body.images || [];
+
+        // Images present in old but not in new need to be deleted
+        const imagesToDelete = oldImages.filter(img => !newImages.includes(img));
+
+        if (imagesToDelete.length > 0) {
+            logger.info(`PUT /api/properties/${id} - Found ${imagesToDelete.length} images to delete`);
+            await deleteFromCloudinary(imagesToDelete);
+        }
+
+        const property = await Property.findByIdAndUpdate(id, body, { new: true });
 
         logger.info(`PUT /api/properties/${id} - Updated`);
         return NextResponse.json(property);
@@ -74,26 +127,9 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
             return NextResponse.json({ error: 'Property not found' }, { status: 404 });
         }
 
-        // Delete images from Cloudinary
+        // Delete all images
         if (property.images && property.images.length > 0) {
-            const publicIds = property.images.map((url: string) => {
-                // Extract public_id from URL
-                // Example: https://res.cloudinary.com/cloud_name/image/upload/v1234567890/folder/public_id.jpg
-                const splitUrl = url.split('/');
-                const filename = splitUrl[splitUrl.length - 1];
-                const publicId = filename.split('.')[0];
-                return publicId;
-            });
-
-            logger.info(`DELETE /api/properties/${id} - Deleting items from Cloudinary: ${publicIds.join(', ')}`);
-
-            // Note: In production, might want to handle failures gracefully or use a background job
-            // For now, we try to delete but don't block DB deletion if it fails, just log it
-            try {
-                await LinkCloudinaryResources(publicIds);
-            } catch (cloudError) {
-                logger.error(`DELETE /api/properties/${id} - Cloudinary deletion error: ${cloudError}`);
-            }
+            await deleteFromCloudinary(property.images);
         }
 
         await Property.findByIdAndDelete(id);
@@ -106,32 +142,3 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     }
 }
 
-async function LinkCloudinaryResources(publicIds: string[]) {
-    // Use delete_resources api
-    // We need to be careful about the public_id format depending on folder structure
-    // If the URL contains folder, the extraction usage above might need adjustment depending on how it's stored.
-    // Assuming flat structure or adjust if folder is used. 
-    // For now, using the filename extraction. If using folders, need full path after 'upload/v.../'
-
-    // Correct extraction logic for standard Cloudinary URLs:
-    // .../upload/v1234/folder/image.jpg -> folder/image
-
-    // Given we don't know the exact folder structure yet, we'll try to match standard pattern.
-    // This is a simplified extraction. 
-
-    /* 
-      Wait, the 'publicIds' extracted above `filename.split('.')[0]` handles `image.jpg` -> `image`. 
-      If it is `folder/image.jpg`, splitting by `/` and taking last one only gives `image`. 
-      Cloudinary public_id INCLUDES the folder. 
-      
-      We'll improve the extraction in the helper or main loop.
-    */
-
-    // We will invoke cloudinary.api.delete_resources(publicIds)
-    // But since that requires Admin API which might be stricter, uploader.destroy is per image.
-    // api.delete_resources is better for batch.
-
-    // Let's rely on standard uploader.destroy loop/promise.all for updating
-    const promises = publicIds.map(id => cloudinary.uploader.destroy(id));
-    await Promise.all(promises);
-}
