@@ -10,6 +10,8 @@ export interface IAdmin extends Document {
     profileImage?: string;
     companyName?: string;
     sessionVersion: number;
+    failedLoginAttempts: number;
+    lockoutUntil?: Date;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -25,6 +27,8 @@ const AdminSchema: Schema = new Schema(
         profileImage: { type: String },
         companyName: { type: String },
         sessionVersion: { type: Number, default: 0 },
+        failedLoginAttempts: { type: Number, default: 0 },
+        lockoutUntil: { type: Date },
     },
     { timestamps: true }
 );

@@ -90,8 +90,12 @@ export default function AdminLayout({
                 <div className="p-4">
                     {user && (
                         <div className="mb-6 p-4 bg-white/5 rounded-xl border border-white/5 flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold">
-                                {user.name?.[0] || 'A'}
+                            <div className="h-10 w-10 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold overflow-hidden border border-white/10">
+                                {user.image ? (
+                                    <img src={user.image} alt="Profile" className="h-full w-full object-cover" />
+                                ) : (
+                                    <span>{user.name?.[0] || 'A'}</span>
+                                )}
                             </div>
                             <div className="overflow-hidden">
                                 <p className="text-sm font-medium text-white truncate">{user.name || 'Admin'}</p>

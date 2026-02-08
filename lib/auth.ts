@@ -32,12 +32,40 @@ export const authOptions: NextAuthOptions = {
                     throw new Error('Invalid credentials');
                 }
 
+                // Check if account is locked
+                if (admin.lockoutUntil && admin.lockoutUntil > new Date()) {
+                    const minutesLeft = Math.ceil((admin.lockoutUntil.getTime() - new Date().getTime()) / 60000);
+                    logger.warn(`Login blocked: Account locked for ${credentials.email}`);
+                    throw new Error(`Account locked. Try again in ${minutesLeft} minutes.`);
+                }
+
                 const isValid = await bcrypt.compare(credentials.password, admin.passwordHash);
 
                 if (!isValid) {
-                    logger.warn(`Login failed: Invalid password for ${credentials.email}`);
-                    throw new Error('Invalid credentials');
+                    // Increment failed attempts
+                    admin.failedLoginAttempts = (admin.failedLoginAttempts || 0) + 1;
+
+                    // Lockout logic: 5 failed attempts = 15 minutes lockout
+                    if (admin.failedLoginAttempts >= 5) {
+                        admin.lockoutUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+                        admin.failedLoginAttempts = 0; // Optional: reset attempts after lockout is set, or keep counting? 
+                        // Better to keep attempts reset or keep them? usually reset lockout triggers.
+                        // Let's keep it simple: set lockout, and if they try again, check lockout.
+                        // When lockout expires, they start from 0? or current? 
+                        // Standard practice: Lockout expires, next failure counts as 1.
+                        // So we should probably not reset attempts here, but reset them upon successful login.
+                        // Actually, if we reset attempts here, the check "attempts >= 5" won't trigger next time easily if logic is flawed.
+                        // But lockoutUntil check is first.
+                    }
+
+                    await admin.save();
+                    logger.warn(`Login failed: Invalid password for ${credentials.email}. Attempts: ${admin.failedLoginAttempts}`);
+                    throw new Error(admin.lockoutUntil ? 'Account locked due to too many failed attempts.' : 'Invalid credentials');
                 }
+
+                // Reset failed attempts on successful login
+                admin.failedLoginAttempts = 0;
+                admin.lockoutUntil = undefined;
 
                 // Increment session version to invalidate previous sessions
                 admin.sessionVersion = (admin.sessionVersion || 0) + 1;

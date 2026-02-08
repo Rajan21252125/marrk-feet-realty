@@ -55,16 +55,35 @@ export async function PUT(req: Request) {
         if (password) {
             const salt = await bcrypt.genSalt(10);
             updateData.passwordHash = await bcrypt.hash(password, salt);
+
+            // Security: Invalidate session and require re-verification
+            updateData.isVerified = false;
+            updateData.verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+            // We need to fetch the current doc to increment sessionVersion safely or just use $inc
+            // But since we are doing findOneAndUpdate below, we can't easily reference current value in $set for sessionVersion if not using $inc.
+            // Let's use $inc for sessionVersion in the update call, or fetch first. 
+            // Actually, we can use $inc in the same update operation.
+        }
+
+        const updateOps: any = { $set: updateData };
+        if (password) {
+            updateOps.$inc = { sessionVersion: 1 };
         }
 
         const updatedAdmin = await Admin.findOneAndUpdate(
             { email: session.user.email },
-            { $set: updateData },
+            updateOps,
             { new: true }
         ).select('-passwordHash');
 
-        logger.info(`PUT /api/admin/settings - Profile updated for ${session.user.email}`);
-        return NextResponse.json({ message: 'Profile updated', admin: updatedAdmin });
+        logger.info(`PUT /api/admin/settings - Profile updated for ${session.user.email}. Password changed: ${!!password}`);
+
+        // Return a flag indicating if re-auth is needed
+        return NextResponse.json({
+            message: 'Profile updated',
+            admin: updatedAdmin,
+            reAuthRequired: !!password
+        });
     } catch (error) {
         logger.error(`PUT /api/admin/settings - Error: ${error}`);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

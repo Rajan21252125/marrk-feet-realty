@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { toast } from 'react-hot-toast';
 import { User, Building, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -27,7 +27,7 @@ export default function SettingsPage() {
             const res = await fetch('/api/admin/settings');
             const data = await res.json();
             if (data.profile) {
-                setProfile(prev => ({ ...prev, ...data.profile }));
+                setProfile(prev => ({ ...prev, ...data.profile, password: '' })); // Ensure password is empty
             }
             if (data.admins) {
                 setAdmins(data.admins);
@@ -41,6 +41,7 @@ export default function SettingsPage() {
 
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
+        const toastId = toast.loading('Saving changes...');
         try {
             const res = await fetch('/api/admin/settings', {
                 method: 'PUT',
@@ -49,17 +50,24 @@ export default function SettingsPage() {
             });
             const data = await res.json();
             if (res.ok) {
-                toast.success('Profile updated');
-                update({
-                    name: profile.name,
-                    companyName: profile.companyName,
-                    image: profile.profileImage
-                });
+                if (data.reAuthRequired) {
+                    toast.success('Password updated. Please sign in again to verify.', { id: toastId });
+                    setTimeout(() => {
+                        signOut({ callbackUrl: '/admin/login' });
+                    }, 1500);
+                } else {
+                    toast.success('Profile updated successfully', { id: toastId });
+                    update({
+                        name: profile.name,
+                        image: profile.profileImage
+                    });
+                    setProfile(prev => ({ ...prev, password: '' }));
+                }
             } else {
-                toast.error(data.error || 'Update failed');
+                toast.error(data.error || 'Update failed', { id: toastId });
             }
         } catch (error) {
-            toast.error('Update failed');
+            toast.error('Update failed', { id: toastId });
         }
     };
 
@@ -130,19 +138,6 @@ export default function SettingsPage() {
                                     className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all placeholder:text-gray-600"
                                     placeholder="Your Name"
                                 />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-1.5">Company Name</label>
-                                <div className="relative">
-                                    <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                                    <input
-                                        type="text"
-                                        value={profile.companyName}
-                                        onChange={(e) => setProfile({ ...profile, companyName: e.target.value })}
-                                        className="w-full bg-black/20 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all placeholder:text-gray-600"
-                                        placeholder="Company Name"
-                                    />
-                                </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-1.5">Profile Image URL</label>
@@ -247,6 +242,8 @@ export default function SettingsPage() {
                                             size="sm"
                                             className="text-gray-500 hover:text-red-400 hover:bg-red-500/10 h-8 w-8 p-0 rounded-full"
                                             disabled={session?.user?.email === admin.email}
+                                            // Only show/enable delete if current user is super admin
+                                            style={{ display: session?.user?.email === 'grajan408@gmail.com' ? 'inline-flex' : 'none' }}
                                             onClick={() => {
                                                 if (confirm('Are you sure you want to delete this admin? This action cannot be undone.')) {
                                                     handleDeleteAdmin(admin._id);
