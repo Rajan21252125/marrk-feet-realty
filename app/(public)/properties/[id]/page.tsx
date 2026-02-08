@@ -94,7 +94,7 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                                 </div>
                             </div>
                             <div className="text-right">
-                                <p className="text-4xl md:text-5xl font-bold drop-shadow-md">${property.price.toLocaleString()}</p>
+                                <p className="text-4xl md:text-5xl font-bold drop-shadow-md">₹{property.price.toLocaleString()}</p>
                                 <p className="text-gray-300 text-lg drop-shadow-sm">For Sale</p>
                             </div>
                         </div>

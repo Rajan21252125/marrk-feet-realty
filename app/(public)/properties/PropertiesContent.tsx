@@ -13,6 +13,7 @@ export default function PropertiesContent() {
     const [currentPage, setCurrentPage] = useState(1);
     const [filterQuery, setFilterQuery] = useState('');
     const [propertyType, setPropertyType] = useState('');
+    const [sortOption, setSortOption] = useState('newest'); // newest, price-low, price-high
     const itemsPerPage = 9;
 
     useEffect(() => {
@@ -36,15 +37,22 @@ export default function PropertiesContent() {
     };
 
     // Filter logic
-    const filteredProperties = properties.filter(p => {
-        const matchesSearch =
-            p.title.toLowerCase().includes(filterQuery.toLowerCase()) ||
-            p.location.toLowerCase().includes(filterQuery.toLowerCase());
+    const filteredProperties = properties
+        .filter(p => {
+            const matchesSearch =
+                p.title.toLowerCase().includes(filterQuery.toLowerCase()) ||
+                p.location.toLowerCase().includes(filterQuery.toLowerCase());
 
-        const matchesType = propertyType ? p.propertyType === propertyType : true;
+            const matchesType = propertyType ? p.propertyType === propertyType : true;
 
-        return matchesSearch && matchesType;
-    });
+            return matchesSearch && matchesType;
+        })
+        .sort((a, b) => {
+            if (sortOption === 'newest') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            if (sortOption === 'price-low') return (a.price || 0) - (b.price || 0);
+            if (sortOption === 'price-high') return (b.price || 0) - (a.price || 0);
+            return 0;
+        });
 
     // Pagination logic
     const totalPages = Math.ceil(filteredProperties.length / itemsPerPage);
@@ -83,7 +91,7 @@ export default function PropertiesContent() {
 
             <div className="container mx-auto px-4 py-16">
                 {/* Search & Filter Bar */}
-                <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-lg border border-gray-100 dark:border-white/5 p-4 mb-12 -mt-24 relative z-20 flex flex-col md:flex-row gap-4 items-center">
+                <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-lg border border-gray-100 dark:border-white/5 p-4 mb-12 -mt-24 relative z-20 flex flex-col lg:flex-row gap-4 items-center">
                     <div className="relative flex-1 w-full">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                         <input
@@ -94,9 +102,9 @@ export default function PropertiesContent() {
                             onChange={(e) => setFilterQuery(e.target.value)}
                         />
                     </div>
-                    <div className="w-full md:w-auto flex gap-4 justify-center items-center">
+                    <div className="w-full lg:w-auto flex flex-col sm:flex-row gap-4 justify-center items-center">
                         <select
-                            className="px-4 py-3 rounded-lg border border-gray-200 dark:border-white/10 bg-transparent focus:ring-2 focus:ring-accent outline-none cursor-pointer text-gray-700 dark:text-gray-300 bg-white dark:bg-neutral-900"
+                            className="w-full sm:w-auto px-4 py-3 rounded-lg border border-gray-200 dark:border-white/10 bg-transparent focus:ring-2 focus:ring-accent outline-none cursor-pointer text-gray-700 dark:text-gray-300 bg-white dark:bg-neutral-900"
                             value={propertyType}
                             onChange={(e) => setPropertyType(e.target.value)}
                         >
@@ -108,7 +116,16 @@ export default function PropertiesContent() {
                             <option value="Penthouse">Penthouse</option>
                             <option value="Plot">Plot</option>
                         </select>
-                        <Button className="bg-primary text-white px-8 h-full">Search</Button>
+                        <select
+                            className="w-full sm:w-auto px-4 py-3 rounded-lg border border-gray-200 dark:border-white/10 bg-transparent focus:ring-2 focus:ring-accent outline-none cursor-pointer text-gray-700 dark:text-gray-300 bg-white dark:bg-neutral-900"
+                            value={sortOption}
+                            onChange={(e) => setSortOption(e.target.value)}
+                        >
+                            <option value="newest">Newest First</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                        </select>
+                        <Button className="w-full sm:w-auto bg-primary text-white px-8 h-full">Search</Button>
                     </div>
                 </div>
 
@@ -136,7 +153,7 @@ export default function PropertiesContent() {
                                             {property.propertyType}
                                         </div>
                                         <div className="absolute bottom-4 right-4 bg-accent/90 text-white px-4 py-2 rounded-lg text-lg font-bold backdrop-blur-sm shadow-lg">
-                                            ${property.price?.toLocaleString()}
+                                            ₹{property.price?.toLocaleString()}
                                         </div>
                                     </div>
 
@@ -199,8 +216,8 @@ export default function PropertiesContent() {
                                             key={i}
                                             onClick={() => handlePageChange(i + 1)}
                                             className={`w-10 h-10 rounded-lg font-medium transition-colors ${currentPage === i + 1
-                                                ? 'bg-primary-dark text-white'
-                                                : 'bg-white dark:bg-neutral-900 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5'
+                                                ? 'bg-primary text-white'
+                                                : 'bg-white text-black dark:text-white dark:bg-neutral-900 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5'
                                                 }`}
                                         >
                                             {i + 1}
@@ -211,7 +228,7 @@ export default function PropertiesContent() {
                                 <button
                                     onClick={() => handlePageChange(currentPage + 1)}
                                     disabled={currentPage === totalPages}
-                                    className="p-2 rounded-lg border border-gray-200 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                    className="p-2 rounded-lg border border-gray-900 text-gray-900 dark:text-white dark:border-white/10 hover:bg-gray-100 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                 >
                                     <ChevronRight size={20} />
                                 </button>

@@ -105,166 +105,166 @@ export default function SettingsPage() {
 
     return (
         <div className="space-y-8 pb-10">
-            <h1 className="text-3xl font-bold text-white mb-6">Settings</h1>
-
-            {/* Profile Settings */}
-            <div className="bg-primary/20 backdrop-blur-md rounded-2xl p-6 border border-white/10 shadow-xl">
-                <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                    <User className="w-5 h-5 text-accent" /> Profile Settings
-                </h2>
-                <form onSubmit={handleUpdateProfile} className="space-y-4 max-w-xl">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Name</label>
-                        <input
-                            type="text"
-                            value={profile.name}
-                            onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent"
-                            placeholder="Your Name"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Company Details</label>
-                        <div className="flex items-center gap-2">
-                            <Building className="w-4 h-4 text-gray-400" />
-                            <input
-                                type="text"
-                                value={profile.companyName}
-                                onChange={(e) => setProfile({ ...profile, companyName: e.target.value })}
-                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent"
-                                placeholder="Company Name"
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Profile Image URL</label>
-                        <input
-                            type="text"
-                            value={profile.profileImage || ''}
-                            onChange={(e) => setProfile({ ...profile, profileImage: e.target.value })}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent"
-                            placeholder="https://example.com/image.jpg"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">New Password (leave blank to keep current)</label>
-                        <div className="flex items-center gap-2">
-                            <Lock className="w-4 h-4 text-gray-400" />
-                            <input
-                                type="password"
-                                value={profile.password}
-                                onChange={(e) => setProfile({ ...profile, password: e.target.value })}
-                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent"
-                                placeholder="New Password"
-                            />
-                        </div>
-                    </div>
-                    <Button type="submit" className="bg-accent hover:bg-accent/80 text-white mt-4">
-                        Save Changes
-                    </Button>
-                </form>
+            <div>
+                <h1 className="text-3xl font-bold text-white mb-2">Settings</h1>
+                <p className="text-gray-400">Manage your profile and admin access</p>
             </div>
 
-            {/* Admin Management */}
-            <div className="bg-primary/20 backdrop-blur-md rounded-2xl p-6 border border-white/10 shadow-xl">
-                <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                    <User className="w-5 h-5 text-accent" /> Manage Admins
-                </h2>
-
-                {/* Add Admin Form */}
-                <div className="mb-8 p-4 bg-white/5 rounded-xl border border-white/5">
-                    <h3 className="text-lg font-medium text-gray-200 mb-3">Add New Admin</h3>
-                    <form onSubmit={handleAddAdmin} className="flex flex-col md:flex-row gap-4 items-end">
-                        <div className="flex-1 w-full">
-                            <label className="block text-xs text-gray-400 mb-1">Email</label>
-                            <input
-                                type="email"
-                                required
-                                value={newAdmin.email}
-                                onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
-                                className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white text-sm"
-                                placeholder="admin@example.com"
-                            />
+            <div className="grid lg:grid-cols-2 gap-8">
+                {/* Profile Settings */}
+                <div className="bg-primary/20 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-xl">
+                    <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-accent/20 text-accent">
+                            <User className="w-5 h-5" />
                         </div>
-                        <div className="flex-1 w-full">
-                            <label className="block text-xs text-gray-400 mb-1">Password</label>
-                            <input
-                                type="password"
-                                required
-                                value={newAdmin.password}
-                                onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })}
-                                className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white text-sm"
-                                placeholder="Initial Password"
-                            />
+                        Profile Settings
+                    </h2>
+                    <form onSubmit={handleUpdateProfile} className="space-y-6">
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-1.5">Full Name</label>
+                                <input
+                                    type="text"
+                                    value={profile.name}
+                                    onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all placeholder:text-gray-600"
+                                    placeholder="Your Name"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-1.5">Company Name</label>
+                                <div className="relative">
+                                    <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                                    <input
+                                        type="text"
+                                        value={profile.companyName}
+                                        onChange={(e) => setProfile({ ...profile, companyName: e.target.value })}
+                                        className="w-full bg-black/20 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all placeholder:text-gray-600"
+                                        placeholder="Company Name"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-1.5">Profile Image URL</label>
+                                <input
+                                    type="text"
+                                    value={profile.profileImage || ''}
+                                    onChange={(e) => setProfile({ ...profile, profileImage: e.target.value })}
+                                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all placeholder:text-gray-600"
+                                    placeholder="https://example.com/image.jpg"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-1.5">New Password</label>
+                                <div className="relative">
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                                    <input
+                                        type="password"
+                                        value={profile.password}
+                                        onChange={(e) => setProfile({ ...profile, password: e.target.value })}
+                                        className="w-full bg-black/20 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all placeholder:text-gray-600"
+                                        placeholder="Leave blank to keep current"
+                                    />
+                                </div>
+                            </div>
                         </div>
-                        <Button type="submit" className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white">
-                            Add Admin
+                        <Button
+                            type="submit"
+                            className="w-full bg-accent hover:bg-accent/80 text-white py-6 rounded-xl shadow-lg shadow-accent/20 transition-all active:scale-[0.98]"
+                        >
+                            Save Changes
                         </Button>
                     </form>
-                    <p className="text-xs text-gray-400 mt-2">* Max 5 admins allowed.</p>
                 </div>
 
-                {/* Admins List */}
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="border-b border-white/10 text-gray-400 text-sm">
-                                <th className="p-3">Profile</th>
-                                <th className="p-3">Name</th>
-                                <th className="p-3">Email</th>
-                                <th className="p-3">Role</th>
-                                <th className="p-3">Verified</th>
-                                <th className="p-3 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="text-gray-300 text-sm">
-                            {admins.map((admin) => (
-                                <tr key={admin._id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                    <td className="p-3">
-                                        <div className="w-8 h-8 rounded-full bg-gray-700 overflow-hidden">
-                                            {admin.profileImage ? (
-                                                <img src={admin.profileImage} alt="Profile" className="w-full h-full object-cover" />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-xs text-white bg-accent/50">
-                                                    {admin.name ? admin.name[0] : 'A'}
+                {/* Admin Management */}
+                <div className="space-y-6">
+                    <div className="bg-primary/20 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-xl">
+                        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-green-500/20 text-green-400">
+                                <User className="w-5 h-5" />
+                            </div>
+                            Manage Admins
+                        </h2>
+
+                        {/* Add Admin Form */}
+                        <div className="bg-white/5 rounded-xl border border-white/5 p-5 mb-8">
+                            <h3 className="text-sm font-semibold text-gray-200 mb-4 uppercase tracking-wider">Add New Admin</h3>
+                            <form onSubmit={handleAddAdmin} className="space-y-4">
+                                <div>
+                                    <input
+                                        type="email"
+                                        required
+                                        value={newAdmin.email}
+                                        onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
+                                        className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500/50"
+                                        placeholder="Email Address"
+                                    />
+                                </div>
+                                <div>
+                                    <input
+                                        type="password"
+                                        required
+                                        value={newAdmin.password}
+                                        onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })}
+                                        className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500/50"
+                                        placeholder="Initial Password"
+                                    />
+                                </div>
+                                <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+                                    Add Admin
+                                </Button>
+                            </form>
+                            <p className="text-xs text-gray-500 mt-3 text-center">* Limit of 5 admins per workspace.</p>
+                        </div>
+
+                        {/* Admins List */}
+                        <div className="space-y-4">
+                            <h3 className="text-sm font-semibold text-gray-200 uppercase tracking-wider">Existing Admins</h3>
+                            <div className="space-y-3">
+                                {admins.map((admin) => (
+                                    <div key={admin._id} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5 group hover:border-white/10 transition-colors">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center overflow-hidden border border-white/10">
+                                                {admin.profileImage ? (
+                                                    <img src={admin.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <span className="text-sm font-bold text-gray-400">{admin.name ? admin.name[0] : 'A'}</span>
+                                                )}
+                                            </div>
+                                            <div>
+                                                <div className="flex items-center gap-2">
+                                                    <p className="text-sm font-medium text-white">{admin.name || 'Unavailable'}</p>
+                                                    {admin.isVerified && (
+                                                        <span className="w-1.5 h-1.5 bg-green-400 rounded-full" title="Verified"></span>
+                                                    )}
                                                 </div>
-                                            )}
+                                                <p className="text-xs text-gray-400">{admin.email}</p>
+                                            </div>
                                         </div>
-                                    </td>
-                                    <td className="p-3 font-medium text-white">{admin.name || 'N/A'}</td>
-                                    <td className="p-3">{admin.email}</td>
-                                    <td className="p-3 capitalize">{admin.role}</td>
-                                    <td className="p-3">
-                                        {admin.isVerified ? (
-                                            <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs">Verified</span>
-                                        ) : (
-                                            <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs">Pending</span>
-                                        )}
-                                    </td>
-                                    <td className="p-3 text-right">
                                         <Button
-                                            variant="destructive"
+                                            variant="ghost"
                                             size="sm"
-                                            className="h-8 px-3 text-xs"
+                                            className="text-gray-500 hover:text-red-400 hover:bg-red-500/10 h-8 w-8 p-0 rounded-full"
                                             disabled={session?.user?.email === admin.email}
                                             onClick={() => {
                                                 if (confirm('Are you sure you want to delete this admin? This action cannot be undone.')) {
                                                     handleDeleteAdmin(admin._id);
                                                 }
                                             }}
+                                            title="Delete Admin"
                                         >
-                                            Delete
+                                            <span className="sr-only">Delete</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /></svg>
                                         </Button>
-                                    </td>
-                                </tr>
-                            ))}
-                            {admins.length === 0 && (
-                                <tr>
-                                    <td colSpan={6} className="p-4 text-center text-gray-500">No admins found.</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                    </div>
+                                ))}
+                                {admins.length === 0 && (
+                                    <div className="text-center py-4 text-gray-500 text-sm">No admins found.</div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

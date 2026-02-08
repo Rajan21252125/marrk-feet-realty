@@ -27,7 +27,7 @@ export function Header() {
         >
             <div className="container mx-auto flex items-center justify-between px-4 md:px-6">
                 <Link href="/" className="flex items-center gap-2 z-50">
-                    <span className={`text-2xl font-bold tracking-tight transition-colors ${isScrolled ? 'text-primary-dark' : 'text-white'}`}>
+                    <span className={`text-2xl font-bold tracking-tight transition-colors text-primary`}>
                         Markfeet Realty
                     </span>
                 </Link>
@@ -39,9 +39,6 @@ export function Header() {
                     </Link>
                     <Link href="/about" className={`text-sm font-medium transition-colors hover:text-accent ${isScrolled ? 'text-gray-700 dark:text-gray-200' : 'text-white/90'}`}>
                         About
-                    </Link>
-                    <Link href="/contact" className={`text-sm font-medium transition-colors hover:text-accent ${isScrolled ? 'text-gray-700 dark:text-gray-200' : 'text-white/90'}`}>
-                        Contact
                     </Link>
 
                     <Link href="/contact">
@@ -79,13 +76,6 @@ export function Header() {
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             About
-                        </Link>
-                        <Link
-                            href="/contact"
-                            className="text-2xl font-bold text-white hover:text-accent transition-colors"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            Contact
                         </Link>
                         <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)}>
                             <Button

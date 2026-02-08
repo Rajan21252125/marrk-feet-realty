@@ -29,11 +29,14 @@ export default async function AdminDashboard() {
         .lean();
 
     return (
-        <div>
-            <div className="mb-8 flex items-center justify-between">
-                <h1 className="text-3xl font-bold text-primary-dark">Dashboard</h1>
+        <div className="space-y-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
+                    <p className="text-gray-400">Overview of your real estate business</p>
+                </div>
                 <Link href="/admin/properties/add">
-                    <Button>
+                    <Button className="bg-accent hover:bg-accent/80 text-white shadow-lg shadow-accent/20 transition-all hover:scale-105">
                         <Plus className="mr-2 h-4 w-4" />
                         Add New Property
                     </Button>
@@ -41,87 +44,117 @@ export default async function AdminDashboard() {
             </div>
 
             {/* Stats Cards */}
-            <div className="mb-8 grid gap-6 sm:grid-cols-3">
-                <div className="rounded-xl border bg-card p-6 shadow-sm">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm font-medium text-muted-foreground">Total Properties</p>
-                            <h3 className="text-2xl font-bold">{totalProperties}</h3>
+            <div className="grid gap-6 sm:grid-cols-3">
+                <div className="relative group overflow-hidden rounded-2xl bg-primary/20 backdrop-blur-xl border border-white/10 p-6 shadow-lg transition-all hover:border-accent/30 hover:shadow-accent/10">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <Building className="h-24 w-24 text-blue-500 transform rotate-12 translate-x-4 -translate-y-4" />
+                    </div>
+                    <div className="relative z-10">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="rounded-xl bg-blue-500/20 p-3 text-blue-400">
+                                <Building className="h-6 w-6" />
+                            </div>
+                            <span className="text-xs font-medium text-green-400 bg-green-500/10 px-2 py-1 rounded-full">
+                                +12% this month
+                            </span>
                         </div>
-                        <div className="rounded-full bg-blue-100 p-3 text-blue-600 dark:bg-blue-900/20">
-                            <Building className="h-6 w-6" />
-                        </div>
+                        <p className="text-sm font-medium text-gray-400">Total Properties</p>
+                        <h3 className="text-3xl font-bold text-white mt-1">{totalProperties}</h3>
                     </div>
                 </div>
-                <div className="rounded-xl border bg-card p-6 shadow-sm">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm font-medium text-muted-foreground">Active Listings</p>
-                            <h3 className="text-2xl font-bold">{activeProperties}</h3>
-                        </div>
-                        <div className="rounded-full bg-green-100 p-3 text-green-600 dark:bg-green-900/20">
-                            <CheckCircle className="h-6 w-6" />
-                        </div>
+
+                <div className="relative group overflow-hidden rounded-2xl bg-primary/20 backdrop-blur-xl border border-white/10 p-6 shadow-lg transition-all hover:border-accent/30 hover:shadow-accent/10">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <CheckCircle className="h-24 w-24 text-green-500 transform rotate-12 translate-x-4 -translate-y-4" />
                     </div>
-                    <p className="mt-2 text-xs text-muted-foreground">{totalProperties - activeProperties} inactive</p>
+                    <div className="relative z-10">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="rounded-xl bg-green-500/20 p-3 text-green-400">
+                                <CheckCircle className="h-6 w-6" />
+                            </div>
+                            <span className="text-xs font-medium text-green-400 bg-green-500/10 px-2 py-1 rounded-full">
+                                {Math.round((activeProperties / (totalProperties || 1)) * 100)}% Active
+                            </span>
+                        </div>
+                        <p className="text-sm font-medium text-gray-400">Active Listings</p>
+                        <h3 className="text-3xl font-bold text-white mt-1">{activeProperties}</h3>
+                        <p className="text-xs text-gray-500 mt-1">{totalProperties - activeProperties} inactive properties</p>
+                    </div>
                 </div>
-                <div className="rounded-xl border bg-card p-6 shadow-sm">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm font-medium text-muted-foreground">Total Inquiries</p>
-                            <h3 className="text-2xl font-bold">{totalMessages}</h3>
+
+                <div className="relative group overflow-hidden rounded-2xl bg-primary/20 backdrop-blur-xl border border-white/10 p-6 shadow-lg transition-all hover:border-accent/30 hover:shadow-accent/10">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <MessageSquare className="h-24 w-24 text-accent transform rotate-12 translate-x-4 -translate-y-4" />
+                    </div>
+                    <div className="relative z-10">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="rounded-xl bg-accent/20 p-3 text-accent">
+                                <MessageSquare className="h-6 w-6" />
+                            </div>
+                            <span className="text-xs font-medium text-gray-400 bg-white/5 px-2 py-1 rounded-full">
+                                All time
+                            </span>
                         </div>
-                        <div className="rounded-full bg-orange-100 p-3 text-orange-600 dark:bg-orange-900/20">
-                            <MessageSquare className="h-6 w-6" />
-                        </div>
+                        <p className="text-sm font-medium text-gray-400">Total Inquiries</p>
+                        <h3 className="text-3xl font-bold text-white mt-1">{totalMessages}</h3>
                     </div>
                 </div>
             </div>
 
             {/* Recent Activity / Properties */}
-            <div className="rounded-xl border bg-card shadow-sm">
-                <div className="flex items-center justify-between border-b p-6">
-                    <h2 className="text-xl font-bold text-primary-dark">Recent Properties</h2>
+            <div className="rounded-2xl bg-primary/20 backdrop-blur-xl border border-white/10 shadow-lg overflow-hidden">
+                <div className="flex items-center justify-between p-6 border-b border-white/10 bg-white/5">
+                    <h2 className="text-xl font-bold text-white">Recent Properties</h2>
                     <Link href="/admin/properties">
-                        <Button variant="outline" size="sm">View All</Button>
+                        <Button variant="ghost" className="text-accent hover:text-accent/80 hover:bg-accent/10">
+                            View All
+                        </Button>
                     </Link>
                 </div>
-                <div className="p-6">
-                    <div className="rounded-md border overflow-x-auto">
+                <div className="p-0">
+                    <div className="overflow-x-auto">
                         <table className="w-full text-sm">
-                            <thead className="bg-muted/50">
-                                <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Property</th>
-                                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Location</th>
-                                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Price</th>
-                                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
-                                    <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Actions</th>
+                            <thead className="bg-white/5">
+                                <tr className="border-b border-white/10">
+                                    <th className="h-12 px-6 text-left align-middle font-medium text-gray-400 uppercase tracking-wider text-xs">Property</th>
+                                    <th className="h-12 px-6 text-left align-middle font-medium text-gray-400 uppercase tracking-wider text-xs">Location</th>
+                                    <th className="h-12 px-6 text-left align-middle font-medium text-gray-400 uppercase tracking-wider text-xs">Price</th>
+                                    <th className="h-12 px-6 text-left align-middle font-medium text-gray-400 uppercase tracking-wider text-xs">Status</th>
+                                    <th className="h-12 px-6 text-right align-middle font-medium text-gray-400 uppercase tracking-wider text-xs">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="divide-y divide-white/5">
                                 {recentProperties.length === 0 ? (
                                     <tr>
-                                        <td colSpan={5} className="p-4 text-center text-muted-foreground">
+                                        <td colSpan={5} className="p-8 text-center text-gray-500">
                                             No properties found.
                                         </td>
                                     </tr>
                                 ) : (
                                     recentProperties.map((property: any) => (
-                                        <tr key={property._id} className="border-b transition-colors hover:bg-muted/50">
-                                            <td className="p-4 align-middle font-medium">{property.title}</td>
-                                            <td className="p-4 align-middle">{property.location}</td>
-                                            <td className="p-4 align-middle">{formatPrice(property.price)}</td>
-                                            <td className="p-4 align-middle">
-                                                <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent ${property.isActive
-                                                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                                                        : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+                                        <tr key={property._id} className="transition-colors hover:bg-white/5">
+                                            <td className="p-6 align-middle">
+                                                <div className="font-semibold text-white">{property.title}</div>
+                                            </td>
+                                            <td className="p-6 align-middle text-gray-300">{property.location}</td>
+                                            <td className="p-6 align-middle font-mono text-accent">{formatPrice(property.price)}</td>
+                                            <td className="p-6 align-middle">
+                                                <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold border ${property.isActive
+                                                    ? 'bg-green-500/10 text-green-400 border-green-500/20'
+                                                    : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
                                                     }`}>
-                                                    {property.isActive ? 'Active' : 'Inactive'}
+                                                    {property.isActive ? 'Active' : 'Hidden'}
                                                 </span>
                                             </td>
-                                            <td className="p-4 align-middle text-right">
+                                            <td className="p-6 align-middle text-right">
                                                 <Link href={`/admin/properties/${property._id}/edit`}>
-                                                    <Button variant="ghost" size="sm">Edit</Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/10"
+                                                    >
+                                                        Edit
+                                                    </Button>
                                                 </Link>
                                             </td>
                                         </tr>
