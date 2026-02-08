@@ -220,7 +220,7 @@ export default function AdminPropertiesPage() {
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <Link href={`/properties/${property._id}`} target="_blank">
+                                            <Link href={`/properties/${property._id}`} target="_blank" prefetch={false}>
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
@@ -230,7 +230,7 @@ export default function AdminPropertiesPage() {
                                                     <Eye className="h-4 w-4" />
                                                 </Button>
                                             </Link>
-                                            <Link href={`/admin/properties/${property._id}/edit`}>
+                                            <Link href={`/admin/properties/${property._id}/edit`} prefetch={false}>
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
