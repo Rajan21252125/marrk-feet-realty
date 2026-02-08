@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Building, MessageSquare, Settings, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Building, MessageSquare, Settings, LogOut, Menu, X, FileText } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/Button';
@@ -41,6 +41,7 @@ export default function AdminLayout({
         { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { href: '/admin/properties', label: 'Properties', icon: Building },
         { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
+        { href: '/admin/logs', label: 'Logs', icon: FileText },
         { href: '/admin/settings', label: 'Settings', icon: Settings },
     ];
 

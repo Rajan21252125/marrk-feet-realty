@@ -1,19 +1,48 @@
 import winston from 'winston';
-import 'winston-daily-rotate-file';
+import DailyRotateFile from 'winston-daily-rotate-file';
+import Transport from 'winston-transport';
+import Log from '@/models/Log';
+import dbConnect from '@/lib/db';
 
 const { combine, timestamp, printf } = winston.format;
 
 const customLogFormat = printf(({ level, message, timestamp }) => {
     const tag = level === 'error' ? '[ERROR]' : '[MSG]';
-    // Format timestamp as YYYY-MM-DD HH:mm:ss if possible, or simplified
-    // Standard timestamp() gives ISO string. We can use a custom function or just slice ISO.
-    // Let's stick to the default ISO or just the provided timestamp for now, but user asked for date wise.
-    // "logs all log should in one file but the log should be date wise" -> this refers to file rotation
-    // "logs can be differentiate with [ERROR] ... and [MSG]" -> this refers to content
-
-    // To make it cleaner inside the log line:
     return `${timestamp} ${tag}: ${message}`;
 });
+
+// Custom Transport for MongoDB
+class MongoDBTransport extends Transport {
+    constructor(opts?: Transport.TransportStreamOptions) {
+        super(opts);
+    }
+
+    log(info: any, next: () => void) {
+        setImmediate(() => {
+            this.emit('logged', info);
+        });
+
+        // Fire and forget - don't await to avoid blocking
+        (async () => {
+            try {
+                // Ensure DB is connected
+                await dbConnect();
+
+                await Log.create({
+                    level: info.level,
+                    message: info.message,
+                    meta: info,
+                    timestamp: new Date()
+                });
+            } catch (err) {
+                // Use stderr to avoid infinite loops if console transport captures this
+                process.stderr.write(`Failed to save log to MongoDB: ${err}\n`);
+            }
+        })();
+
+        next();
+    }
+}
 
 const transports: winston.transport[] = [
     new winston.transports.Console({
@@ -25,19 +54,24 @@ const transports: winston.transport[] = [
     }),
 ];
 
-// File logging with daily rotation
-const fileRotateTransport = new winston.transports.DailyRotateFile({
-    filename: 'logs/app-%DATE%.log',
-    datePattern: 'YYYY-MM-DD',
-    maxSize: '20m',
-    maxFiles: '14d',
-    format: combine(
-        timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-        customLogFormat
-    )
-});
-
-transports.push(fileRotateTransport);
+// Use MongoDB transport in production (or if configured), File transport in dev
+if (process.env.NODE_ENV === 'production') {
+    transports.push(new MongoDBTransport());
+} else {
+    // File logging with daily rotation for development
+    const fileRotateTransport = new DailyRotateFile({
+        filename: 'logs/app-%DATE%.log',
+        datePattern: 'YYYY-MM-DD',
+        maxSize: '20m',
+        maxFiles: '14d',
+        format: combine(
+            timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+            customLogFormat
+        )
+    });
+    // Explicit cast to any to avoid strict type mismatch if different winston versions
+    transports.push(fileRotateTransport as unknown as winston.transport);
+}
 
 const logger = winston.createLogger({
     level: process.env.LOG_LEVEL || 'info',
