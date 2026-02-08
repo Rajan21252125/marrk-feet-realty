@@ -173,7 +173,7 @@ export function Contact() {
                             <Button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-primary-dark hover:bg-primary-dark/90 dark:bg-accent dark:hover:bg-accent/90 text-white h-12 text-lg font-medium shadow-lg shadow-primary-dark/25 dark:shadow-accent/25 disabled:opacity-70 disabled:cursor-not-allowed"
+                                className="w-full bg-primary hover:bg-primary/90 dark:bg-accent dark:hover:bg-accent/90 text-white h-12 text-lg font-medium shadow-lg shadow-primary-dark/25 dark:shadow-accent/25 disabled:opacity-70 disabled:cursor-not-allowed"
                             >
                                 {loading ? 'Sending...' : 'Send Message'} {!loading && <Send size={18} className="ml-2" />}
                             </Button>

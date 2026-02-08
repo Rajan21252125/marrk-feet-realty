@@ -63,7 +63,7 @@ export function Listings() {
                                         fill
                                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                                     />
-                                    <div className="absolute top-4 left-4 bg-white/90 dark:bg-black/90 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide backdrop-blur-sm">
+                                    <div className="absolute top-4 left-4 bg-white/90 text-black/90 dark:bg-black/90 dark:text-white/90 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide backdrop-blur-sm">
                                         {property.propertyType}
                                     </div>
                                     <div className="absolute bottom-4 right-4 bg-accent/90 text-white px-4 py-2 rounded-lg text-lg font-bold backdrop-blur-sm shadow-lg">

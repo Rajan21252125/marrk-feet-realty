@@ -1,20 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #093046;
-  /* Primary Dark as default text for light mode */
+  --background: #093046;
+  --foreground: #ffffff;
   --primary: #E97108;
   --primary-foreground: #ffffff;
-  --primary-dark: #093046;
-  --secondary: #DAC4AF;
-  --accent: #FCBC7C;
-  --muted: #f3f4f6;
-  --muted-foreground: #6b7280;
-  --card: #ffffff;
-  --card-foreground: #093046;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
+  --primary-dark: #0d0d0d;
+  --secondary: #1a202c;
+  --accent: #E97108;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --card: #0f172a;
+  --card-foreground: #ffffff;
+  --border: #1e293b;
+  --input: #1e293b;
   --ring: #E97108;
   --radius: 0.5rem;
 }
@@ -38,28 +37,6 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --font-sans: var(--font-inter);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #093046;
-    /* Primary Dark as background */
-    --foreground: #ffffff;
-    --primary: #E97108;
-    --primary-foreground: #ffffff;
-    --primary-dark: #ffffff;
-    /* In dark mode, primary-dark text becomes white */
-    --secondary: #1a202c;
-    /* Darker secondary */
-    --accent: #E97108;
-    --muted: #1e293b;
-    --muted-foreground: #94a3b8;
-    --card: #0f172a;
-    --card-foreground: #ffffff;
-    --border: #1e293b;
-    --input: #1e293b;
-    --ring: #E97108;
-  }
 }
 
 body {
