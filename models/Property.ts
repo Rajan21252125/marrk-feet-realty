@@ -25,6 +25,7 @@ export interface IProperty extends Document {
     overlooking?: string[];
     ownershipType?: string;
     possessionStatus?: string;
+    status: 'Available' | 'Sold';
     createdAt: Date;
     updatedAt: Date;
 }
@@ -59,6 +60,7 @@ const PropertySchema: Schema = new Schema(
         overlooking: { type: [String] },
         ownershipType: { type: String },
         possessionStatus: { type: String },
+        status: { type: String, enum: ['Available', 'Sold'], default: 'Available' },
     },
     { timestamps: true }
 );

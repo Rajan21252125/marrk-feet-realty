@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
-import { Bed, Bath, Move, MapPin, Check, ArrowLeft, Share2, Heart } from 'lucide-react';
+import { Bed, Bath, Move, MapPin, Check, ArrowLeft } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import dbConnect from '@/lib/db';
 import Property from '@/models/Property';
@@ -276,8 +276,8 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                                             <img src="https://i.pravatar.cc/150?u=a042581f4e29026024d" alt="Agent" className="object-cover w-full h-full" />
                                         </div>
                                         <div>
-                                            <p className="font-bold text-lg text-primary-dark dark:text-white">Sarah Jenkins</p>
-                                            <p className="text-sm text-accent">Senior Real Estate Agent</p>
+                                            <p className="font-bold text-lg text-primary-dark dark:text-white">Ankit Rajput</p>
+                                            <p className="text-sm text-accent">Real Estate Agent</p>
                                         </div>
                                     </div>
                                     <Button variant="outline" className="w-full border-primary-dark text-primary-dark hover:bg-primary-dark hover:text-white transition-all">

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Plus, Pencil, Trash2, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/Button';
+import { Select } from '@/components/ui/Select';
 
 export default function AdminPropertiesPage() {
     const [properties, setProperties] = useState<any[]>([]);
@@ -129,26 +130,28 @@ export default function AdminPropertiesPage() {
                 </div>
 
                 <div className="flex w-full md:w-auto gap-3">
-                    <select
+                    <Select
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
-                        className="bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 cursor-pointer"
+                        containerClassName="w-full md:w-40"
+                        className="bg-black/20 border-white/10"
                     >
                         <option value="all" className="bg-neutral-900">All Status</option>
                         <option value="visible" className="bg-neutral-900">Visible</option>
                         <option value="hidden" className="bg-neutral-900">Hidden</option>
-                    </select>
+                    </Select>
 
-                    <select
+                    <Select
                         value={sortOption}
                         onChange={(e) => setSortOption(e.target.value)}
-                        className="bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 cursor-pointer"
+                        containerClassName="w-full md:w-52"
+                        className="bg-black/20 border-white/10"
                     >
                         <option value="newest" className="bg-neutral-900">Newest First</option>
                         <option value="oldest" className="bg-neutral-900">Oldest First</option>
                         <option value="price-high" className="bg-neutral-900">Price: High to Low</option>
                         <option value="price-low" className="bg-neutral-900">Price: Low to High</option>
-                    </select>
+                    </Select>
                 </div>
             </div>
 
@@ -160,7 +163,8 @@ export default function AdminPropertiesPage() {
                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Property</th>
                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Location</th>
                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Price</th>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Status</th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">List Status</th>
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Sale Status</th>
                                 <th className="px-6 py-4 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
@@ -172,7 +176,7 @@ export default function AdminPropertiesPage() {
                                 >
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-4">
-                                            <div className="relative h-16 w-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-800 border border-white/10">
+                                            <div className="relative h-16 w-24 shrink-0 rounded-lg overflow-hidden bg-gray-800 border border-white/10">
                                                 {property.images && property.images[0] ? (
                                                     <img
                                                         src={property.images[0]}
@@ -218,8 +222,13 @@ export default function AdminPropertiesPage() {
                                             )}
                                         </button>
                                     </td>
+                                    <td className="px-6 py-4">
+                                        <div className={`text-xs font-bold uppercase tracking-tight ${property.status === 'Sold' ? 'text-red-400' : 'text-blue-400'}`}>
+                                            {property.status}
+                                        </div>
+                                    </td>
                                     <td className="px-6 py-4 text-right">
-                                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div className="flex items-center justify-end gap-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                                             <Link href={`/properties/${property._id}`} target="_blank" prefetch={false}>
                                                 <Button
                                                     variant="ghost"
@@ -275,6 +284,6 @@ export default function AdminPropertiesPage() {
                     </table>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

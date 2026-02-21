@@ -5,6 +5,7 @@ import Property from '@/models/Property';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { v2 as cloudinary } from 'cloudinary';
+import { sanitize } from '@/lib/sanitization';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -83,6 +84,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
         await dbConnect();
         const body = await req.json();
+        const sanitizedBody = sanitize(body);
 
         // Check for removed images
         const existingProperty = await Property.findById(id);
@@ -101,7 +103,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
             await deleteFromCloudinary(imagesToDelete);
         }
 
-        const property = await Property.findByIdAndUpdate(id, body, { new: true });
+        const property = await Property.findByIdAndUpdate(id, sanitizedBody, { new: true });
 
         logger.info(`PUT /api/properties/${id} - Updated`);
         return NextResponse.json(property);

@@ -4,6 +4,7 @@ import { Mail, MapPin, Phone, Send } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import { CONTACT_INFO } from "@/lib/constants";
 
 export function Contact() {
     const [loading, setLoading] = useState(false);
@@ -73,10 +74,10 @@ export function Contact() {
                                     <MapPin size={24} />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-xl mb-1 text-primary-dark dark:text-white">Global Headquarters</h3>
+                                    <h3 className="font-bold text-xl mb-1 text-primary-dark dark:text-white">Main Office</h3>
                                     <p className="text-gray-500 dark:text-gray-400">
-                                        123 Real Estate Ave, Suite 400<br />
-                                        New York, NY 10001
+                                        {CONTACT_INFO.address.line1}<br />
+                                        {CONTACT_INFO.address.line2}
                                     </p>
                                 </div>
                             </div>
@@ -88,9 +89,9 @@ export function Contact() {
                                 <div>
                                     <h3 className="font-bold text-xl mb-1 text-primary-dark dark:text-white">Direct Line</h3>
                                     <p className="text-gray-500 dark:text-gray-400">
-                                        +1 (555) 123-4567
+                                        {CONTACT_INFO.phone}
                                     </p>
-                                    <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">Mon-Fri, 9am - 6pm EST</p>
+                                    <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">{CONTACT_INFO.officeHours}</p>
                                 </div>
                             </div>
 
@@ -101,7 +102,7 @@ export function Contact() {
                                 <div>
                                     <h3 className="font-bold text-xl mb-1 text-primary-dark dark:text-white">Email Us</h3>
                                     <p className="text-gray-500 dark:text-gray-400">
-                                        info@markfeetrealty.com
+                                        {CONTACT_INFO.email}
                                     </p>
                                 </div>
                             </div>

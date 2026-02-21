@@ -4,6 +4,7 @@ import dbConnect from '@/lib/db';
 import Property from '@/models/Property';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { sanitize } from '@/lib/sanitization';
 
 export async function GET(req: Request) {
     logger.info(`GET /api/properties - Fetching properties`);
@@ -41,9 +42,10 @@ export async function POST(req: Request) {
 
         await dbConnect();
         const body = await req.json();
-        logger.info(`POST /api/properties - Payload: ${JSON.stringify(body)}`);
+        const sanitizedBody = sanitize(body);
+        logger.info(`POST /api/properties - Payload: ${JSON.stringify(sanitizedBody)}`);
 
-        const property = await Property.create(body);
+        const property = await Property.create(sanitizedBody);
         logger.info(`POST /api/properties - Property created: ${property._id}`);
 
         return NextResponse.json(property, { status: 201 });

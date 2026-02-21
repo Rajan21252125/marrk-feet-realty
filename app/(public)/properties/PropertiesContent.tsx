@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
-import { MapPin, ArrowRight, BedDouble, Bath, Maximize, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import { Select } from '@/components/ui/Select';
+import { MapPin, BedDouble, Bath, Maximize, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from 'react-hot-toast';
 
 export default function PropertiesContent() {
@@ -103,29 +104,29 @@ export default function PropertiesContent() {
                         />
                     </div>
                     <div className="w-full lg:w-auto flex flex-col sm:flex-row gap-4 justify-center items-center">
-                        <select
-                            className="w-full sm:w-auto px-4 py-3 rounded-lg border border-gray-200 dark:border-white/10 bg-transparent focus:ring-2 focus:ring-accent outline-none cursor-pointer text-gray-700 dark:text-gray-300 bg-white dark:bg-neutral-900"
+                        <Select
+                            className="w-full sm:w-48 bg-transparent"
                             value={propertyType}
                             onChange={(e) => setPropertyType(e.target.value)}
                         >
-                            <option value="">All Types</option>
-                            <option value="Villa">Villa</option>
-                            <option value="Apartment">Apartment</option>
-                            <option value="House">House</option>
-                            <option value="Cottage">Cottage</option>
-                            <option value="Penthouse">Penthouse</option>
-                            <option value="Plot">Plot</option>
-                        </select>
-                        <select
-                            className="w-full sm:w-auto px-4 py-3 rounded-lg border border-gray-200 dark:border-white/10 bg-transparent focus:ring-2 focus:ring-accent outline-none cursor-pointer text-gray-700 dark:text-gray-300 bg-white dark:bg-neutral-900"
+                            <option value="" className="bg-white dark:bg-neutral-900">All Types</option>
+                            <option value="Villa" className="bg-white dark:bg-neutral-900">Villa</option>
+                            <option value="Apartment" className="bg-white dark:bg-neutral-900">Apartment</option>
+                            <option value="House" className="bg-white dark:bg-neutral-900">House</option>
+                            <option value="Cottage" className="bg-white dark:bg-neutral-900">Cottage</option>
+                            <option value="Penthouse" className="bg-white dark:bg-neutral-900">Penthouse</option>
+                            <option value="Plot" className="bg-white dark:bg-neutral-900">Plot</option>
+                        </Select>
+                        <Select
+                            className="w-full sm:w-52 bg-transparent"
                             value={sortOption}
                             onChange={(e) => setSortOption(e.target.value)}
                         >
-                            <option value="newest">Newest First</option>
-                            <option value="price-low">Price: Low to High</option>
-                            <option value="price-high">Price: High to Low</option>
-                        </select>
-                        <Button className="w-full sm:w-auto bg-primary text-white px-8 h-full">Search</Button>
+                            <option value="newest" className="bg-white dark:bg-neutral-900">Newest First</option>
+                            <option value="price-low" className="bg-white dark:bg-neutral-900">Price: Low to High</option>
+                            <option value="price-high" className="bg-white dark:bg-neutral-900">Price: High to Low</option>
+                        </Select>
+                        <Button className="w-full sm:w-auto bg-primary text-white px-8 h-full min-h-[46px]">Search</Button>
                     </div>
                 </div>
 

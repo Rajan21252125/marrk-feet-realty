@@ -4,6 +4,8 @@ import dbConnect from '@/lib/db';
 import Message from '@/models/Message';
 import { authOptions } from '@/lib/auth';
 import logger from '@/lib/logger';
+import { rateLimit } from '@/lib/rate-limit';
+import { sanitize } from '@/lib/sanitization';
 
 export async function GET() {
     logger.info(`GET /api/messages - Fetching messages`);
@@ -29,8 +31,19 @@ export async function GET() {
 export async function POST(req: Request) {
     logger.info(`POST /api/messages - Creating new message`);
     try {
-        const data = await req.json();
-        const { name, email, phone, message } = data;
+        const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
+        const { success } = rateLimit(ip, 3, 60000); // 3 requests per minute for contact form
+
+        if (!success) {
+            logger.warn(`POST /api/messages - Rate limit exceeded for IP: ${ip}`);
+            return NextResponse.json(
+                { error: 'Too many messages. Please try again later.' },
+                { status: 429 }
+            );
+        }
+
+        const body = await req.json();
+        const { name, email, phone, message } = sanitize(body);
 
         if (!name || !email || !message) {
             logger.warn(`POST /api/messages - Validation failed: Missing required fields`);
@@ -44,8 +57,6 @@ export async function POST(req: Request) {
             email,
             phone: phone || '', // Handle optional phone
             message,
-            read: false,
-            createdAt: new Date(),
         });
 
         logger.info(`POST /api/messages - Message created successfully: ${newMessage._id}`);

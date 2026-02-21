@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { Upload, X, Loader2, Trash2 } from 'lucide-react';
+import { Select } from '@/components/ui/Select';
+import { Upload, X, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { toast } from 'react-hot-toast';
 
@@ -44,6 +45,7 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
         overlooking: initialData?.overlooking || [],
         ownershipType: initialData?.ownershipType || '',
         possessionStatus: initialData?.possessionStatus || '',
+        status: initialData?.status || 'Available',
     });
 
     useEffect(() => {
@@ -75,6 +77,7 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                 overlooking: initialData.overlooking || [],
                 ownershipType: initialData.ownershipType || '',
                 possessionStatus: initialData.possessionStatus || '',
+                status: initialData.status || 'Available',
             });
             setImages(initialData.images || []);
         }
@@ -300,41 +303,56 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
 
             {/* Property Details */}
             <div className="rounded-xl border bg-card p-6 shadow-sm">
-                <h2 className="mb-4 text-xl font-semibold">Property Details</h2>
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-semibold">Property Details</h2>
+                    <div className="flex items-center gap-2">
+                        <label className="text-sm font-medium">Status:</label>
+                        <Select
+                            name="status"
+                            value={formData.status}
+                            onChange={handleChange}
+                            className="bg-transparent w-32"
+                            containerClassName="w-auto"
+                        >
+                            <option value="Available" className="bg-white dark:bg-neutral-900">Available</option>
+                            <option value="Sold" className="bg-white dark:bg-neutral-900">Sold</option>
+                        </Select>
+                    </div>
+                </div>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <div>
                         <label className="mb-2 block text-sm font-medium">Type</label>
-                        <select
+                        <Select
                             name="propertyType"
                             value={formData.propertyType}
                             onChange={handleChange}
-                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            className="bg-transparent"
                         >
-                            <option value="Apartment">Apartment</option>
-                            <option value="Villa">Villa</option>
-                            <option value="Plot">Plot</option>
-                            <option value="House">House</option>
-                            <option value="Cottage">Cottage</option>
-                            <option value="Penthouse">Penthouse</option>
-                            <option value="Commercial">Commercial</option>
-                        </select>
+                            <option value="Apartment" className="bg-white dark:bg-neutral-900">Apartment</option>
+                            <option value="Villa" className="bg-white dark:bg-neutral-900">Villa</option>
+                            <option value="Plot" className="bg-white dark:bg-neutral-900">Plot</option>
+                            <option value="House" className="bg-white dark:bg-neutral-900">House</option>
+                            <option value="Cottage" className="bg-white dark:bg-neutral-900">Cottage</option>
+                            <option value="Penthouse" className="bg-white dark:bg-neutral-900">Penthouse</option>
+                            <option value="Commercial" className="bg-white dark:bg-neutral-900">Commercial</option>
+                        </Select>
                     </div>
                     <div>
                         <label className="mb-2 block text-sm font-medium">BHK Type</label>
-                        <select
+                        <Select
                             name="bhkType"
                             value={formData.bhkType}
                             onChange={handleChange}
-                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            className="bg-transparent"
                         >
-                            <option value="">Select BHK</option>
-                            <option value="1 RK">1 RK</option>
-                            <option value="1 BHK">1 BHK</option>
-                            <option value="2 BHK">2 BHK</option>
-                            <option value="3 BHK">3 BHK</option>
-                            <option value="4 BHK">4 BHK</option>
-                            <option value="4+ BHK">4+ BHK</option>
-                        </select>
+                            <option value="" className="bg-white dark:bg-neutral-900">Select BHK</option>
+                            <option value="1 RK" className="bg-white dark:bg-neutral-900">1 RK</option>
+                            <option value="1 BHK" className="bg-white dark:bg-neutral-900">1 BHK</option>
+                            <option value="2 BHK" className="bg-white dark:bg-neutral-900">2 BHK</option>
+                            <option value="3 BHK" className="bg-white dark:bg-neutral-900">3 BHK</option>
+                            <option value="4 BHK" className="bg-white dark:bg-neutral-900">4 BHK</option>
+                            <option value="4+ BHK" className="bg-white dark:bg-neutral-900">4+ BHK</option>
+                        </Select>
                     </div>
                     <div>
                         <label className="mb-2 block text-sm font-medium">Bedrooms</label>
@@ -416,50 +434,50 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                     </div>
                     <div>
                         <label className="mb-2 block text-sm font-medium">Facing</label>
-                        <select
+                        <Select
                             name="facing"
                             value={formData.facing}
                             onChange={handleChange}
-                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            className="bg-transparent"
                         >
-                            <option value="">Select Direction</option>
-                            <option value="North">North</option>
-                            <option value="South">South</option>
-                            <option value="East">East</option>
-                            <option value="West">West</option>
-                            <option value="North-East">North-East</option>
-                            <option value="North-West">North-West</option>
-                            <option value="South-East">South-East</option>
-                            <option value="South-West">South-West</option>
-                        </select>
+                            <option value="" className="bg-white dark:bg-neutral-900">Select Direction</option>
+                            <option value="North" className="bg-white dark:bg-neutral-900">North</option>
+                            <option value="South" className="bg-white dark:bg-neutral-900">South</option>
+                            <option value="East" className="bg-white dark:bg-neutral-900">East</option>
+                            <option value="West" className="bg-white dark:bg-neutral-900">West</option>
+                            <option value="North-East" className="bg-white dark:bg-neutral-900">North-East</option>
+                            <option value="North-West" className="bg-white dark:bg-neutral-900">North-West</option>
+                            <option value="South-East" className="bg-white dark:bg-neutral-900">South-East</option>
+                            <option value="South-West" className="bg-white dark:bg-neutral-900">South-West</option>
+                        </Select>
                     </div>
                     <div>
                         <label className="mb-2 block text-sm font-medium">Possession Status</label>
-                        <select
+                        <Select
                             name="possessionStatus"
                             value={formData.possessionStatus}
                             onChange={handleChange}
-                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            className="bg-transparent"
                         >
-                            <option value="">Select Status</option>
-                            <option value="Ready to Move">Ready to Move</option>
-                            <option value="Under Construction">Under Construction</option>
-                        </select>
+                            <option value="" className="bg-white dark:bg-neutral-900">Select Status</option>
+                            <option value="Ready to Move" className="bg-white dark:bg-neutral-900">Ready to Move</option>
+                            <option value="Under Construction" className="bg-white dark:bg-neutral-900">Under Construction</option>
+                        </Select>
                     </div>
                     <div>
                         <label className="mb-2 block text-sm font-medium">Ownership Type</label>
-                        <select
+                        <Select
                             name="ownershipType"
                             value={formData.ownershipType}
                             onChange={handleChange}
-                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            className="bg-transparent"
                         >
-                            <option value="">Select Type</option>
-                            <option value="Freehold">Freehold</option>
-                            <option value="Leasehold">Leasehold</option>
-                            <option value="Co-operative Society">Co-operative Society</option>
-                            <option value="Power of Attorney">Power of Attorney</option>
-                        </select>
+                            <option value="" className="bg-white dark:bg-neutral-900">Select Type</option>
+                            <option value="Freehold" className="bg-white dark:bg-neutral-900">Freehold</option>
+                            <option value="Leasehold" className="bg-white dark:bg-neutral-900">Leasehold</option>
+                            <option value="Co-operative Society" className="bg-white dark:bg-neutral-900">Co-operative Society</option>
+                            <option value="Power of Attorney" className="bg-white dark:bg-neutral-900">Power of Attorney</option>
+                        </Select>
                     </div>
                 </div>
             </div>

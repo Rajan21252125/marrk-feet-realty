@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
 
+import { SITE_NAME } from "@/lib/constants";
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -10,8 +12,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    template: 'MarkFeetRealty - %s',
-    default: 'MarkFeetRealty - Real Estate Agency',
+    template: `${SITE_NAME} - %s`,
+    default: `${SITE_NAME} - Real Estate Agency`,
   },
   description: 'Find your dream home or manage your listings efficiently.',
   twitter: {

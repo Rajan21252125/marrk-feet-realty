@@ -5,6 +5,7 @@ import { Mail, MapPin, Phone, Send } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { CONTACT_INFO } from '@/lib/constants';
 
 export default function ContactPage() {
     const [loading, setLoading] = useState(false);
@@ -87,8 +88,8 @@ export default function ContactPage() {
                                 <div>
                                     <h3 className="font-bold text-lg text-primary-dark dark:text-white">Visit Our Office</h3>
                                     <p className="text-gray-600 dark:text-gray-300 mt-1">
-                                        123 Luxury Lane, Beverly Hills<br />
-                                        CA 90210, United States
+                                        {CONTACT_INFO.address.line1}<br />
+                                        {CONTACT_INFO.address.line2}
                                     </p>
                                 </div>
                             </div>
@@ -100,8 +101,9 @@ export default function ContactPage() {
                                 <div>
                                     <h3 className="font-bold text-lg text-primary-dark dark:text-white">Call Us</h3>
                                     <p className="text-gray-600 dark:text-gray-300 mt-1">
-                                        +1 (555) 123-4567<br />
-                                        Mon - Fri, 9am - 6pm
+                                        Mob: {CONTACT_INFO.phone}<br />
+                                        Landline: {CONTACT_INFO.landline}<br />
+                                        {CONTACT_INFO.officeHours}
                                     </p>
                                 </div>
                             </div>
@@ -113,8 +115,9 @@ export default function ContactPage() {
                                 <div>
                                     <h3 className="font-bold text-lg text-primary-dark dark:text-white">Email Us</h3>
                                     <p className="text-gray-600 dark:text-gray-300 mt-1">
-                                        info@markfeetrealty.com<br />
-                                        sales@markfeetrealty.com
+                                        {CONTACT_INFO.email}<br />
+                                        {CONTACT_INFO.salesEmail}<br />
+                                        <span className="font-bold text-accent">RERA: {CONTACT_INFO.rera}</span>
                                     </p>
                                 </div>
                             </div>

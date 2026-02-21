@@ -30,7 +30,7 @@ export function Hero() {
                     className="h-full w-full bg-cover bg-center transition-transform duration-1000 md:scale-105"
                     style={{ backgroundImage: "url('https://images.unsplash.com/photo-1600596542815-e32c0ee3ad11?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')" }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent"></div>
             </div>
 
             <div className="container relative z-10 mx-auto px-4 text-center md:px-6 pt-20">
@@ -39,12 +39,12 @@ export function Hero() {
                 </span>
 
                 <h1 className="mb-6 text-5xl font-extrabold tracking-tight text-white sm:text-6xl md:text-7xl lg:text-8xl drop-shadow-xl">
-                    Discover Your <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-white">Dream Lifestyle</span>
+                    Revolutionizing <br />
+                    <span className="text-transparent bg-clip-text bg-linear-to-r from-accent to-white">Real Estate</span>
                 </h1>
 
                 <p className="mx-auto mb-10 max-w-2xl text-lg text-gray-300 sm:text-xl font-light leading-relaxed">
-                    Access the most exclusive property inventory. From modern penthouses to secluded waterfront estates.
+                    Connecting individuals with their dream properties through innovation and dedication. Your premier partner in real estate solutions.
                 </p>
 
                 {/* Search Bar */}
