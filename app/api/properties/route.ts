@@ -83,8 +83,7 @@ export async function PATCH(req: Request) {
 
         return NextResponse.json({ message: 'Property updated', property: updatedProperty });
 
-    } catch (error) {
-        console.error('Error updating property:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    } catch (_error) {
+        return NextResponse.json({ error: 'Failed to fetch properties' }, { status: 500 });
     }
 }

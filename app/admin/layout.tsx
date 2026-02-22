@@ -29,7 +29,7 @@ export default function AdminLayout({
 
     // Close sidebar on route change (mobile)
     useEffect(() => {
-        setIsSidebarOpen(false);
+        setTimeout(() => setIsSidebarOpen(false), 0);
     }, [pathname]);
 
     // Don't show sidebar on login or verify page
@@ -83,7 +83,7 @@ export default function AdminLayout({
                 lg:translate-x-0 lg:static lg:block
             `}>
                 <div className="h-16 flex items-center px-6 border-b border-white/10">
-                    <span className="text-xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                    <span className="text-xl font-bold bg-linear-to-r from-white to-gray-400 bg-clip-text text-transparent">
                         MarkFeet Admin
                     </span>
                 </div>
@@ -93,7 +93,7 @@ export default function AdminLayout({
                         <div className="mb-6 p-4 bg-white/5 rounded-xl border border-white/5 flex items-center gap-3">
                             <div className="h-10 w-10 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold overflow-hidden border border-white/10">
                                 {user.image ? (
-                                    <img src={user.image} alt="Profile" className="h-full w-full object-cover" />
+                                    <Image src={user.image} alt="Profile" width={40} height={40} className="h-full w-full object-cover" />
                                 ) : (
                                     <span>{user.name?.[0] || 'A'}</span>
                                 )}

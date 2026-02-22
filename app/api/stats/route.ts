@@ -29,11 +29,7 @@ export async function GET() {
             happyClients: happyClientsCount + baseClients,
         });
 
-    } catch (error: any) {
-        console.error('Stats fetch error:', error);
-        return NextResponse.json(
-            { error: 'Internal server error' },
-            { status: 500 }
-        );
+    } catch (_error) {
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

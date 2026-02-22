@@ -16,6 +16,7 @@ class MongoDBTransport extends Transport {
         super(opts);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     log(info: any, next: () => void) {
         setImmediate(() => {
             this.emit('logged', info);
@@ -60,6 +61,7 @@ if (process.env.NODE_ENV === 'production') {
     // File logging with daily rotation for development
     // Dynamic require to prevent 'fs' module issues in production serverless environment
     try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const DailyRotateFile = require('winston-daily-rotate-file');
         const fileRotateTransport = new DailyRotateFile({
             filename: 'logs/app-%DATE%.log',

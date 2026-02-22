@@ -44,11 +44,7 @@ export async function POST(req: Request) {
             { status: 201 }
         );
 
-    } catch (error: any) {
-        console.error('Newsletter subscription error:', error);
-        return NextResponse.json(
-            { error: 'Internal server error' },
-            { status: 500 }
-        );
+    } catch (_error) {
+        return NextResponse.json({ error: 'Failed to subscribe' }, { status: 500 });
     }
 }

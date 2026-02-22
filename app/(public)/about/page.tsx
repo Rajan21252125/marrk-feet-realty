@@ -6,7 +6,7 @@ import { SITE_NAME, LEADERSHIP_TEAM, TEAM_STRUCTURE, SERVICES } from '@/lib/cons
 import { ShieldCheck, Video, Users, TrendingUp, Handshake, FileText, Search } from 'lucide-react';
 
 export default function AboutPage() {
-    const [stats, setStats] = useState<any>(null);
+    const [stats, setStats] = useState<{ label: string; value: string }[] | null>(null);
     const [loadingStats, setLoadingStats] = useState(true);
 
     useEffect(() => {
@@ -25,7 +25,7 @@ export default function AboutPage() {
                     { label: 'Years of Experience', value: '1+' }, // Or calculate from constants if needed
                 ]);
             }
-        } catch (error) {
+        } catch (_error) {
             console.error('Failed to fetch stats');
         } finally {
             setLoadingStats(false);
@@ -64,7 +64,7 @@ export default function AboutPage() {
                             </div>
                         ))
                     ) : (
-                        stats?.map((stat: any, index: number) => (
+                        stats?.map((stat, index) => (
                             <div key={index} className="text-center">
                                 <p className="text-4xl md:text-5xl font-bold text-accent mb-2">{stat.value}</p>
                                 <p className="text-sm md:text-base text-gray-500 uppercase tracking-widest">{stat.label}</p>

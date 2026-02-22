@@ -81,3 +81,25 @@ body {
   background-color: var(--primary);
   color: white;
 }
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #ff5a3c;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #1a1a1a;
+  box-shadow: 0 0 10px rgba(255, 90, 60, 0.4);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: #ff5a3c;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #1a1a1a;
+  box-shadow: 0 0 10px rgba(255, 90, 60, 0.4);
+}

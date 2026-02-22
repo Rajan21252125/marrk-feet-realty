@@ -48,7 +48,16 @@ export async function PUT(req: Request) {
 
         await dbConnect();
 
-        const updateData: any = {};
+        interface UpdateData {
+            name?: string;
+            companyName?: string;
+            profileImage?: string;
+            passwordHash?: string;
+            isVerified?: boolean;
+            verificationCode?: string;
+        }
+
+        const updateData: UpdateData = {};
         if (name !== undefined) updateData.name = name;
         if (companyName !== undefined) updateData.companyName = companyName;
         if (profileImage !== undefined) updateData.profileImage = profileImage;
@@ -65,7 +74,7 @@ export async function PUT(req: Request) {
             // Actually, we can use $inc in the same update operation.
         }
 
-        const updateOps: any = { $set: updateData };
+        const updateOps: { $set: UpdateData; $inc?: { sessionVersion: number } } = { $set: updateData };
         if (password) {
             updateOps.$inc = { sessionVersion: 1 };
         }

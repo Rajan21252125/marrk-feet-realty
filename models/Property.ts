@@ -1,14 +1,17 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface IProperty extends Document {
+export interface IPropertyData {
+    _id: string; // Add _id for lean() objects
     title: string;
     description: string;
     price: number;
+    builder?: string;
     location: string;
-    propertyType: 'Apartment' | 'Villa' | 'Plot';
+    propertyType: 'Apartment' | 'Villa' | 'Plot' | 'House' | 'Cottage' | 'Penthouse' | 'Commercial';
     beds: number;
     baths: number;
     area: number;
+    tags?: string[];
     images: string[];
     isActive: boolean;
     furnishType?: string;
@@ -25,16 +28,20 @@ export interface IProperty extends Document {
     overlooking?: string[];
     ownershipType?: string;
     possessionStatus?: string;
+    listingType: 'Sale' | 'Rent';
     status: 'Available' | 'Sold';
     createdAt: Date;
     updatedAt: Date;
 }
+
+export interface IProperty extends Document, Omit<IPropertyData, '_id'> { }
 
 const PropertySchema: Schema = new Schema(
     {
         title: { type: String, required: true },
         description: { type: String, required: true },
         price: { type: Number, required: true },
+        builder: { type: String },
         location: { type: String, required: true },
         propertyType: {
             type: String,
@@ -42,9 +49,10 @@ const PropertySchema: Schema = new Schema(
             required: true,
         },
         beds: { type: Number, default: 0 },
-        baths: { type: Number, default: 0 },
+        baths: { type: Number, required: true },
         area: { type: Number, required: true },
-        images: { type: [String], default: [] },
+        tags: { type: [String], default: [] },
+        images: { type: [String], required: true },
         isActive: { type: Boolean, default: true },
         furnishType: { type: String, enum: ['Fully Furnished', 'Semi Furnished', 'Unfurnished'] },
         coveredParking: { type: Number },
@@ -60,6 +68,7 @@ const PropertySchema: Schema = new Schema(
         overlooking: { type: [String] },
         ownershipType: { type: String },
         possessionStatus: { type: String },
+        listingType: { type: String, enum: ['Sale', 'Rent'], default: 'Sale' },
         status: { type: String, enum: ['Available', 'Sold'], default: 'Available' },
     },
     { timestamps: true }

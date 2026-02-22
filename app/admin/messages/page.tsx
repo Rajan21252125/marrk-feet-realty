@@ -3,15 +3,19 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { Trash2, MessageSquare, Phone, Mail } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+
+interface Message {
+    _id: string;
+    name: string;
+    email: string;
+    phone: string;
+    message: string;
+    createdAt: string;
+}
 
 export default function MessagesPage() {
-    const [messages, setMessages] = useState<any[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchMessages();
-    }, []);
 
     const fetchMessages = async () => {
         try {
@@ -27,6 +31,10 @@ export default function MessagesPage() {
         }
     };
 
+    useEffect(() => {
+        setTimeout(() => fetchMessages(), 0);
+    }, []);
+
     const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to delete this message?')) return;
         try {
@@ -39,7 +47,7 @@ export default function MessagesPage() {
             } else {
                 toast.error('Failed to delete message');
             }
-        } catch (error) {
+        } catch (_error) {
             toast.error('Failed to delete message');
         }
     };
@@ -65,7 +73,7 @@ export default function MessagesPage() {
                     >
                         <div className="flex items-start justify-between mb-4">
                             <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-accent to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                                <div className="h-10 w-10 rounded-full bg-linear-to-br from-accent to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
                                     {msg.name?.charAt(0).toUpperCase() || '?'}
                                 </div>
                                 <div>
@@ -81,15 +89,17 @@ export default function MessagesPage() {
                             </div>
                             <button
                                 onClick={() => handleDelete(msg._id)}
-                                className="text-gray-500 hover:text-red-400 transition-colors p-1"
+                                className="p-1"
                                 title="Delete Message"
                             >
-                                <Trash2 className="w-4 h-4" />
+                                <div className="bg-linear-to-br from-red-500 to-red-700 p-2 rounded-lg text-white shadow-lg">
+                                    <Trash2 size={16} />
+                                </div>
                             </button>
                         </div>
 
-                        <div className="bg-black/20 rounded-xl p-4 text-sm text-gray-300 leading-relaxed mb-6 flex-grow border border-white/5">
-                            "{msg.message}"
+                        <div className="bg-black/20 rounded-xl p-4 text-sm text-gray-300 leading-relaxed mb-6 grow border border-white/5">
+                            &quot;{msg.message}&quot;
                         </div>
 
                         <div className="pt-4 border-t border-white/10 flex items-center gap-3">

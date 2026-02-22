@@ -8,11 +8,12 @@ export function sanitize<T>(obj: T): T {
             obj[i] = sanitize(obj[i]);
         }
     } else if (obj !== null && typeof obj === 'object') {
-        Object.keys(obj).forEach((key) => {
+        const objectWithKeys = obj as unknown as Record<string, unknown>;
+        Object.keys(objectWithKeys).forEach((key) => {
             if (key.startsWith('$')) {
-                delete (obj as any)[key];
+                delete objectWithKeys[key];
             } else {
-                (obj as any)[key] = sanitize((obj as any)[key]);
+                objectWithKeys[key] = sanitize(objectWithKeys[key]);
             }
         });
     }

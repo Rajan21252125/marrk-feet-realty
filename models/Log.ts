@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface ILog extends Document {
     level: string;
     message: string;
-    meta?: any;
+    meta?: Record<string, unknown>;
     timestamp: Date;
 }
 

@@ -7,6 +7,7 @@ import Property from '@/models/Property';
 import { ScheduleForm } from '@/components/property/ScheduleForm';
 import ImageSlider from '@/components/property/ImageSlider';
 import PropertyActions from '@/components/property/PropertyActions';
+import Image from 'next/image';
 
 
 import { Metadata } from 'next';
@@ -17,7 +18,7 @@ async function getProperty(id: string) {
         const property = await Property.findById(id).lean();
         if (!property) return null;
         return JSON.parse(JSON.stringify(property));
-    } catch (error) {
+    } catch (_error) {
         return null;
     }
 }
@@ -95,7 +96,7 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                             </div>
                             <div className="text-right">
                                 <p className="text-4xl md:text-5xl font-bold drop-shadow-md">₹{property.price.toLocaleString()}</p>
-                                <p className="text-gray-300 text-lg drop-shadow-sm">For Sale</p>
+                                <p className="text-gray-300 text-lg drop-shadow-sm">For {property.listingType || 'Sale'}</p>
                             </div>
                         </div>
                     </div>
@@ -273,7 +274,7 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                                 <div className="mt-8 pt-8 border-t border-gray-100 dark:border-white/5">
                                     <div className="flex items-center gap-4 mb-4">
                                         <div className="h-14 w-14 rounded-full bg-gray-100 overflow-hidden relative">
-                                            <img src="https://i.pravatar.cc/150?u=a042581f4e29026024d" alt="Agent" className="object-cover w-full h-full" />
+                                            <Image src="https://i.pravatar.cc/150?u=a042581f4e29026024d" alt="Agent" width={56} height={56} className="object-cover w-full h-full" />
                                         </div>
                                         <div>
                                             <p className="font-bold text-lg text-primary-dark dark:text-white">Ankit Rajput</p>

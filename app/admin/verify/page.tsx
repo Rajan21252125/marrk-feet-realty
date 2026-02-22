@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { CheckCircle, ShieldCheck, LogOut } from 'lucide-react';
+import { CheckCircle, ShieldCheck, LogOut, RefreshCw } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 export default function VerifyPage() {
     const { data: session, status, update } = useSession();
@@ -13,12 +14,37 @@ export default function VerifyPage() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [resending, setResending] = useState(false);
+
+    const resendCode = useCallback(async (isAuto = false) => {
+        try {
+            setResending(true);
+            const res = await fetch('/api/admin/verify/resend', { method: 'POST' });
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.error || 'Failed to send code');
+
+            if (!isAuto) toast.success('New verification code sent!');
+            console.log('Verification code:', data.code);
+        } catch (err) {
+            console.error('Error sending code:', err);
+            if (!isAuto) toast.error('Failed to send verification code');
+        } finally {
+            setResending(false);
+        }
+    }, []);
 
     useEffect(() => {
-        if (status === 'authenticated' && (session?.user as any)?.isVerified) {
-            router.push('/admin/dashboard');
+        const user = session?.user as { isVerified?: boolean };
+        if (status === 'authenticated') {
+            if (user?.isVerified) {
+                router.push('/admin/dashboard');
+            } else {
+                // Auto-trigger code generation on mount if not verified
+                resendCode(true);
+            }
         }
-    }, [status, session, router]);
+    }, [status, session, router, resendCode]);
 
     const handleVerify = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -38,7 +64,7 @@ export default function VerifyPage() {
                 throw new Error(data.error || 'Verification failed');
             }
 
-            setSuccess(true);
+            toast.success('Account verified!');
             setSuccess(true);
 
             // Update the session on the client side to reflect the database change
@@ -49,8 +75,9 @@ export default function VerifyPage() {
                 router.refresh(); // Ensure server components re-render
             }, 1000);
 
-        } catch (err: any) {
-            setError(err.message);
+        } catch (_err) {
+            setError((_err as Error).message);
+            toast.error((_err as Error).message);
         } finally {
             setLoading(false);
         }
@@ -64,7 +91,7 @@ export default function VerifyPage() {
     }
 
     // If already verified (checked in useEffect), render nothing while redirecting
-    if ((session?.user as any)?.isVerified) return null;
+    if ((session?.user as { isVerified?: boolean })?.isVerified) return null;
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
@@ -110,9 +137,21 @@ export default function VerifyPage() {
                                 </div>
                             )}
 
-                            <Button type="submit" className="w-full py-6 text-lg" disabled={loading}>
-                                {loading ? 'Verifying...' : 'Verify Account'}
-                            </Button>
+                            <div className="space-y-4">
+                                <Button type="submit" className="w-full py-6 text-lg" disabled={loading}>
+                                    {loading ? 'Verifying...' : 'Verify Account'}
+                                </Button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => resendCode()}
+                                    disabled={resending}
+                                    className="flex w-full h-12 items-center justify-center gap-2 rounded-xl border border-input bg-background px-4 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
+                                >
+                                    <RefreshCw className={`h-4 w-4 ${resending ? 'animate-spin' : ''}`} />
+                                    {resending ? 'Sending...' : 'Resend Code'}
+                                </button>
+                            </div>
                         </form>
                     )}
 
