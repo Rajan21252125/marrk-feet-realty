@@ -3,8 +3,18 @@
 import { useState, useEffect } from 'react';
 import { signOut, useSession } from 'next-auth/react';
 import { toast } from 'react-hot-toast';
-import { User, Building, Lock } from 'lucide-react';
+import { User, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+
+import Image from 'next/image';
+
+interface IAdmin {
+    _id: string;
+    email: string;
+    name?: string;
+    profileImage?: string;
+    isVerified: boolean;
+}
 
 export default function SettingsPage() {
     const { data: session, update } = useSession();
@@ -15,29 +25,31 @@ export default function SettingsPage() {
         profileImage: '',
         password: '',
     });
-    const [admins, setAdmins] = useState<any[]>([]);
+    const [admins, setAdmins] = useState<IAdmin[]>([]);
     const [newAdmin, setNewAdmin] = useState({ email: '', password: '' });
-
-    useEffect(() => {
-        fetchSettings();
-    }, []);
 
     const fetchSettings = async () => {
         try {
             const res = await fetch('/api/admin/settings');
             const data = await res.json();
-            if (data.profile) {
-                setProfile(prev => ({ ...prev, ...data.profile, password: '' })); // Ensure password is empty
+            if (res.ok) {
+                if (data.admin) {
+                    setProfile(prev => ({ ...prev, ...data.admin, password: '' }));
+                }
+                if (data.admins) {
+                    setAdmins(data.admins);
+                }
             }
-            if (data.admins) {
-                setAdmins(data.admins);
-            }
-            setLoading(false);
-        } catch (error) {
+        } catch (_error) {
             toast.error('Failed to load settings');
+        } finally {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchSettings();
+    }, []);
 
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -66,7 +78,7 @@ export default function SettingsPage() {
             } else {
                 toast.error(data.error || 'Update failed', { id: toastId });
             }
-        } catch (error) {
+        } catch (_error) {
             toast.error('Update failed', { id: toastId });
         }
     };
@@ -87,7 +99,7 @@ export default function SettingsPage() {
             } else {
                 toast.error(data.error || 'Failed to add admin');
             }
-        } catch (error) {
+        } catch (_error) {
             toast.error('Failed to add admin');
         }
     };
@@ -104,7 +116,7 @@ export default function SettingsPage() {
             } else {
                 toast.error(data.error || 'Failed to delete admin');
             }
-        } catch (error) {
+        } catch (_error) {
             toast.error('Failed to delete admin');
         }
     };
@@ -220,9 +232,9 @@ export default function SettingsPage() {
                                 {admins.map((admin) => (
                                     <div key={admin._id} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5 group hover:border-white/10 transition-colors">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center overflow-hidden border border-white/10">
+                                            <div className="relative w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center overflow-hidden border border-white/10">
                                                 {admin.profileImage ? (
-                                                    <img src={admin.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                                                    <Image src={admin.profileImage} alt={admin.name || "Admin Profile"} fill className="object-cover" unoptimized />
                                                 ) : (
                                                     <span className="text-sm font-bold text-gray-400">{admin.name ? admin.name[0] : 'A'}</span>
                                                 )}

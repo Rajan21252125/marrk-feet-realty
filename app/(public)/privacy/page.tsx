@@ -38,7 +38,7 @@ export default function PrivacyPage() {
                             <li>To respond to your inquiries and offer personalized property recommendations.</li>
                             <li>To send you administrative information, such as updates to our terms or policies.</li>
                             <li>To send you marketing communications and newsletters (you can opt-out at any time).</li>
-                            <li>To improve our website's functionality and user experience.</li>
+                            <li>To improve our website&apos;s functionality and user experience.</li>
                             <li>To comply with legal obligations, including RERA requirements.</li>
                         </ul>
                     </section>
@@ -71,7 +71,7 @@ export default function PrivacyPage() {
                         <ul className="list-disc pl-6 space-y-2 text-gray-600 dark:text-gray-300">
                             <li>Access and receive a copy of your personal data.</li>
                             <li>Request correction of any inaccurate or incomplete data.</li>
-                            <li>Request deletion of your data when it's no longer necessary for our operations.</li>
+                            <li>Request deletion of your data when it&apos;s no longer necessary for our operations.</li>
                             <li>Withdraw your consent at any time for data processing.</li>
                         </ul>
                     </section>
@@ -79,7 +79,7 @@ export default function PrivacyPage() {
                     <section>
                         <h2 className="text-2xl font-bold text-primary-dark dark:text-white mb-4">6. Changes to This Policy</h2>
                         <p className="text-gray-600 dark:text-gray-300">
-                            We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the "Last Updated" date.
+                            We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the &quot;Last Updated&quot; date.
                         </p>
                     </section>
 

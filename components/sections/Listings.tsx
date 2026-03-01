@@ -1,14 +1,18 @@
 'use client';
 
-import { MapPin, ArrowRight, BedDouble, Bath, Maximize } from "lucide-react";
+import { ArrowRight } from "lucide-react"; // Only ArrowRight is used in this component
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
+import { IPropertyData } from "@/models/Property";
+import { FadeIn } from "@/components/ui/FadeIn";
+import { PropertyCard } from "@/components/ui/PropertyCard";
+
 export function Listings() {
-    const [properties, setProperties] = useState<any[]>([]);
+    const [properties, setProperties] = useState<IPropertyData[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -18,7 +22,7 @@ export function Listings() {
                 const data = await res.json();
                 if (Array.isArray(data)) {
                     // Filter active properties and take top 6
-                    setProperties(data.filter((p: any) => p.isActive).slice(0, 6));
+                    setProperties(data.filter((p: IPropertyData) => p.isActive).slice(0, 6));
                 }
             } catch (error) {
                 console.error("Failed to fetch properties", error);
@@ -54,55 +58,20 @@ export function Listings() {
                     </div>
                 ) : (
                     <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                        {properties.map((property) => (
-                            <div key={property._id} className="group relative bg-white dark:bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-border">
-                                <div className="aspect-[4/3] relative overflow-hidden bg-gray-200">
-                                    <Image
-                                        src={property.images?.[0] || 'https://images.unsplash.com/photo-1600596542815-e32c0ee3ad11?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'}
-                                        alt={property.title}
-                                        fill
-                                        className="object-cover transition-transform duration-700 group-hover:scale-110"
-                                    />
-                                    <div className="absolute top-4 left-4 bg-white/90 text-black/90 dark:bg-black/90 dark:text-white/90 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide backdrop-blur-sm">
-                                        {property.propertyType}
-                                    </div>
-                                    <div className="absolute bottom-4 right-4 bg-accent/90 text-white px-4 py-2 rounded-lg text-lg font-bold backdrop-blur-sm shadow-lg">
-                                        ₹{property.price?.toLocaleString()}
-                                    </div>
-                                </div>
-
-                                <div className="p-6">
-                                    <div className="flex items-center text-gray-500 mb-3 text-sm">
-                                        <MapPin size={14} className="mr-1 text-accent" />
-                                        {property.location}
-                                    </div>
-
-                                    <h3 className="text-xl font-bold mb-4 text-primary-dark dark:text-foreground group-hover:text-accent transition-colors line-clamp-1">
-                                        {property.title}
-                                    </h3>
-
-                                    <div className="flex items-center justify-between py-4 border-t border-gray-100 dark:border-white/5 mb-4 max-w-[90%]">
-                                        <div className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400">
-                                            <BedDouble size={18} />
-                                            <span className="text-sm font-medium">{property.beds} Beds</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400">
-                                            <Bath size={18} />
-                                            <span className="text-sm font-medium">{property.baths} Baths</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400">
-                                            <Maximize size={18} />
-                                            <span className="text-sm font-medium">{property.area} sqft</span>
-                                        </div>
-                                    </div>
-
-                                    <Link href={`/properties/${property._id}`} className="block">
-                                        <Button className="w-full bg-transparent border border-primary-dark text-primary-dark hover:bg-primary-dark hover:text-white dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-black transition-all">
-                                            View Details
-                                        </Button>
-                                    </Link>
-                                </div>
-                            </div>
+                        {properties.map((property, index) => (
+                            <FadeIn key={property._id.toString()} delay={index * 0.1} direction="up">
+                                <PropertyCard
+                                    id={property._id.toString()}
+                                    title={property.title}
+                                    price={property.price}
+                                    location={property.location}
+                                    beds={property.beds}
+                                    baths={property.baths}
+                                    area={property.area}
+                                    imageUrl={property.images?.[0] || 'https://images.unsplash.com/photo-1600596542815-e32c0ee3ad11'}
+                                    category={property.propertyType}
+                                />
+                            </FadeIn>
                         ))}
                     </div>
                 )}

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import crypto from 'node:crypto';
 import { getServerSession } from 'next-auth';
 import dbConnect from '@/lib/db';
 import Admin from '@/models/Admin';
@@ -48,7 +49,16 @@ export async function PUT(req: Request) {
 
         await dbConnect();
 
-        const updateData: any = {};
+        interface UpdateData {
+            name?: string;
+            companyName?: string;
+            profileImage?: string;
+            passwordHash?: string;
+            isVerified?: boolean;
+            verificationCode?: string;
+        }
+
+        const updateData: UpdateData = {};
         if (name !== undefined) updateData.name = name;
         if (companyName !== undefined) updateData.companyName = companyName;
         if (profileImage !== undefined) updateData.profileImage = profileImage;
@@ -58,14 +68,14 @@ export async function PUT(req: Request) {
 
             // Security: Invalidate session and require re-verification
             updateData.isVerified = false;
-            updateData.verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+            updateData.verificationCode = crypto.randomInt(100000, 1000000).toString();
             // We need to fetch the current doc to increment sessionVersion safely or just use $inc
             // But since we are doing findOneAndUpdate below, we can't easily reference current value in $set for sessionVersion if not using $inc.
             // Let's use $inc for sessionVersion in the update call, or fetch first. 
             // Actually, we can use $inc in the same update operation.
         }
 
-        const updateOps: any = { $set: updateData };
+        const updateOps: { $set: UpdateData; $inc?: { sessionVersion: number } } = { $set: updateData };
         if (password) {
             updateOps.$inc = { sessionVersion: 1 };
         }
@@ -125,7 +135,7 @@ export async function POST(req: Request) {
         const passwordHash = await bcrypt.hash(password, salt);
 
         // Generate verification code
-        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const verificationCode = crypto.randomInt(100000, 1000000).toString();
 
         const newAdmin = await Admin.create({
             email,

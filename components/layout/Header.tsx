@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
-import { Menu, X } from "lucide-react";
-import { SITE_NAME } from "@/lib/constants";
+import { Menu, X, BadgeCheck, Heart } from "lucide-react";
+import { SITE_NAME, CONTACT_INFO } from "@/lib/constants";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -34,11 +35,12 @@ export function Header() {
         <>
             <header
                 className={`fixed top-0 z-50 w-full transition-all duration-300 ${isScrolled
-                    ? "bg-white/90 backdrop-blur-md shadow-sm dark:bg-black/90 border-b border-gray-200 dark:border-gray-800 py-3"
-                    : "bg-transparent py-5"
+                    ? "bg-white/90 backdrop-blur-md shadow-sm dark:bg-black/90 border-b border-gray-200 dark:border-gray-800"
+                    : "bg-transparent"
                     }`}
             >
-                <div className="container mx-auto flex items-center justify-between px-4 md:px-6">
+
+                <div className={`container mx-auto flex items-center justify-between px-4 md:px-6 transition-all duration-300 ${isScrolled ? 'py-3' : 'py-5'}`}>
                     <Link href="/" className="flex items-center gap-2 z-50">
                         <span className={`text-2xl font-bold tracking-tight transition-colors text-primary`}>
                             {SITE_NAME}
@@ -56,25 +58,36 @@ export function Header() {
                         <Link href="/about" className={`text-sm font-medium transition-colors hover:text-accent ${isScrolled ? 'text-gray-700 dark:text-gray-200' : 'text-white/90'}`}>
                             About
                         </Link>
-
-                        <Link href="/contact">
-                            <Button variant="default" className="bg-accent hover:bg-accent/90 text-white shadow-lg shadow-accent/20">
-                                Get In Touch
-                            </Button>
+                        <Link href="/liked" className={`text-sm font-medium transition-colors hover:text-accent flex items-center gap-1.5 ${isScrolled ? 'text-gray-700 dark:text-gray-200' : 'text-white/90'}`}>
+                            <Heart size={16} />
                         </Link>
+
+                        <div className="flex items-center gap-4">
+                            {/* <ThemeToggle /> */}
+                            <Link href="/contact">
+                                <Button variant="default" className="bg-accent hover:bg-accent/90 text-white shadow-lg shadow-accent/20">
+                                    Get In Touch
+                                </Button>
+                            </Link>
+                        </div>
                     </nav>
 
-                    {/* Mobile Menu Toggle */}
-                    <button
-                        className={`md:hidden outline-none transition-all duration-300 ${isMobileMenuOpen ? 'fixed right-4 top-5 z-110' : 'relative z-50'}`}
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    >
-                        {isMobileMenuOpen ? (
-                            <X className="h-7 w-7 text-white" />
-                        ) : (
-                            <Menu className={`h-7 w-7 ${isScrolled ? 'text-black dark:text-white' : 'text-white'}`} />
-                        )}
-                    </button>
+                    {/* Mobile Menu Actions */}
+                    <div className="flex items-center gap-4 md:hidden">
+                        <Link href="/liked" className={`p-2 transition-colors ${isScrolled ? 'text-gray-700 dark:text-gray-200' : 'text-white'}`}>
+                            <Heart size={24} />
+                        </Link>
+                        <button
+                            className={`outline-none transition-all duration-300 ${isMobileMenuOpen ? 'fixed right-4 top-5 z-110' : 'relative z-50'}`}
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        >
+                            {isMobileMenuOpen ? (
+                                <X className="h-7 w-7 text-white" />
+                            ) : (
+                                <Menu className={`h-7 w-7 ${isScrolled ? 'text-black dark:text-white' : 'text-white'}`} />
+                            )}
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -86,7 +99,17 @@ export function Header() {
                         <span className="text-2xl font-bold tracking-tight text-primary">
                             {SITE_NAME}
                         </span>
-                        <X onClick={() => setIsMobileMenuOpen(false)} className="h-7 w-7 text-white" />
+                        <div className="flex items-center gap-4">
+                            {/* <ThemeToggle /> */}
+                            <Link
+                                href="/liked"
+                                className="text-3xl font-bold text-white hover:text-accent transition-colors flex items-center gap-3"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                <Heart size={28} />
+                            </Link>
+                            <X onClick={() => setIsMobileMenuOpen(false)} className="h-7 w-7 text-white" />
+                        </div>
                     </div>
 
                     <Link

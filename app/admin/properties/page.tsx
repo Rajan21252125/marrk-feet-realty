@@ -7,30 +7,33 @@ import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 
+import Image from 'next/image';
+import { IPropertyData } from '@/models/Property';
+
 export default function AdminPropertiesPage() {
-    const [properties, setProperties] = useState<any[]>([]);
+    const [properties, setProperties] = useState<IPropertyData[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [filterStatus, setFilterStatus] = useState('all'); // all, visible, hidden
     const [sortOption, setSortOption] = useState('newest'); // newest, oldest, price-high, price-low
-
-    useEffect(() => {
-        fetchProperties();
-    }, []);
 
     const fetchProperties = async () => {
         try {
             const res = await fetch('/api/properties');
             const data = await res.json();
             if (Array.isArray(data)) {
-                setProperties(data);
+                setProperties(data as IPropertyData[]);
             }
             setLoading(false);
-        } catch (error) {
+        } catch (_error) {
             toast.error('Failed to load properties');
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchProperties();
+    }, []);
 
     const toggleVisibility = async (id: string, currentStatus: boolean) => {
         try {
@@ -43,12 +46,12 @@ export default function AdminPropertiesPage() {
             if (res.ok) {
                 toast.success(`Property is now ${!currentStatus ? 'Visible' : 'Hidden'}`);
                 setProperties(properties.map(p =>
-                    p._id === id ? { ...p, isActive: !currentStatus } : p
+                    p._id.toString() === id ? { ...p, isActive: !currentStatus } : p
                 ));
             } else {
                 toast.error(data.error || 'Failed to update property');
             }
-        } catch (error) {
+        } catch (_error) {
             toast.error('Failed to update property');
         }
     };
@@ -63,7 +66,7 @@ export default function AdminPropertiesPage() {
 
             if (res.ok) {
                 toast.success('Property deleted successfully');
-                setProperties(properties.filter(p => p._id !== id));
+                setProperties(properties.filter(p => p._id.toString() !== id));
             } else {
                 const data = await res.json();
                 toast.error(data.error || 'Failed to delete property');
@@ -171,17 +174,18 @@ export default function AdminPropertiesPage() {
                         <tbody className="divide-y divide-white/5">
                             {filteredProperties.map((property) => (
                                 <tr
-                                    key={property._id}
+                                    key={property._id.toString()}
                                     className="hover:bg-white/5 transition-colors group"
                                 >
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-4">
                                             <div className="relative h-16 w-24 shrink-0 rounded-lg overflow-hidden bg-gray-800 border border-white/10">
                                                 {property.images && property.images[0] ? (
-                                                    <img
+                                                    <Image
                                                         src={property.images[0]}
                                                         alt={property.title}
-                                                        className="h-full w-full object-cover"
+                                                        fill
+                                                        className="object-cover"
                                                     />
                                                 ) : (
                                                     <div className="h-full w-full flex items-center justify-center text-gray-600">
@@ -209,7 +213,7 @@ export default function AdminPropertiesPage() {
                                     </td>
                                     <td className="px-6 py-4">
                                         <button
-                                            onClick={() => toggleVisibility(property._id, property.isActive)}
+                                            onClick={() => toggleVisibility(property._id.toString(), property.isActive)}
                                             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-all ${property.isActive
                                                 ? 'bg-green-500/10 text-green-400 border-green-500/20 hover:bg-green-500/20'
                                                 : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20 hover:bg-yellow-500/20'
@@ -254,7 +258,7 @@ export default function AdminPropertiesPage() {
                                                 size="sm"
                                                 className="h-8 w-8 p-0 rounded-full hover:bg-red-500/20 hover:text-red-400 text-gray-400"
                                                 title="Delete Property"
-                                                onClick={() => handleDelete(property._id)}
+                                                onClick={() => handleDelete(property._id.toString())}
                                             >
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>

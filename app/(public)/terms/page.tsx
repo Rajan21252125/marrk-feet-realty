@@ -11,7 +11,7 @@ export default function TermsPage() {
                     <section>
                         <h2 className="text-2xl font-bold text-primary-dark dark:text-white mb-4">1. Acceptance of Terms</h2>
                         <p className="text-gray-600 dark:text-gray-300">
-                            By accessing and using the website of {SITE_NAME} ("Company", "we", "us", "our"), you agree to be bound by these Terms of Service. If you do not agree to all of these terms, please do not use this website.
+                            By accessing and using the website of {SITE_NAME} (&quot;Company&quot;, &quot;we&quot;, &quot;us&quot;, &quot;our&quot;), you agree to be bound by these Terms of Service. If you do not agree to all of these terms, please do not use this website.
                         </p>
                     </section>
 

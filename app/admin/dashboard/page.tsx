@@ -2,17 +2,10 @@ import Link from 'next/link';
 import { Building, CheckCircle, Plus, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import dbConnect from '@/lib/db';
-import Property from '@/models/Property';
 import Message from '@/models/Message';
+import Property, { IPropertyData } from '@/models/Property';
+import { formatPrice } from '@/lib/utils';
 
-// Helper to format currency
-const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        maximumFractionDigits: 0,
-    }).format(price);
-};
 
 export default async function AdminDashboard() {
     await dbConnect();
@@ -131,8 +124,8 @@ export default async function AdminDashboard() {
                                         </td>
                                     </tr>
                                 ) : (
-                                    recentProperties.map((property: any) => (
-                                        <tr key={property._id} className="transition-colors hover:bg-white/5">
+                                    recentProperties.map((property: IPropertyData) => (
+                                        <tr key={property._id.toString()} className="transition-colors hover:bg-white/5">
                                             <td className="p-6 align-middle">
                                                 <div className="font-semibold text-white">{property.title}</div>
                                             </td>

@@ -90,9 +90,10 @@ export const authOptions: NextAuthOptions = {
                         profileImage: admin.profileImage,
                         companyName: admin.companyName,
                     };
-                } catch (error: any) {
-                    logger.error(`Authorize error: ${error.message}`);
-                    throw new Error(error.message || 'Authentication failed');
+                } catch (error) {
+                    const e = error as Error;
+                    logger.error(`Authorize error: ${e.message}`);
+                    throw new Error(e.message || 'Authentication failed');
                 }
             },
         }),
@@ -114,20 +115,7 @@ export const authOptions: NextAuthOptions = {
                     const dbUser = await Admin.findOne({ email: token.email });
                     if (dbUser) {
                         // Enforce single session: if token version doesn't match DB version, invalidate.
-                        // We can't strictly "invalidate" the token here easily without throwing, which might disrupt flow.
-                        // But we can update the token state to reflect invalid session.
-                        // However, simpler approach: Update token with current DB data.
-
-                        // If token has a sessionVersion and it differs from DB, it means a new login occurred elsewhere.
                         if (token.sessionVersion && dbUser.sessionVersion && token.sessionVersion !== dbUser.sessionVersion) {
-                            // This will cause session() callback or middleware to reject it if we handle it there.
-                            // For now, let's just sync the data. The UI can handle "logged out" if we clear the user.
-                            // Actually, let's just set an error flag or clear the user part.
-                            // A common pattern is to just return null/empty, but NextAuth types might complain.
-                            // We will just sync. If the user logs in again, they get the new version.
-                            // The requirement is "one admin can login at one time". 
-                            // So the OLD session (with old version) should fail.
-
                             return { ...token, error: 'SessionInvalid' };
                         }
 
@@ -144,28 +132,40 @@ export const authOptions: NextAuthOptions = {
             }
 
             if (user) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 token.role = (user as any).role;
                 token.id = user.id;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 token.isVerified = (user as any).isVerified;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 token.sessionVersion = (user as any).sessionVersion;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 token.name = (user as any).name;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 token.picture = (user as any).profileImage;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 token.companyName = (user as any).companyName;
             }
             return token;
         },
         async session({ session, token }) {
             if (token.error === 'SessionInvalid') {
-                // Force signout or invalid session effect
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 return { ...session, error: 'SessionInvalid' } as any;
             }
 
             if (session.user) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (session.user as any).role = token.role;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (session.user as any).id = token.id;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (session.user as any).isVerified = token.isVerified;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (session.user as any).name = token.name;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (session.user as any).image = token.picture;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (session.user as any).companyName = token.companyName;
             }
             return session;
@@ -180,13 +180,6 @@ export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
 };
 
-// Safe export of handler
-let handler: any;
-try {
-    handler = NextAuth(authOptions);
-} catch (error) {
-    console.error("Error initializing NextAuth:", error);
-    handler = () => new Response("Internal Server Error", { status: 500 });
-}
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

@@ -28,7 +28,7 @@ export default function NotFound() {
                         Lost in the Luxury?
                     </h2>
                     <p className="text-lg text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-                        We couldn't find the property or page you're looking for. It might have been moved or doesn't exist anymore.
+                        We couldn&apos;t find the property or page you&apos;re looking for. It might have been moved or doesn&apos;t exist anymore.
                     </p>
                 </div>
 

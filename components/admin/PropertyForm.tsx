@@ -8,8 +8,42 @@ import { Upload, X, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { toast } from 'react-hot-toast';
 
+import { IProperty } from '@/models/Property';
+
+interface PropertyFormData {
+    title: string;
+    description: string;
+    price: string | number;
+    builder: string;
+    location: string;
+    address: string;
+    city: string;
+    state: string;
+    propertyType: string;
+    beds: string | number;
+    baths: string | number;
+    area: string | number;
+    furnishType: string;
+    coveredParking: string | number;
+    openParking: string | number;
+    tenantPreference: string[];
+    petFriendly: boolean;
+    bhkType: string;
+    ageOfProperty: string | number;
+    balcony: string | number;
+    floorNumber: string | number;
+    totalFloors: string | number;
+    facing: string;
+    overlooking: string[];
+    tags: string[];
+    ownershipType: string;
+    possessionStatus: string;
+    listingType: string;
+    status: string;
+}
+
 interface PropertyFormProps {
-    initialData?: any;
+    initialData?: IProperty | null;
 }
 
 export default function PropertyForm({ initialData }: PropertyFormProps) {
@@ -19,14 +53,15 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
     const [images, setImages] = useState<string[]>(initialData?.images || []);
     const [previewImages, setPreviewImages] = useState<{ file: File; preview: string }[]>([]);
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<PropertyFormData>({
         title: initialData?.title || '',
         description: initialData?.description || '',
         price: initialData?.price || '',
+        builder: initialData?.builder || '',
         location: initialData?.location || '',
-        address: initialData?.address || '', // Assuming address field exists or part of location
-        city: initialData?.city || '',
-        state: initialData?.state || '',
+        address: '',
+        city: '',
+        state: '',
         propertyType: initialData?.propertyType || 'Apartment',
         beds: initialData?.beds || '',
         baths: initialData?.baths || '',
@@ -43,8 +78,10 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
         totalFloors: initialData?.totalFloors || '',
         facing: initialData?.facing || '',
         overlooking: initialData?.overlooking || [],
+        tags: initialData?.tags || [],
         ownershipType: initialData?.ownershipType || '',
         possessionStatus: initialData?.possessionStatus || '',
+        listingType: initialData?.listingType || 'Sale',
         status: initialData?.status || 'Available',
     });
 
@@ -55,10 +92,11 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                 title: initialData.title || '',
                 description: initialData.description || '',
                 price: initialData.price || '',
+                builder: initialData.builder || '',
                 location: initialData.location || '',
-                address: initialData.address || '',
-                city: initialData.city || '',
-                state: initialData.state || '',
+                address: '',
+                city: '',
+                state: '',
                 propertyType: initialData.propertyType || 'Apartment',
                 beds: initialData.beds || '',
                 baths: initialData.baths || '',
@@ -75,8 +113,10 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                 totalFloors: initialData.totalFloors || '',
                 facing: initialData.facing || '',
                 overlooking: initialData.overlooking || [],
+                tags: initialData.tags || [],
                 ownershipType: initialData.ownershipType || '',
                 possessionStatus: initialData.possessionStatus || '',
+                listingType: initialData.listingType || 'Sale',
                 status: initialData.status || 'Available',
             });
             setImages(initialData.images || []);
@@ -84,13 +124,18 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
     }, [initialData]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        const { name, value, type } = e.target;
+
+        if (type === 'number') {
+            setFormData((prev) => ({ ...prev, [name]: value === '' ? '' : Number(value) }));
+        } else {
+            setFormData((prev) => ({ ...prev, [name]: value }));
+        }
     };
 
-    const handleMultiSelect = (field: string, value: string) => {
-        setFormData((prev: any) => {
-            const current = prev[field] || [];
+    const handleMultiSelect = (field: keyof PropertyFormData, value: string) => {
+        setFormData((prev) => {
+            const current = (prev[field] as string[]) || [];
             if (current.includes(value)) {
                 return { ...prev, [field]: current.filter((item: string) => item !== value) };
             } else {
@@ -99,7 +144,7 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
         });
     };
 
-    const toggleBoolean = (field: string, value: boolean) => {
+    const toggleBoolean = (field: keyof PropertyFormData, value: boolean) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
     };
 
@@ -198,17 +243,17 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
 
             const payload = {
                 ...formData,
-                price: parseFloat(formData.price),
-                beds: parseInt(formData.beds),
-                baths: parseInt(formData.baths),
-                area: parseInt(formData.area),
+                price: parseFloat(formData.price.toString()),
+                beds: parseInt(formData.beds.toString()),
+                baths: parseInt(formData.baths.toString()),
+                area: parseInt(formData.area.toString()),
                 images: finalImages,
-                coveredParking: formData.coveredParking ? parseInt(formData.coveredParking as string) : 0,
-                openParking: formData.openParking ? parseInt(formData.openParking as string) : 0,
-                ageOfProperty: formData.ageOfProperty ? parseInt(formData.ageOfProperty as string) : 0,
-                balcony: formData.balcony ? parseInt(formData.balcony as string) : 0,
-                floorNumber: formData.floorNumber ? parseInt(formData.floorNumber as string) : 0,
-                totalFloors: formData.totalFloors ? parseInt(formData.totalFloors as string) : 0,
+                coveredParking: formData.coveredParking ? parseInt(formData.coveredParking.toString()) : 0,
+                openParking: formData.openParking ? parseInt(formData.openParking.toString()) : 0,
+                ageOfProperty: formData.ageOfProperty ? parseInt(formData.ageOfProperty.toString()) : 0,
+                balcony: formData.balcony ? parseInt(formData.balcony.toString()) : 0,
+                floorNumber: formData.floorNumber ? parseInt(formData.floorNumber.toString()) : 0,
+                totalFloors: formData.totalFloors ? parseInt(formData.totalFloors.toString()) : 0,
             };
 
             const url = initialData ? `/api/properties/${initialData._id}` : '/api/properties';
@@ -264,7 +309,7 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                         />
                     </div>
                     <div>
-                        <label className="mb-2 block text-sm font-medium">Price ($)</label>
+                        <label className="mb-2 block text-sm font-medium">Price (₹)</label>
                         <input
                             name="price"
                             value={formData.price}
@@ -272,7 +317,32 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                             required
                             type="number"
                             className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                            placeholder="0.00"
+                            placeholder="0"
+                        />
+                    </div>
+                    <div>
+                        <label className="mb-2 block text-sm font-medium">Builder / Company Name</label>
+                        <input
+                            name="builder"
+                            value={formData.builder}
+                            onChange={handleChange}
+                            type="text"
+                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            placeholder="e.g. Godrej Properties"
+                        />
+                    </div>
+                    <div>
+                        <label className="mb-2 block text-sm font-medium">Tags (comma separated)</label>
+                        <input
+                            name="tags"
+                            value={formData.tags.join(', ')}
+                            onChange={(e) => {
+                                const tags = e.target.value.split(',').map(t => t.trim()).filter(t => t !== '');
+                                setFormData(prev => ({ ...prev, tags }));
+                            }}
+                            type="text"
+                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            placeholder="e.g. Luxury, Trending, Budget Pick"
                         />
                     </div>
                 </div>
@@ -320,6 +390,18 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                     </div>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div>
+                        <label className="mb-2 block text-sm font-medium">Listing Type</label>
+                        <Select
+                            name="listingType"
+                            value={formData.listingType}
+                            onChange={handleChange}
+                            className="bg-transparent"
+                        >
+                            <option value="Sale" className="bg-white dark:bg-neutral-900">For Sale</option>
+                            <option value="Rent" className="bg-white dark:bg-neutral-900">For Rent</option>
+                        </Select>
+                    </div>
                     <div>
                         <label className="mb-2 block text-sm font-medium">Type</label>
                         <Select
@@ -494,7 +576,7 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                                 <button
                                     type="button"
                                     key={type}
-                                    onClick={() => handleChange({ target: { name: 'furnishType', value: type } } as any)}
+                                    onClick={() => setFormData(prev => ({ ...prev, furnishType: type }))}
                                     className={`rounded-full px-4 py-2 text-sm border transition-colors ${formData.furnishType === type
                                         ? 'bg-primary text-primary-foreground border-primary'
                                         : 'bg-background hover:bg-muted border-input'
@@ -515,7 +597,7 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                                     <button
                                         type="button"
                                         key={num}
-                                        onClick={() => handleChange({ target: { name: 'coveredParking', value: num } } as any)}
+                                        onClick={() => setFormData(prev => ({ ...prev, coveredParking: num }))}
                                         className={`h-10 w-10 rounded-md border text-sm flex items-center justify-center transition-colors ${
                                             // loose check for number vs string in formData
                                             formData.coveredParking == num
@@ -543,7 +625,7 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                                     <button
                                         type="button"
                                         key={num}
-                                        onClick={() => handleChange({ target: { name: 'openParking', value: num } } as any)}
+                                        onClick={() => setFormData(prev => ({ ...prev, openParking: num }))}
                                         className={`h-10 w-10 rounded-md border text-sm flex items-center justify-center transition-colors ${formData.openParking == num
                                             ? 'bg-primary text-primary-foreground border-primary'
                                             : 'bg-background hover:bg-muted border-input'

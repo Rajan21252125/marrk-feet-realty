@@ -44,6 +44,7 @@ export default function ContactPage() {
                 toast.error('Failed to send message.');
             }
         } catch (error) {
+            console.error('Contact form error:', error);
             toast.error('Something went wrong.');
         } finally {
             setLoading(false);
@@ -64,7 +65,7 @@ export default function ContactPage() {
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                     <div className="text-center text-white px-4">
                         <h1 className="text-5xl md:text-6xl font-bold mb-4">Contact Us</h1>
-                        <p className="text-xl md:text-2xl font-light text-gray-200">We're here to turn your real estate dreams into reality.</p>
+                        <p className="text-xl md:text-2xl font-light text-gray-200">We&apos;re here to turn your real estate dreams into reality.</p>
                     </div>
                 </div>
             </div>
@@ -76,7 +77,7 @@ export default function ContactPage() {
                         <div>
                             <h2 className="text-3xl font-bold text-primary-dark dark:text-white mb-6">Get in Touch</h2>
                             <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
-                                Whether you're looking to buy, sell, or invest, our team of dedicated advisors is ready to provide personalized guidance.
+                                Whether you&apos;re looking to buy, sell, or invest, our team of dedicated advisors is ready to provide personalized guidance.
                             </p>
                         </div>
 
