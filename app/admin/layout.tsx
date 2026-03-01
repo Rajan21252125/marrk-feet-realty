@@ -93,7 +93,7 @@ export default function AdminLayout({
                         <div className="mb-6 p-4 bg-white/5 rounded-xl border border-white/5 flex items-center gap-3">
                             <div className="h-10 w-10 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold overflow-hidden border border-white/10">
                                 {user.image ? (
-                                    <Image src={user.image} alt="Profile" width={40} height={40} className="h-full w-full object-cover" />
+                                    <Image src={user.image} alt="Profile" width={40} height={40} className="h-full w-full object-cover" unoptimized />
                                 ) : (
                                     <span>{user.name?.[0] || 'A'}</span>
                                 )}

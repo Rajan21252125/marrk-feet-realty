@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import logger from '@/lib/logger';
 import dbConnect from '@/lib/db';
 import Newsletter from '@/models/Newsletter';
 import { rateLimit } from '@/lib/rate-limit';
@@ -44,7 +45,8 @@ export async function POST(req: Request) {
             { status: 201 }
         );
 
-    } catch (_error) {
+    } catch (error) {
+        logger.error(`Failed to subscribe: ${error}`);
         return NextResponse.json({ error: 'Failed to subscribe' }, { status: 500 });
     }
 }

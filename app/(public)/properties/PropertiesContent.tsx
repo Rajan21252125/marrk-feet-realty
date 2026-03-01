@@ -1,19 +1,23 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, SlidersHorizontal, Heart, Search, SortAsc, ChevronDown } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { ChevronLeft, ChevronRight, SlidersHorizontal, Search, ChevronDown } from "lucide-react";
 import { toast } from 'react-hot-toast';
 
-import { IProperty } from '@/models/Property';
+import { IPropertyData } from '@/models/Property';
 import { PropertyCard } from '@/components/ui/PropertyCard';
 import { PropertyFilter, FilterState } from '@/components/property/PropertyFilter';
 import { FadeIn } from '@/components/ui/FadeIn';
 import { Button } from '@/components/ui/Button';
 
-export default function PropertiesContent() {
-    const [properties, setProperties] = useState<IProperty[]>([]);
-    const [filteredProperties, setFilteredProperties] = useState<IProperty[]>([]);
-    const [loading, setLoading] = useState(true);
+interface PropertiesContentProps {
+    initialProperties: IPropertyData[];
+}
+
+const PropertiesContent: React.FC<PropertiesContentProps> = ({ initialProperties }) => {
+    const [properties, setProperties] = useState<IPropertyData[]>(initialProperties || []);
+    const [filteredProperties, setFilteredProperties] = useState<IPropertyData[]>(initialProperties || []);
+    const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -21,12 +25,14 @@ export default function PropertiesContent() {
     const itemsPerPage = 12;
 
     useEffect(() => {
+        if (initialProperties?.length > 0) return;
+
         const fetchProperties = async () => {
             try {
                 const res = await fetch('/api/properties');
                 const data = await res.json();
                 if (Array.isArray(data)) {
-                    const activeProperties = data.filter((p: IProperty) => p.isActive);
+                    const activeProperties = data.filter((p: IPropertyData) => p.isActive);
                     setProperties(activeProperties);
                     setFilteredProperties(activeProperties);
                 }
@@ -39,10 +45,18 @@ export default function PropertiesContent() {
         };
 
         fetchProperties();
-    }, []);
+    }, [initialProperties]);
+
+    const lastFiltersRef = useRef<FilterState>({
+        status: 'All',
+        location: [],
+        type: [],
+        budget: [0, 500]
+    });
 
     const handleFilterChange = useCallback((filters: FilterState) => {
-        let filtered = properties;
+        lastFiltersRef.current = filters;
+        let filtered = properties as IPropertyData[];
 
         // Status Filter (Buy/Rent mapping to Sale/Rent)
         if (filters.status !== 'All') {
@@ -59,8 +73,8 @@ export default function PropertiesContent() {
         if (filters.type.length > 0) {
             filtered = filtered.filter(p => filters.type.some(t =>
                 p.title?.toLowerCase().includes(t.toLowerCase()) ||
-                (p as any).propertyType?.toLowerCase().includes(t.toLowerCase()) ||
-                (p as any).bhkType?.toLowerCase().includes(t.toLowerCase())
+                p.propertyType?.toLowerCase().includes(t.toLowerCase()) ||
+                p.bhkType?.toLowerCase().includes(t.toLowerCase())
             ));
         }
 
@@ -70,7 +84,7 @@ export default function PropertiesContent() {
             filtered = filtered.filter(p =>
                 p.title.toLowerCase().includes(query) ||
                 p.location.toLowerCase().includes(query) ||
-                (p as any).builder?.toLowerCase().includes(query)
+                p.builder?.toLowerCase().includes(query)
             );
         }
 
@@ -98,6 +112,11 @@ export default function PropertiesContent() {
         setFilteredProperties(filtered);
         setCurrentPage(1);
     }, [properties, searchQuery, sortBy]);
+
+    // Re-apply filters when search or sort changes
+    useEffect(() => {
+        handleFilterChange(lastFiltersRef.current);
+    }, [searchQuery, sortBy, properties, handleFilterChange]);
 
     // Pagination logic
     const totalPages = Math.ceil(filteredProperties.length / itemsPerPage);
@@ -199,7 +218,7 @@ export default function PropertiesContent() {
                     <main className="lg:w-2/3">
                         {loading ? (
                             <div className="grid gap-8 sm:grid-cols-2">
-                                {[1, 2, 4].map((i) => (
+                                {[1, 2, 3].map((i) => (
                                     <div key={i} className="h-[400px] bg-gray-200 dark:bg-gray-800 animate-pulse rounded-2xl" />
                                 ))}
                             </div>
@@ -289,4 +308,6 @@ export default function PropertiesContent() {
             </div>
         </div>
     );
-}
+};
+
+export default PropertiesContent;

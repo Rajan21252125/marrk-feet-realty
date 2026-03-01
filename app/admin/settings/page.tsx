@@ -234,7 +234,7 @@ export default function SettingsPage() {
                                         <div className="flex items-center gap-3">
                                             <div className="relative w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center overflow-hidden border border-white/10">
                                                 {admin.profileImage ? (
-                                                    <Image src={admin.profileImage} alt={admin.name || "Admin Profile"} fill className="object-cover" />
+                                                    <Image src={admin.profileImage} alt={admin.name || "Admin Profile"} fill className="object-cover" unoptimized />
                                                 ) : (
                                                     <span className="text-sm font-bold text-gray-400">{admin.name ? admin.name[0] : 'A'}</span>
                                                 )}

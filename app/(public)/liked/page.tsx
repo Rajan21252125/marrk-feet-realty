@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { IProperty } from '@/models/Property';
+import { IPropertyData } from '@/models/Property';
 import { PropertyCard } from '@/components/ui/PropertyCard';
 import { FadeIn } from '@/components/ui/FadeIn';
 import Link from 'next/link';
@@ -10,7 +10,7 @@ import { HeartOff, ArrowLeft, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 export default function LikedPropertiesPage() {
-    const [properties, setProperties] = useState<IProperty[]>([]);
+    const [properties, setProperties] = useState<IPropertyData[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -23,12 +23,11 @@ export default function LikedPropertiesPage() {
                     return;
                 }
 
-                const res = await fetch('/api/properties');
+                const res = await fetch(`/api/properties?ids=${savedIds.join(',')}`);
                 const data = await res.json();
 
                 if (Array.isArray(data)) {
-                    const liked = data.filter((p: IProperty) => savedIds.includes(p._id.toString()));
-                    setProperties(liked);
+                    setProperties(data);
                 }
             } catch (error) {
                 console.error("Failed to fetch liked properties", error);
@@ -56,7 +55,7 @@ export default function LikedPropertiesPage() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
                     <div>
                         <h1 className="text-4xl font-bold tracking-tight text-primary-dark dark:text-white">Your Saved Properties</h1>
-                        <p className="text-muted-foreground mt-2">Properties you've marked as favorite for easy access.</p>
+                        <p className="text-muted-foreground mt-2">Properties you&apos;ve marked as favorite for easy access.</p>
                     </div>
                     <Link href="/properties">
                         <Button variant="outline" className="gap-2">

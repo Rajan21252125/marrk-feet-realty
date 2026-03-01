@@ -32,7 +32,7 @@ export default function AdminPropertiesPage() {
     };
 
     useEffect(() => {
-        setTimeout(() => fetchProperties(), 0);
+        fetchProperties();
     }, []);
 
     const toggleVisibility = async (id: string, currentStatus: boolean) => {
@@ -46,7 +46,7 @@ export default function AdminPropertiesPage() {
             if (res.ok) {
                 toast.success(`Property is now ${!currentStatus ? 'Visible' : 'Hidden'}`);
                 setProperties(properties.map(p =>
-                    (p._id as unknown as string) === id ? { ...p, isActive: !currentStatus } : p
+                    p._id.toString() === id ? { ...p, isActive: !currentStatus } : p
                 ));
             } else {
                 toast.error(data.error || 'Failed to update property');
@@ -66,7 +66,7 @@ export default function AdminPropertiesPage() {
 
             if (res.ok) {
                 toast.success('Property deleted successfully');
-                setProperties(properties.filter(p => (p._id as unknown as string) !== id));
+                setProperties(properties.filter(p => p._id.toString() !== id));
             } else {
                 const data = await res.json();
                 toast.error(data.error || 'Failed to delete property');

@@ -25,9 +25,8 @@ export default function VerifyPage() {
             if (!res.ok) throw new Error(data.error || 'Failed to send code');
 
             if (!isAuto) toast.success('New verification code sent!');
-            console.log('Verification code:', data.code);
         } catch (err) {
-            console.error('Error sending code:', err);
+            console.error('Error sending code');
             if (!isAuto) toast.error('Failed to send verification code');
         } finally {
             setResending(false);

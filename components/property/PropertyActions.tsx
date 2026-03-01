@@ -17,7 +17,7 @@ export default function PropertyActions({ propertyId, propertyTitle }: PropertyA
         // Check if property is already liked in localStorage
         const savedProperties = JSON.parse(localStorage.getItem('savedProperties') || '[]');
         if (savedProperties.includes(propertyId)) {
-            setTimeout(() => setIsLiked(true), 0);
+            setIsLiked(true);
         }
     }, [propertyId]);
 

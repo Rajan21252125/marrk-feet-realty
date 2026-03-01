@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import crypto from 'node:crypto';
 import { getServerSession } from 'next-auth';
 import dbConnect from '@/lib/db';
 import Admin from '@/models/Admin';
@@ -21,13 +22,13 @@ export async function POST() {
         }
 
         // Generate a new 6-digit code
-        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const verificationCode = crypto.randomInt(100000, 1000000).toString();
 
         // Store the code in the DB
         admin.verificationCode = verificationCode;
         await admin.save();
 
-        logger.info(`Verification code generated for ${admin.email}: ${verificationCode}`);
+        logger.info(`Verification code issued for ${admin.email}`);
 
         // In a real production app, we would send an email here.
         // For now, we return it in dev or just assume user sees logs.

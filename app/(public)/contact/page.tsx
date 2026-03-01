@@ -43,7 +43,8 @@ export default function ContactPage() {
             } else {
                 toast.error('Failed to send message.');
             }
-        } catch (_error) {
+        } catch (error) {
+            console.error('Contact form error:', error);
             toast.error('Something went wrong.');
         } finally {
             setLoading(false);

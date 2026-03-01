@@ -165,7 +165,7 @@ export function PropertyFilter({ onFilterChange }: PropertyFilterProps) {
             <div className="flex gap-4 mt-8 pt-8 border-t border-white/5">
                 <Button
                     variant="outline"
-                    className="flex-1 bg-transparent border-white/10 text-white hover:bg-white/5"
+                    className="w-full bg-transparent border-white/10 text-white hover:bg-white/5"
                     onClick={() => {
                         setStatus('All');
                         setSelectedLocations([]);
@@ -173,10 +173,7 @@ export function PropertyFilter({ onFilterChange }: PropertyFilterProps) {
                         setBudget(status === 'Rent' ? [10000, 500000] : [10, 200]);
                     }}
                 >
-                    Reset
-                </Button>
-                <Button className="flex-1 bg-accent hover:bg-accent/90 text-white">
-                    Apply Filter
+                    Reset All Filters
                 </Button>
             </div>
         </div>

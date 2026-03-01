@@ -25,8 +25,8 @@ export default function AboutPage() {
                     { label: 'Years of Experience', value: '1+' }, // Or calculate from constants if needed
                 ]);
             }
-        } catch (_error) {
-            console.error('Failed to fetch stats');
+        } catch (error) {
+            console.error('Failed to fetch stats:', error);
         } finally {
             setLoadingStats(false);
         }

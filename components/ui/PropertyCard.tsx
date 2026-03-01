@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from './Button';
 import { Bed, Bath, Move, MapPin, Heart } from 'lucide-react';
+import { formatPrice } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 
@@ -35,9 +36,21 @@ export function PropertyCard({
     tags
 }: PropertyCardProps) {
     const [isLiked, setIsLiked] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    // Safe helper for localStorage parsing
+    const getSavedProperties = (): string[] => {
+        try {
+            return JSON.parse(localStorage.getItem('savedProperties') || '[]');
+        } catch (error) {
+            console.error('Error parsing savedProperties from localStorage:', error);
+            return [];
+        }
+    };
 
     useEffect(() => {
-        const savedProperties = JSON.parse(localStorage.getItem('savedProperties') || '[]');
+        setMounted(true);
+        const savedProperties = getSavedProperties();
         if (savedProperties.includes(id)) {
             setIsLiked(true);
         }
@@ -47,15 +60,15 @@ export function PropertyCard({
         e.preventDefault();
         e.stopPropagation();
 
-        const savedProperties = JSON.parse(localStorage.getItem('savedProperties') || '[]');
+        const savedProperties = getSavedProperties();
+        let updatedProperties: string[];
 
         if (isLiked) {
-            const updated = savedProperties.filter((pid: string) => pid !== id);
-            localStorage.setItem('savedProperties', JSON.stringify(updated));
+            updatedProperties = savedProperties.filter((pid: string) => pid !== id);
+            localStorage.setItem('savedProperties', JSON.stringify(updatedProperties));
             setIsLiked(false);
             toast.success('Removed from favorites');
         } else {
-            savedProperties.push(id);
             localStorage.setItem('savedProperties', JSON.stringify(savedProperties));
             setIsLiked(true);
             toast.success('Added to favorites');
@@ -64,11 +77,7 @@ export function PropertyCard({
         window.dispatchEvent(new Event('favoritesUpdated'));
     };
 
-    const formatPrice = (num: number) => {
-        if (num >= 10000000) return `₹ ${(num / 10000000).toFixed(2)} Cr`;
-        if (num >= 100000) return `₹ ${(num / 100000).toFixed(0)} Lac`;
-        return `₹ ${num.toLocaleString()}`;
-    };
+
 
     return (
         <div className="group relative overflow-hidden rounded-3xl bg-neutral-900 border border-white/5 transition-all hover:bg-neutral-800/50 hover:border-white/10 shadow-2xl">

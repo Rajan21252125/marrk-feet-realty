@@ -1,18 +1,18 @@
 'use client';
 
-import { MapPin, ArrowRight, BedDouble, Bath, Maximize } from "lucide-react";
+import { ArrowRight } from "lucide-react"; // Only ArrowRight is used in this component
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
-import { IProperty } from "@/models/Property";
+import { IPropertyData } from "@/models/Property";
 import { FadeIn } from "@/components/ui/FadeIn";
 import { PropertyCard } from "@/components/ui/PropertyCard";
 
-export function Listings({ showFilter = false }: { showFilter?: boolean }) {
-    const [properties, setProperties] = useState<IProperty[]>([]);
+export function Listings() {
+    const [properties, setProperties] = useState<IPropertyData[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -22,7 +22,7 @@ export function Listings({ showFilter = false }: { showFilter?: boolean }) {
                 const data = await res.json();
                 if (Array.isArray(data)) {
                     // Filter active properties and take top 6
-                    setProperties(data.filter((p: IProperty) => p.isActive).slice(0, 6));
+                    setProperties(data.filter((p: IPropertyData) => p.isActive).slice(0, 6));
                 }
             } catch (error) {
                 console.error("Failed to fetch properties", error);

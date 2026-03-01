@@ -124,8 +124,13 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
     }, [initialData]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        const { name, value, type } = e.target;
+
+        if (type === 'number') {
+            setFormData((prev) => ({ ...prev, [name]: value === '' ? '' : Number(value) }));
+        } else {
+            setFormData((prev) => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleMultiSelect = (field: keyof PropertyFormData, value: string) => {

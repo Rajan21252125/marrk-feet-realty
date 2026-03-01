@@ -3,16 +3,9 @@ import { Building, CheckCircle, Plus, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import dbConnect from '@/lib/db';
 import Message from '@/models/Message';
-import Property, { IProperty, IPropertyData } from '@/models/Property';
+import Property, { IPropertyData } from '@/models/Property';
+import { formatPrice } from '@/lib/utils';
 
-// Helper to format currency
-const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        maximumFractionDigits: 0,
-    }).format(price);
-};
 
 export default async function AdminDashboard() {
     await dbConnect();

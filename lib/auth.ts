@@ -180,14 +180,6 @@ export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
 };
 
-// Safe export of handler
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let handler: any;
-try {
-    handler = NextAuth(authOptions);
-} catch (error) {
-    console.error("Error initializing NextAuth:", error);
-    handler = () => new Response("Internal Server Error", { status: 500 });
-}
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

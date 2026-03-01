@@ -32,7 +32,7 @@ export default function MessagesPage() {
     };
 
     useEffect(() => {
-        setTimeout(() => fetchMessages(), 0);
+        fetchMessages();
     }, []);
 
     const handleDelete = async (id: string) => {

@@ -16,10 +16,17 @@ export async function GET(req: Request) {
         const title = searchParams.get('title');
         const location = searchParams.get('location');
         const type = searchParams.get('type');
+        const ids = searchParams.get('ids');
 
         if (title) query.title = { $regex: title, $options: 'i' };
         if (location) query.location = { $regex: location, $options: 'i' };
         if (type && type !== 'All Types') query.propertyType = type;
+        if (ids) {
+            const idArray = ids.split(',').filter(id => id.trim() !== '');
+            if (idArray.length > 0) {
+                query._id = { $in: idArray };
+            }
+        }
 
         const properties = await Property.find(query).sort({ createdAt: -1 });
         logger.info(`GET /api/properties - Fetched ${properties.length} properties`);
@@ -83,7 +90,8 @@ export async function PATCH(req: Request) {
 
         return NextResponse.json({ message: 'Property updated', property: updatedProperty });
 
-    } catch (_error) {
-        return NextResponse.json({ error: 'Failed to fetch properties' }, { status: 500 });
+    } catch (error) {
+        logger.error(`PATCH /api/properties - Error: ${error}`);
+        return NextResponse.json({ error: 'Failed to update properties' }, { status: 500 });
     }
 }

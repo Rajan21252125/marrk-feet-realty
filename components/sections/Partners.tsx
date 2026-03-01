@@ -19,7 +19,7 @@ const PARTNERS = [
 
 export function Partners() {
     return (
-        <section className="bg-white dark:bg-black py-12 border-y border-neutral-200 dark:border-neutral-800 overflow-hidden">
+        <section className="bg-neutral-50 dark:bg-neutral-900 py-12 border-y border-neutral-200 dark:border-neutral-800 overflow-hidden">
             <div className="container mx-auto px-4 mb-8 text-center">
                 <p className="text-sm font-semibold tracking-widest text-muted-foreground uppercase">
                     Trusted by Industry Leaders
