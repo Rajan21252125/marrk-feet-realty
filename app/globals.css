@@ -16,7 +16,48 @@
   --input: #1e293b;
   --ring: #E97108;
   --radius: 0.5rem;
+
+  /* Brand Colors (Stitch Audit) */
+  --brand-orange: #f97316;
+  --brand-orange-text: #E97108;
+  /* Darker orange for text on light backgrounds */
+  --brand-navy: #0f172a;
+  --brand-slate: #f8fafc;
 }
+
+.public-theme {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --primary: var(--brand-orange);
+  --primary-foreground: #ffffff;
+  --secondary: var(--brand-navy);
+  --accent: var(--brand-orange);
+  --muted: #f1f5f9;
+  --muted-foreground: #475569;
+  /* Gray-600 for better light-mode contrast */
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: var(--brand-orange);
+}
+
+.dark .public-theme {
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --primary: var(--brand-orange);
+  --primary-foreground: #ffffff;
+  --secondary: #1e293b;
+  --accent: var(--brand-orange);
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --card: #1e293b;
+  --card-foreground: #f8fafc;
+  --border: #334155;
+  --input: #334155;
+  --ring: var(--brand-orange);
+}
+
 
 @theme inline {
   --color-background: var(--background);
@@ -33,10 +74,15 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-orange-text: var(--brand-orange-text);
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-slate: var(--brand-slate);
   --radius-sm: calc(var(--radius) - 2px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --font-sans: var(--font-inter);
+  --font-plus: var(--font-plus-jakarta);
 }
 
 body {
@@ -102,4 +148,47 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
   border: 3px solid #1a1a1a;
   box-shadow: 0 0 10px rgba(255, 90, 60, 0.4);
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  background: var(--brand-orange);
+  color: white;
+  padding: 1rem;
+  z-index: 1000;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Native Select Option Styling */
+select option {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.dark select option {
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
+
+/* Specific overrides for themes if needed */
+.public-theme select option {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+.dark .public-theme select option {
+  background-color: #0f172a;
+  color: #ffffff;
+}
+
+/* Ensure Hero section options (always light background card) are visible */
+[role="search"] select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
 }

@@ -1,18 +1,20 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { FloatingActions } from "@/components/ui/FloatingActions";
 
-export default function PublicLayout({
+export default async function PublicLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
     return (
-        <div className="flex min-h-screen flex-col font-sans">
+        <div className="public-theme font-plus min-h-screen flex flex-col transition-colors duration-300">
             <Header />
-            <main className="flex-1">
+            <main className="flex-grow">
                 {children}
             </main>
             <Footer />
+            <FloatingActions />
         </div>
     );
 }

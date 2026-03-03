@@ -39,3 +39,13 @@ logs
 
 # scripts
 /scripts
+migrate-properties.ts
+
+# lint/dev output
+lint_output.txt
+
+# ide/os
+.vscode
+.idea
+.DS_Store
+Thumbs.db

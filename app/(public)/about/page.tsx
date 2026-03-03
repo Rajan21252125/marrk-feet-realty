@@ -1,202 +1,201 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { SITE_NAME, LEADERSHIP_TEAM, TEAM_STRUCTURE, SERVICES } from '@/lib/constants';
-import { ShieldCheck, Video, Users, TrendingUp, Handshake, FileText, Search } from 'lucide-react';
+import Link from 'next/link';
+import { SITE_NAME, LEADERSHIP_TEAM, SITE_STATS } from '@/lib/constants';
+import { Target, Users, Shield, Award, ChevronRight, Mail } from 'lucide-react';
+import { FadeIn } from '@/components/ui/FadeIn';
 
 export default function AboutPage() {
-    const [stats, setStats] = useState<{ label: string; value: string }[] | null>(null);
-    const [loadingStats, setLoadingStats] = useState(true);
-
-    useEffect(() => {
-        fetchStats();
-    }, []);
-
-    const fetchStats = async () => {
-        try {
-            const res = await fetch('/api/stats');
-            const data = await res.json();
-            if (res.ok) {
-                setStats([
-                    { label: 'Happy Clients', value: `${data.happyClients}+` },
-                    { label: 'Properties Sold', value: `${data.propertiesSold}+` },
-                    { label: 'Active Listings', value: `${data.activeListings}` },
-                    { label: 'Years of Experience', value: '1+' }, // Or calculate from constants if needed
-                ]);
-            }
-        } catch (error) {
-            console.error('Failed to fetch stats:', error);
-        } finally {
-            setLoadingStats(false);
-        }
-    };
-
     return (
-        <div className="min-h-screen bg-white dark:bg-black">
+        <div className="min-h-screen bg-white dark:bg-brand-navy/5 overflow-x-hidden">
             {/* Hero Section */}
-            <div className="relative h-[60vh] w-full overflow-hidden aspect-4/5">
-                <Image
-                    src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2670&auto=format&fit=crop"
-                    alt="About Us"
-                    fill
-                    className="object-cover"
-                    priority
-                />
-                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                    <div className="text-center text-white px-4 max-w-4xl">
-                        <h1 className="text-5xl md:text-7xl font-bold mb-6">Established Oct 12, 2024</h1>
-                        <p className="text-xl md:text-2xl font-light text-gray-200">
-                            Revolutionizing the real estate experience through innovation and dedication.
+            <section className="relative pt-32 pb-20 bg-brand-navy overflow-hidden">
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-10"></div>
+                <div className="container relative z-10 mx-auto px-4 text-center">
+                    <FadeIn direction="down">
+                        <span className="text-brand-orange font-bold tracking-[0.3em] text-xs uppercase underline underline-offset-8">Our Journey</span>
+                        <h1 className="text-4xl md:text-6xl font-bold text-white mt-8 mb-6">Established <span className="text-brand-orange">Oct 12, 2024</span></h1>
+                        <p className="text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed">
+                            A mission to redefine the real estate experience through radical transparency,
+                            cinematic property showcases, and unwavering commitment to client success.
                         </p>
-                    </div>
+                    </FadeIn>
+                </div>
+            </section>
+
+            {/* Breadcrumbs */}
+            <div className="bg-gray-50 dark:bg-brand-navy/10 py-4 border-b border-gray-100 dark:border-white/5">
+                <div className="container mx-auto px-4">
+                    <nav className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                        <Link href="/" className="hover:text-brand-orange">Home</Link>
+                        <ChevronRight size={14} className="text-gray-300" />
+                        <span className="text-brand-navy dark:text-white">About Us</span>
+                    </nav>
                 </div>
             </div>
 
-            <div className="container mx-auto px-4 py-20">
-                {/* Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-24 border-b border-gray-100 dark:border-white/10 pb-12">
-                    {loadingStats ? (
-                        Array(4).fill(0).map((_, i) => (
-                            <div key={i} className="flex flex-col items-center animate-pulse">
-                                <div className="h-10 w-24 bg-gray-200 dark:bg-neutral-800 rounded mb-2"></div>
-                                <div className="h-4 w-32 bg-gray-100 dark:bg-neutral-900 rounded"></div>
+            <section className="py-20 md:py-24 overflow-x-hidden">
+                <div className="container mx-auto px-4 md:px-6">
+                    <div className="grid gap-12 md:gap-16 lg:grid-cols-2 items-center">
+                        <FadeIn direction="left">
+                            <div className="relative rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white dark:border-brand-navy/20">
+                                <Image
+                                    src="/about-us.png"
+                                    alt="Modern Real Estate Office"
+                                    width={800}
+                                    height={1000}
+                                    className="object-cover aspect-4/5"
+                                />
+                                <div className="absolute inset-0 bg-brand-orange/10 mix-blend-multiply"></div>
                             </div>
-                        ))
-                    ) : (
-                        stats?.map((stat, index) => (
-                            <div key={index} className="text-center">
-                                <p className="text-4xl md:text-5xl font-bold text-accent mb-2">{stat.value}</p>
-                                <p className="text-sm md:text-base text-gray-500 uppercase tracking-widest">{stat.label}</p>
-                            </div>
-                        ))
-                    )}
-                </div>
+                        </FadeIn>
 
-                {/* Story & Vision */}
-                <div className="grid gap-16 lg:grid-cols-2 items-center mb-24">
-                    <div className="relative aspect-4/5 rounded-3xl overflow-hidden shadow-2xl group">
-                        <Image
-                            src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=2573&auto=format&fit=crop"
-                            alt="Our Story"
-                            fill
-                            className="object-cover"
-                        />
-                    </div>
-                    <div className="space-y-8">
-                        <h2 className="text-3xl md:text-4xl font-bold text-primary-dark dark:text-white">
-                            Your partner in real estate solutions.
-                        </h2>
-                        <div className="w-20 h-1 bg-accent rounded-full"></div>
-                        <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
-                            Welcome to {SITE_NAME}. We are dedicated to providing end-to-end real estate services. Our goal is to exceed your expectations by connecting individuals with their dream properties and building lasting relationships.
-                        </p>
-                        <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
-                            As your premier partner in real estate solutions, we deliver comprehensive, tailored services to meet your unique needs. Together, our founders lead with a vision of innovation, transparency, and excellence.
-                        </p>
-                    </div>
-                </div>
-
-                {/* Leadership Section */}
-                <div className="mb-24">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-primary-dark dark:text-white mb-4">Founded by Visionaries</h2>
-                        <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                            Excellence in real estate through innovation and transparency.
-                        </p>
-                    </div>
-
-                    <div className="grid gap-12 sm:grid-cols-2 max-w-5xl mx-auto">
-                        {LEADERSHIP_TEAM.map((member, index) => (
-                            <div key={index} className="flex flex-col items-center text-center space-y-4">
-                                <div className="relative w-64 h-80 overflow-hidden rounded-2xl shadow-xl mb-4 group aspect-4/5">
-                                    <Image
-                                        src={member.image}
-                                        alt={member.name}
-                                        fill
-                                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                    />
-                                    <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent"></div>
-                                    <div className="absolute bottom-4 left-0 w-full px-4 text-white">
-                                        <h3 className="text-xl font-bold">{member.name}</h3>
-                                        <p className="text-accent text-sm font-medium">{member.role}</p>
-                                    </div>
+                        <FadeIn direction="right">
+                            <div className="space-y-8 pr-1.5">
+                                <div className="inline-flex items-center gap-2 px-4 py-2 bg-brand-orange/10 rounded-full text-brand-orange text-xs font-bold uppercase tracking-widest">
+                                    <Award size={16} /> Since 2024
                                 </div>
-                                <p className="text-gray-600 dark:text-gray-400 leading-relaxed max-w-sm">
-                                    {member.description}
+                                <h2 className="text-3xl md:text-5xl font-bold text-brand-navy dark:text-white leading-tight">
+                                    Your Premier Partner in  <span className="text-brand-orange underline underline-offset-8 decoration-4">Real Estate Solutions</span>.
+                                </h2>
+                                <p className="text-gray-600 dark:text-gray-300 text-base md:text-lg leading-relaxed text-justify">
+                                    Welcome to {SITE_NAME}. We are dedicated to providing end-to-end real estate services. Our goal is to exceed your expectations by connecting individuals with their dream properties and building lasting relationships.
+                                </p>
+                                <p className="text-gray-600 dark:text-gray-300 text-base md:text-lg leading-relaxed">
+                                    As your premier partner in real estate solutions, we deliver comprehensive, tailored services to meet your unique needs. Together, our founders lead with a vision of innovation, transparency, and excellence.
+                                </p>
+
+                                <div className="grid grid-cols-2 gap-8 pt-8">
+                                    {SITE_STATS.slice(1, 3).map((stat, i) => (
+                                        <div key={i}>
+                                            <p className="text-4xl font-black text-brand-orange mb-1">{stat.value}</p>
+                                            <p className="text-xs font-bold text-gray-500 uppercase tracking-[0.2em]">{stat.label}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </FadeIn>
+                    </div>
+                </div>
+            </section>
+
+            {/* Founders Section */}
+            <section className="py-32 bg-brand-navy text-white relative overflow-hidden">
+                {/* Modern background decorations */}
+                <div className="absolute top-0 left-0 w-full h-full z-0 pointer-events-none overflow-hidden">
+                    <div className="absolute top-1/4 -right-20 w-[600px] h-[600px] bg-brand-orange/5 rounded-full blur-[120px]" />
+                    <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] bg-white/5 rounded-full blur-[100px]" />
+                </div>
+
+                <div className="container mx-auto px-4 md:px-6 relative z-10">
+                    <div className="max-w-3xl mx-auto text-center mb-20">
+                        <FadeIn direction="down">
+                            <span className="text-brand-orange font-bold tracking-[0.4em] text-xs uppercase bg-brand-orange/10 px-4 py-2 rounded-full mb-6 inline-block">The Leadership Team</span>
+                            <h2 className="text-4xl md:text-6xl font-bold mt-4 leading-tight">Visionaries Behind <br /> <span className="text-brand-orange">MarrkFeet Realty</span></h2>
+                            <p className="text-gray-400 mt-6 text-lg">Leading with transparency, innovation, and a commitment to excellence in the Mumbai real estate landscape.</p>
+                        </FadeIn>
+                    </div>
+
+                    <div className="grid gap-8 lg:grid-cols-2 max-w-6xl mx-auto">
+                        {LEADERSHIP_TEAM.map((member, index) => (
+                            <FadeIn key={index} delay={index * 0.2} direction="up">
+                                <div className="group relative overflow-hidden rounded-[2.5rem] bg-linear-to-b from-white/10 to-white/5 border border-white/10 hover:border-brand-orange/50 transition-all duration-500 shadow-2xl">
+                                    <div className="flex flex-col md:flex-row h-full">
+                                        {/* Image Section - Fixed size/aspect */}
+                                        <div className="relative w-full md:w-[240px] h-[280px] md:h-auto shrink-0 overflow-hidden">
+                                            <Image
+                                                src={member.image}
+                                                alt={member.name}
+                                                fill
+                                                className="object-contain group-hover:scale-105 transition-transform duration-1000"
+                                                sizes="(max-width: 768px) 100vw, 240px"
+                                                priority={index === 0}
+                                            />
+                                            {/* Gradient overlay on image */}
+                                            <div className="absolute inset-0 bg-linear-to-t from-brand-navy via-transparent to-transparent opacity-60 md:hidden" />
+                                        </div>
+
+                                        {/* Content Section */}
+                                        <div className="flex-1 p-6 md:p-10 flex flex-col justify-center">
+                                            <div className="mb-4 md:mb-6">
+                                                <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 group-hover:text-brand-orange transition-colors duration-300">
+                                                    {member.name}
+                                                </h3>
+                                                <div className="flex items-center gap-3">
+                                                    <div className="h-0.5 w-6 bg-brand-orange" />
+                                                    <p className="text-brand-orange font-black uppercase tracking-[0.2em] text-[10px]">
+                                                        {member.role}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <p className="text-gray-300 text-sm leading-relaxed mb-6 md:mb-8 italic font-medium opacity-80 group-hover:opacity-100 transition-opacity">
+                                                &quot;{member.description}&quot;
+                                            </p>
+
+                                            <div className="flex gap-4 justify-center md:justify-start">
+                                                <button className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-orange hover:text-white hover:border-brand-orange transition-all duration-300 group/icon" aria-label={`Contact ${member.name}`}>
+                                                    <Mail size={16} className="group-hover/icon:scale-110 transition-transform" />
+                                                </button>
+                                                <button className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-orange hover:text-white hover:border-brand-orange transition-all duration-300 group/icon" aria-label={`${member.name} LinkedIn`}>
+                                                    <Users size={16} className="group-hover/icon:scale-110 transition-transform" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Decorative reflection element */}
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rotate-45 translate-x-16 -translate-y-16 pointer-events-none group-hover:translate-x-12 transition-transform duration-700" />
+                                </div>
+                            </FadeIn>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Core Values */}
+            <section className="py-24 bg-white dark:bg-brand-navy/10">
+                <div className="container mx-auto px-4 md:px-6">
+                    <div className="grid gap-8 md:grid-cols-3">
+                        <FadeIn delay={0.1}>
+                            <div className="p-10 rounded-[3rem] bg-brand-navy/5 dark:bg-white/5 border border-gray-100 dark:border-white/10 hover:shadow-xl transition-all group h-full">
+                                <div className="w-14 h-14 bg-brand-navy/10 dark:bg-white/10 rounded-2xl flex items-center justify-center text-brand-navy dark:text-white mb-8 group-hover:bg-brand-orange group-hover:text-white transition-all">
+                                    <Target size={28} />
+                                </div>
+                                <h3 className="text-2xl font-bold text-brand-navy dark:text-white mb-4">Our Mission</h3>
+                                <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-sm">
+                                    To revolutionize the real estate landscape in Mumbai by bringing cinematic quality to property viewing and uncompromising transparency to every deal.
                                 </p>
                             </div>
-                        ))}
-                    </div>
-                </div>
+                        </FadeIn>
 
-                {/* Team Structure */}
-                <div className="mb-24 bg-gray-50 dark:bg-neutral-900/50 p-12 rounded-3xl border border-gray-100 dark:border-white/5">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-primary-dark dark:text-white mb-4">Our Comprehensive Team Structure</h2>
-                        <p className="text-gray-600 dark:text-gray-300">Dedicated professionals at every step of your journey.</p>
-                    </div>
-
-                    <div className="grid gap-8 md:grid-cols-3">
-                        <div className="bg-white dark:bg-black p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-white/10 text-center">
-                            <h3 className="text-xl font-bold text-accent mb-6 flex items-center justify-center gap-2">
-                                <TrendingUp className="h-5 w-5" /> Sourcing Team
-                            </h3>
-                            <ul className="space-y-3">
-                                {TEAM_STRUCTURE.sourcing.map((member, i) => (
-                                    <li key={i} className="text-lg text-gray-700 dark:text-gray-300 font-medium">{member.name}</li>
-                                ))}
-                            </ul>
-                        </div>
-                        <div className="bg-white dark:bg-black p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-white/10 text-center">
-                            <h3 className="text-xl font-bold text-accent mb-6 flex items-center justify-center gap-2">
-                                <Handshake className="h-5 w-5" /> Closing Team
-                            </h3>
-                            <ul className="space-y-3">
-                                {TEAM_STRUCTURE.closing.map((member, i) => (
-                                    <li key={i} className="text-lg text-gray-700 dark:text-gray-300 font-medium">{member.name}</li>
-                                ))}
-                            </ul>
-                        </div>
-                        <div className="bg-white dark:bg-black p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-white/10 text-center">
-                            <h3 className="text-xl font-bold text-accent mb-6 flex items-center justify-center gap-2">
-                                <Video className="h-5 w-5" /> Video Editing Team
-                            </h3>
-                            <ul className="space-y-3">
-                                {TEAM_STRUCTURE.videoEditing.map((member, i) => (
-                                    <li key={i} className="text-lg text-gray-700 dark:text-gray-300 font-medium">{member.name}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Services Section */}
-                <div className="mb-24">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-primary-dark dark:text-white mb-4">Our End-to-End Real Estate Solutions</h2>
-                        <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">A comprehensive suite of services to meet all your real estate needs.</p>
-                    </div>
-
-                    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {SERVICES.map((service, index) => (
-                            <div key={index} className="bg-white dark:bg-neutral-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-white/10 hover:shadow-md hover:border-accent/30 transition-all group">
-                                <div className="w-12 h-12 bg-accent/10 rounded-xl text-accent flex items-center justify-center mb-6 group-hover:bg-accent group-hover:text-white transition-colors">
-                                    {index === 0 && <Search className="h-6 w-6" />}
-                                    {index === 1 && <TrendingUp className="h-6 w-6" />}
-                                    {index === 2 && <Video className="h-6 w-6" />}
-                                    {index === 3 && <Handshake className="h-6 w-6" />}
-                                    {index === 4 && <Users className="h-6 w-6" />}
-                                    {index === 5 && <FileText className="h-6 w-6" />}
-                                    {index === 6 && <ShieldCheck className="h-6 w-6" />}
+                        <FadeIn delay={0.2}>
+                            <div className="p-10 rounded-[3rem] bg-brand-navy/5 dark:bg-white/5 border border-gray-100 dark:border-white/10 hover:shadow-xl transition-all group h-full">
+                                <div className="w-14 h-14 bg-brand-navy/10 dark:bg-white/10 rounded-2xl flex items-center justify-center text-brand-navy dark:text-white mb-8 group-hover:bg-brand-orange group-hover:text-white transition-all">
+                                    <Users size={32} />
                                 </div>
-                                <h3 className="text-xl font-bold text-primary-dark dark:text-white mb-3 leading-tight">{service.title}</h3>
-                                <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">{service.description}</p>
+                                <h3 className="text-2xl font-bold text-brand-navy dark:text-white mb-4">Our Community</h3>
+                                <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-sm">
+                                    Building a trusted ecosystem for buyers, sellers, and developers where everyone wins through honest advice and market-driven insights.
+                                </p>
                             </div>
-                        ))}
+                        </FadeIn>
+
+                        <FadeIn delay={0.3}>
+                            <div className="p-10 rounded-[3rem] bg-brand-navy/5 dark:bg-white/5 border border-gray-100 dark:border-white/10 hover:shadow-xl transition-all group h-full">
+                                <div className="w-14 h-14 bg-brand-navy/10 dark:bg-white/10 rounded-2xl flex items-center justify-center text-brand-navy dark:text-white mb-8 group-hover:bg-brand-orange group-hover:text-white transition-all">
+                                    <Shield size={28} />
+                                </div>
+                                <h3 className="text-2xl font-bold text-brand-navy dark:text-white mb-4">Our Integrity</h3>
+                                <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-sm">
+                                    RERA compliance isn&apos;t just a rule for us; it&apos;s our foundation. We ensure every property we list meets the highest standards of legality and trust.
+                                </p>
+                            </div>
+                        </FadeIn>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
     );
 }

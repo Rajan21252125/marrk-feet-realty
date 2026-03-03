@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+      {
+        protocol: "https",
         hostname: "res.cloudinary.com",
       },
       {
@@ -48,7 +52,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://images.unsplash.com https://res.cloudinary.com https://i.pravatar.cc https://encrypted-tbn0.gstatic.com; font-src 'self' data:; connect-src 'self' https://res.cloudinary.com;",
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://images.unsplash.com https://res.cloudinary.com https://i.pravatar.cc https://encrypted-tbn0.gstatic.com https://*.google.com https://*.googleapis.com; font-src 'self' data:; connect-src 'self' https://res.cloudinary.com; frame-src 'self' https://www.google.com https://maps.google.com;",
           },
         ],
       },

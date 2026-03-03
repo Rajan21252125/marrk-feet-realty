@@ -101,9 +101,14 @@ export function Contact() {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-xl mb-1 text-primary-dark dark:text-white">Email Us</h3>
-                                    <p className="text-gray-500 dark:text-gray-400">
-                                        {CONTACT_INFO.email}
-                                    </p>
+                                    <div className="space-y-1">
+                                        <p className="text-gray-500 dark:text-gray-400 break-all text-sm font-bold">
+                                            {CONTACT_INFO.email}
+                                        </p>
+                                        <p className="text-gray-500 dark:text-gray-400 break-all text-xs">
+                                            {CONTACT_INFO.supportEmail}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -111,7 +116,7 @@ export function Contact() {
 
                     <div className="bg-white dark:bg-neutral-900/80 backdrop-blur-sm p-8 md:p-10 rounded-3xl border border-gray-200 dark:border-white/10 shadow-xl">
                         <h3 className="text-2xl font-bold mb-6 text-primary-dark dark:text-white">Send us a message</h3>
-                        <form className="space-y-6" onSubmit={handleSubmit}>
+                        <form className="space-y-6" onSubmit={handleSubmit} aria-label="Contact form">
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label htmlFor="firstName" className="text-sm font-medium text-gray-700 dark:text-gray-300">First name</label>
@@ -174,9 +179,10 @@ export function Contact() {
                             <Button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-primary hover:bg-primary/90 dark:bg-accent dark:hover:bg-accent/90 text-white h-12 text-lg font-medium shadow-lg shadow-primary-dark/25 dark:shadow-accent/25 disabled:opacity-70 disabled:cursor-not-allowed"
+                                aria-label={loading ? "Sending message..." : "Send Message"}
+                                className="w-full bg-brand-orange hover:bg-brand-orange/90 dark:bg-accent dark:hover:bg-accent/90 text-white h-12 text-lg font-medium shadow-lg shadow-primary-dark/25 dark:shadow-accent/25 disabled:opacity-70 disabled:cursor-not-allowed"
                             >
-                                {loading ? 'Sending...' : 'Send Message'} {!loading && <Send size={18} className="ml-2" />}
+                                {loading ? 'Sending...' : 'Send Message'} {!loading && <Send size={18} className="ml-2" aria-hidden="true" />}
                             </Button>
                         </form>
                     </div>

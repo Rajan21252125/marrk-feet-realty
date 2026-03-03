@@ -11,16 +11,39 @@ export async function GET(req: Request) {
     try {
         await dbConnect();
         const { searchParams } = new URL(req.url);
-        const query: Record<string, any> = {};
+        const query: Record<string, any> = { isActive: true };
 
         const title = searchParams.get('title');
         const location = searchParams.get('location');
         const type = searchParams.get('type');
+        const listingType = searchParams.get('listingType');
+        const bhkType = searchParams.get('bhkType');
+        const minPrice = searchParams.get('minPrice');
+        const maxPrice = searchParams.get('maxPrice');
         const ids = searchParams.get('ids');
 
         if (title) query.title = { $regex: title, $options: 'i' };
         if (location) query.location = { $regex: location, $options: 'i' };
-        if (type && type !== 'All Types') query.propertyType = type;
+
+        // listingType can be 'Sale' or 'Rent'
+        if (listingType && listingType !== 'All') {
+            query.listingType = listingType;
+        }
+
+        if (type && type !== 'All' && type !== 'Any Type') {
+            query.propertyType = type;
+        }
+
+        if (bhkType && bhkType !== 'Any') {
+            query.bhkType = bhkType;
+        }
+
+        if (minPrice || maxPrice) {
+            query.price = {};
+            if (minPrice) query.price.$gte = Number(minPrice);
+            if (maxPrice) query.price.$lte = Number(maxPrice);
+        }
+
         if (ids) {
             const idArray = ids.split(',').filter(id => id.trim() !== '');
             if (idArray.length > 0) {

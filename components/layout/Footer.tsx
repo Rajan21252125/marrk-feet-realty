@@ -1,125 +1,162 @@
 'use client'
 
-
 import Link from "next/link";
+import { Facebook, Twitter, Instagram, Linkedin, Youtube, Mail, Phone, MapPin } from "lucide-react";
 import Image from "next/image";
-import { Facebook, Twitter, Instagram, Linkedin, Send } from "lucide-react";
 import { SITE_NAME, SOCIAL_LINKS, CONTACT_INFO } from "@/lib/constants";
-import { useState } from "react";
-import { toast } from "react-hot-toast";
-import { Button } from "@/components/ui/Button";
 
 export function Footer() {
-    const [email, setEmail] = useState("");
-    const [loading, setLoading] = useState(false);
-
-    const handleSubscribe = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!email) return;
-
-        setLoading(true);
-        try {
-            const response = await fetch('/api/newsletter', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                toast.success(data.message);
-                setEmail("");
-            } else {
-                toast.error(data.error || "Failed to subscribe");
-            }
-        } catch (error) {
-            toast.error("An error occurred. Please try again later.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const socials = [
-        { icon: Facebook, href: SOCIAL_LINKS.facebook },
-        { icon: Twitter, href: SOCIAL_LINKS.twitter },
-        { icon: Instagram, href: SOCIAL_LINKS.instagram },
-        { icon: Linkedin, href: SOCIAL_LINKS.linkedin },
-    ];
-
-    const footerNav = [
-        { title: "Properties", links: [{ label: "All Properties", href: "/properties" }, { label: "Featured", href: "/properties" }, { label: "Sell Property", href: "/contact" }] },
-        { title: "Company", links: [{ label: "About Us", href: "/about" }, { label: "Our Team", href: "/about#team" }, { label: "Contact", href: "/contact" }] },
-        { title: "Support", links: [{ label: "Help Center", href: "/contact" }, { label: "Terms", href: "/terms" }, { label: "Privacy", href: "/privacy" }] }
-    ];
-
     return (
-        <footer className="w-full border-t border-border bg-gray-50 dark:bg-black text-gray-600 dark:text-gray-400">
-            <div className="container mx-auto px-4 py-16 md:px-6">
-                <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-                    <div className="space-y-6">
-                        <span className="text-2xl font-bold tracking-tight text-primary-dark dark:text-white">{SITE_NAME}</span>
-                        <p className="text-sm leading-relaxed max-w-xs">
-                            The definitive destination for premium property across the globe. We connect exceptional people with exceptional homes.
-                        </p>
-                        <div className="flex gap-4">
-                            {socials.map((social, i) => (
-                                <Link key={i} href={social.href} className="bg-white dark:bg-neutral-900 p-2 rounded-full border border-gray-200 dark:border-neutral-800 hover:text-accent hover:border-accent transition-all">
-                                    <social.icon size={18} />
+        <footer className="w-full bg-brand-navy text-gray-300 py-20 border-t border-white/5 relative overflow-hidden">
+            {/* Decorative background gradient */}
+            <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-brand-orange/50 to-transparent opacity-30" />
+
+            <div className="container mx-auto px-4 md:px-6 relative z-10">
+                <div className="grid gap-16 md:grid-cols-2 lg:grid-cols-4">
+                    {/* Brand Section */}
+                    <div className="space-y-8">
+                        <Link href="/" className="flex items-center gap-3 group" aria-label="Go to home page">
+                            <Image
+                                src="/logo.png"
+                                alt="MarkFeet Realty Logo"
+                                width={48}
+                                height={48}
+                                className="object-contain transition-transform group-hover:scale-110"
+                            />
+                            <div className="flex flex-col">
+                                <span className="text-2xl font-black tracking-tighter text-white leading-none">
+                                    MarkFeet
+                                </span>
+                                <span className="text-[10px] font-black tracking-[0.4em] uppercase text-brand-orange-text">
+                                    Realty
+                                </span>
+                            </div>
+                        </Link>
+                        <div className="space-y-4">
+                            <p className="text-sm leading-relaxed text-gray-400 font-medium">
+                                Your premium real estate partner in Mumbai. Delivering excellence in every square foot. <br />
+                                <span className="inline-block mt-4 text-xs font-bold text-brand-orange-text uppercase tracking-widest bg-brand-orange/5 px-3 py-1 rounded-full border border-brand-orange/10">
+                                    RERA Approved: {CONTACT_INFO.rera}
+                                </span>
+                            </p>
+                        </div>
+                        <div className="flex gap-3">
+                            {[
+                                { icon: Instagram, href: SOCIAL_LINKS.instagram, label: "Instagram" },
+                                { icon: Facebook, href: SOCIAL_LINKS.facebook, label: "Facebook" },
+                                { icon: Linkedin, href: SOCIAL_LINKS.linkedin, label: "LinkedIn" },
+                                { icon: Youtube, href: SOCIAL_LINKS.youtube, label: "YouTube" },
+                            ].map((social, i) => (
+                                <Link
+                                    key={i}
+                                    href={social.href}
+                                    target="_blank"
+                                    aria-label={`Follow us on ${social.label}`}
+                                    className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-orange hover:border-brand-orange text-white transition-all duration-300 group shadow-lg"
+                                >
+                                    <social.icon size={20} className="group-hover:scale-110 transition-transform" />
                                 </Link>
                             ))}
                         </div>
                     </div>
 
-                    {footerNav.map((section, index) => (
-                        <div key={index}>
-                            <h3 className="mb-6 text-sm font-bold uppercase tracking-wider text-primary-dark dark:text-white">{section.title}</h3>
-                            <ul className="space-y-4 text-sm">
-                                {section.links.map((link, i) => (
-                                    <li key={i}><Link href={link.href} className="hover:text-accent transition-colors">{link.label}</Link></li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
-
+                    {/* Quick Links */}
                     <div>
-                        <h3 className="mb-6 text-sm font-bold uppercase tracking-wider text-primary-dark dark:text-white">Newsletter</h3>
-                        <p className="text-gray-600 dark:text-gray-400 text-sm">
-                            Subscribe to receive updates on new listings and real estate news.
-                        </p>
-                        <form onSubmit={handleSubscribe} className="space-y-3">
-                            <div className="relative">
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="your@email.com"
-                                    required
-                                    className="w-full bg-gray-100 dark:bg-neutral-900 border-none rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-accent outline-hidden"
-                                />
-                                <Button
-                                    type="submit"
-                                    disabled={loading}
-                                    className="absolute right-1 top-1 bottom-1 px-4 rounded-lg bg-accent hover:bg-accent/90 text-white min-w-[80px]"
-                                >
-                                    {loading ? "..." : <Send className="h-4 w-4" />}
-                                </Button>
-                            </div>
-                        </form>
+                        <h3 className="mb-8 text-xs font-black uppercase tracking-[0.3em] text-white flex items-center gap-3">
+                            Quick Links
+                            <div className="w-8 h-px bg-brand-orange" />
+                        </h3>
+                        <ul className="space-y-4 text-sm font-bold">
+                            {[
+                                { label: "Home", href: "/" },
+                                { label: "Properties", href: "/properties" },
+                                { label: "About Us", href: "/about" },
+                                { label: "Services", href: "/services" },
+                                { label: "Contact", href: "/contact" },
+                            ].map((link, i) => (
+                                <li key={i}>
+                                    <Link href={link.href} className="text-gray-400 hover:text-brand-orange transition-all duration-300 flex items-center gap-2 group">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-brand-orange opacity-0 group-hover:opacity-100 transition-all scale-0 group-hover:scale-100" />
+                                        {link.label}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Services */}
+                    <div>
+                        <h3 className="mb-8 text-xs font-black uppercase tracking-[0.3em] text-white flex items-center gap-3">
+                            Services
+                            <div className="w-8 h-px bg-brand-orange" />
+                        </h3>
+                        <ul className="space-y-4 text-sm font-bold">
+                            {[
+                                "Property Buying",
+                                "Property Selling",
+                                "Rental Services",
+                                "Home Loans",
+                                "Legal Assistance",
+                                "Vastu Consultation"
+                            ].map((service, i) => (
+                                <li key={i}>
+                                    <span className="text-gray-400 hover:text-brand-orange transition-all duration-300 flex items-center gap-2 group cursor-pointer">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-brand-orange opacity-0 group-hover:opacity-100 transition-all scale-0 group-hover:scale-100" />
+                                        {service}
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Contact Us */}
+                    <div className="space-y-8">
+                        <h3 className="text-xs font-black uppercase tracking-[0.3em] text-white flex items-center gap-3">
+                            Contact Info
+                            <div className="w-8 h-px bg-brand-orange" />
+                        </h3>
+                        <ul className="space-y-6 text-sm font-bold">
+                            <li className="flex items-start gap-4 group">
+                                <div className="w-10 h-10 rounded-xl bg-brand-orange/10 flex items-center justify-center text-brand-orange shrink-0 group-hover:bg-brand-orange group-hover:text-white transition-all">
+                                    <Phone size={18} />
+                                </div>
+                                <a href={`tel:${CONTACT_INFO.phone}`} className="text-gray-400 hover:text-brand-orange transition-colors pt-2">
+                                    +91 {CONTACT_INFO.phone}
+                                </a>
+                            </li>
+                            <li className="flex items-start gap-4 group">
+                                <div className="w-10 h-10 rounded-xl bg-brand-orange/10 flex items-center justify-center text-brand-orange shrink-0 group-hover:bg-brand-orange group-hover:text-white transition-all">
+                                    <Mail size={18} />
+                                </div>
+                                <div className="space-y-1 pt-2">
+                                    <a href={`mailto:${CONTACT_INFO.email}`} className="text-gray-400 hover:text-brand-orange transition-colors block break-all">
+                                        {CONTACT_INFO.email}
+                                    </a>
+                                    <a href={`mailto:${CONTACT_INFO.supportEmail}`} className="text-gray-500 hover:text-brand-orange transition-colors block break-all text-[11px]">
+                                        {CONTACT_INFO.supportEmail}
+                                    </a>
+                                </div>
+                            </li>
+                            <li className="flex items-start gap-4 group">
+                                <div className="w-10 h-10 rounded-xl bg-brand-orange/10 flex items-center justify-center text-brand-orange shrink-0 group-hover:bg-brand-orange group-hover:text-white transition-all">
+                                    <MapPin size={18} />
+                                </div>
+                                <span className="text-gray-400 pt-2 leading-relaxed">
+                                    Mira Road East, Mumbai,<br /> Maharashtra 401107
+                                </span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
-                <div className="mt-16 border-t border-gray-200 dark:border-neutral-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div className="flex flex-col items-center md:items-start gap-1">
-                        <p className="text-center text-xs">
-                            © {new Date().getFullYear()} {SITE_NAME}. All rights reserved.
+                <div className="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
+                        © {new Date().getFullYear()} MarkFeet Realty. All rights reserved.
+                    </p>
+                    <div className="flex items-center gap-8">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-orange bg-brand-orange/5 px-4 py-2 rounded-full border border-brand-orange/10">
+                            Maharera: {CONTACT_INFO.rera}
                         </p>
-                        <p className="text-xs font-semibold text-accent">RERA: {CONTACT_INFO.rera}</p>
-                    </div>
-                    <div className="flex gap-6 text-xs">
-                        <Link href="/privacy" className="hover:text-accent">Privacy Policy</Link>
-                        <Link href="/terms" className="hover:text-accent">Terms of Service</Link>
-                        <Link href="/contact" className="hover:text-accent">Sitemap</Link>
                     </div>
                 </div>
             </div>
