@@ -5,6 +5,7 @@ import Property from '@/models/Property';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sanitize } from '@/lib/sanitization';
+import { escapeRegex } from '@/lib/utils';
 
 export async function GET(req: Request) {
     logger.info(`GET /api/properties - Fetching properties`);
@@ -22,8 +23,8 @@ export async function GET(req: Request) {
         const maxPrice = searchParams.get('maxPrice');
         const ids = searchParams.get('ids');
 
-        if (title) query.title = { $regex: title, $options: 'i' };
-        if (location) query.location = { $regex: location, $options: 'i' };
+        if (title) query.title = { $regex: escapeRegex(title), $options: 'i' };
+        if (location) query.location = { $regex: escapeRegex(location), $options: 'i' };
 
         // listingType can be 'Sale' or 'Rent'
         if (listingType && listingType !== 'All') {
@@ -39,16 +40,45 @@ export async function GET(req: Request) {
         }
 
         if (minPrice || maxPrice) {
-            query.price = {};
-            if (minPrice) query.price.$gte = Number(minPrice);
-            if (maxPrice) query.price.$lte = Number(maxPrice);
+            const min = minPrice ? Number(minPrice) : 0;
+            const max = maxPrice ? Number(maxPrice) : Infinity;
+
+            if (!Number.isFinite(min) || !Number.isFinite(max)) {
+                return NextResponse.json({ error: 'Price parameters must be valid numbers' }, { status: 400 });
+            }
+
+            if (min > max) {
+                return NextResponse.json({ error: 'Minimum price cannot be greater than maximum price' }, { status: 400 });
+            }
+
+            if (listingType && listingType !== 'All') {
+                query.price = { $gte: min, $lte: max };
+            } else {
+                // If status is 'All' (no listingType provided), apply listing-specific logic
+                // to prevent high 'Buy' budgets (e.g. 50 Lac+) from filtering out all Rent properties.
+                // If the min price is high (> 500,000), we treat it as a Scale filter but don't 
+                // apply it to Rent category, unless max is also small.
+                query.$or = [
+                    { listingType: 'Sale', price: { $gte: min, $lte: max } },
+                    {
+                        listingType: 'Rent',
+                        // For rentals, only apply the filter if it's within a reasonable rental range (0-500k)
+                        // otherwise match all rentals if the filter is clearly for Sale properties.
+                        price: min > 500000 ? { $gte: 0 } : { $gte: min, $lte: max }
+                    }
+                ];
+            }
         }
 
         if (ids) {
-            const idArray = ids.split(',').filter(id => id.trim() !== '');
-            if (idArray.length > 0) {
-                query._id = { $in: idArray };
+            const idArray = ids
+                .split(',')
+                .map(id => id.trim())
+                .filter(id => /^[a-f\d]{24}$/i.test(id));
+            if (idArray.length === 0) {
+                return NextResponse.json({ error: 'Invalid ids parameter' }, { status: 400 });
             }
+            query._id = { $in: idArray };
         }
 
         const properties = await Property.find(query).sort({ createdAt: -1 });
@@ -73,7 +103,7 @@ export async function POST(req: Request) {
         await dbConnect();
         const body = await req.json();
         const sanitizedBody = sanitize(body);
-        logger.info(`POST /api/properties - Payload: ${JSON.stringify(sanitizedBody)}`);
+        logger.info(`POST /api/properties - Payload received`);
 
         const property = await Property.create(sanitizedBody);
         logger.info(`POST /api/properties - Property created: ${property._id}`);

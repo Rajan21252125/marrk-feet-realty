@@ -13,12 +13,21 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const body = await req.json();
-        const { paramsToSign } = body;
+        const body = await req.json().catch(() => null);
+        const paramsToSign = body?.paramsToSign;
+        if (!paramsToSign || typeof paramsToSign !== 'object' || Array.isArray(paramsToSign)) {
+            return NextResponse.json({ error: 'Invalid paramsToSign payload' }, { status: 400 });
+        }
+
+        const apiSecret = process.env.CLOUDINARY_API_SECRET;
+        if (!apiSecret) {
+            logger.error('POST /api/admin/sign-cloudinary - CLOUDINARY_API_SECRET is not set');
+            return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 });
+        }
 
         const signature = cloudinary.utils.api_sign_request(
             paramsToSign,
-            process.env.CLOUDINARY_API_SECRET as string
+            apiSecret
         );
 
         logger.info('POST /api/admin/sign-cloudinary - Signature generated');

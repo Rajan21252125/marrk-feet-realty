@@ -35,7 +35,6 @@ export function PropertyCard({
     tags
 }: PropertyCardProps) {
     const [isLiked, setIsLiked] = useState(false);
-    const [mounted, setMounted] = useState(false);
 
     const getSavedProperties = (): string[] => {
         try {
@@ -48,7 +47,6 @@ export function PropertyCard({
     };
 
     useEffect(() => {
-        setMounted(true);
         const savedProperties = getSavedProperties();
         if (savedProperties.includes(id)) {
             setIsLiked(true);
@@ -76,8 +74,6 @@ export function PropertyCard({
 
         window.dispatchEvent(new Event('favoritesUpdated'));
     };
-
-    if (!mounted) return null;
 
     return (
         <div className="group bg-white dark:bg-brand-navy/40 rounded-[2rem] overflow-hidden border border-gray-100 dark:border-white/5 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] hover:-translate-y-2 relative">
@@ -153,7 +149,7 @@ export function PropertyCard({
             <button
                 onClick={toggleLike}
                 aria-label={isLiked ? "Remove from favorites" : "Add to favorites"}
-                className={`absolute top-4 right-4 p-2.5 rounded-full backdrop-blur-md border border-white/20 transition-all duration-300 hover:scale-110 active:scale-95 z-20 ${isLiked ? 'bg-brand-orange text-white border-brand-orange' : 'bg-black/20 text-white hover:bg-black/40'
+                className={`absolute top-4 right-4 p-2.5 rounded-full backdrop-blur-md border border-white/20 transition-all duration-300 hover:scale-110 active:scale-95 z-20 ${isLiked ? 'bg-brand-orange text-white border-brand-orange' : 'bg-brand-navy/20 text-white hover:bg-brand-navy/40'
                     }`}
             >
                 <Heart size={20} className={isLiked ? 'fill-current' : ''} aria-hidden="true" />

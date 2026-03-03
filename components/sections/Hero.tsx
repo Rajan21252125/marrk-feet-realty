@@ -90,6 +90,7 @@ export function Hero() {
                             icon={MapPin}
                             className="bg-white dark:bg-white border-gray-200 dark:border-gray-200 text-brand-navy dark:text-brand-navy py-4 h-full"
                             containerClassName="h-[64px]"
+                            aria-label="Location"
                             value={location}
                             onChange={(e) => setLocation(e.target.value)}
                         >
@@ -102,6 +103,7 @@ export function Hero() {
                             icon={IndianRupee}
                             className="bg-white dark:bg-white border-gray-200 dark:border-gray-200 text-brand-navy dark:text-brand-navy py-4 h-full"
                             containerClassName="h-[64px]"
+                            aria-label="Budget"
                             value={budget}
                             onChange={(e) => setBudget(e.target.value)}
                         >
@@ -111,7 +113,7 @@ export function Hero() {
                                     <option value="50">Under 50 Lac</option>
                                     <option value="100">50 Lac - 1 Cr</option>
                                     <option value="200">1 Cr - 2 Cr</option>
-                                    <option value="500">2 Cr+</option>
+                                    <option value="500">2 Cr - 5 Cr</option>
                                 </>
                             ) : (
                                 <>

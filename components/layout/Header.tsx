@@ -25,15 +25,56 @@ export function Header() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // Lock body scroll when mobile menu is open
+    // Lock body scroll and handle focus/keyboard when mobile menu is open
     useEffect(() => {
+        const toggleBtn = document.getElementById('mobile-menu-toggle');
+        const menu = document.getElementById('mobile-menu');
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                setIsMobileMenuOpen(false);
+            }
+
+            if (e.key === 'Tab' && menu) {
+                const focusableElements = menu.querySelectorAll<HTMLElement>(
+                    'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])'
+                );
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+
+                if (e.shiftKey) {
+                    if (document.activeElement === firstElement) {
+                        e.preventDefault();
+                        lastElement.focus();
+                    }
+                } else {
+                    if (document.activeElement === lastElement) {
+                        e.preventDefault();
+                        firstElement.focus();
+                    }
+                }
+            }
+        };
+
         if (isMobileMenuOpen) {
             document.body.style.overflow = 'hidden';
+            window.addEventListener('keydown', handleKeyDown);
+
+            // Move focus to first element in menu
+            if (menu) {
+                const firstElement = menu.querySelector<HTMLElement>('a, button');
+                firstElement?.focus();
+            }
         } else {
             document.body.style.overflow = 'unset';
+            window.removeEventListener('keydown', handleKeyDown);
+            // Restore focus to toggle button
+            toggleBtn?.focus();
         }
+
         return () => {
             document.body.style.overflow = 'unset';
+            window.removeEventListener('keydown', handleKeyDown);
         };
     }, [isMobileMenuOpen]);
 

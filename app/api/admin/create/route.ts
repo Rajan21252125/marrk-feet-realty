@@ -3,19 +3,27 @@ import dbConnect from '@/lib/db';
 import Admin from '@/models/Admin';
 import logger from '@/lib/logger';
 import bcrypt from 'bcrypt';
+import { sendVerificationEmail } from '@/lib/email';
 
-const MASTER_KEY = process.env.ADMIN_CREATION_SECRET || 'dev_secret_key';
+const MASTER_KEY = process.env.ADMIN_CREATION_SECRET;
+
+const maskEmail = (email: string) => {
+    const [local, domain] = email.split('@');
+    if (!local || !domain) return '***';
+    return `${local.slice(0, 2)}***@${domain}`;
+};
 
 export async function POST(req: Request) {
     try {
         const { masterKey, email, password } = await req.json();
 
-        if (masterKey !== MASTER_KEY) {
+        if (!masterKey || masterKey !== MASTER_KEY) {
             logger.warn(`Admin creation failed: Invalid master key`);
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         if (!email || !password) {
+            logger.warn(`Admin creation failed: Missing email or password`);
             return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
         }
 
@@ -23,6 +31,7 @@ export async function POST(req: Request) {
 
         const existingAdmin = await Admin.findOne({ email });
         if (existingAdmin) {
+            logger.warn(`Admin creation failed: Admin already exists`);
             return NextResponse.json({ error: 'Admin already exists' }, { status: 409 });
         }
 
@@ -37,11 +46,10 @@ export async function POST(req: Request) {
             verificationCode,
         });
 
-        logger.info(`New admin created: ${email} (Unverified)`);
+        logger.info(`New admin created: ${maskEmail(email)} (Unverified)`);
 
-        // In production, send email with code here.
-        // For dev, return the code in response or log it.
-        logger.info(`Verification Code for ${email}: ${verificationCode}`);
+        // Send verification email (professional template used)
+        await sendVerificationEmail(email, verificationCode);
 
         return NextResponse.json({
             message: 'Admin created successfully. Please verify your account.',

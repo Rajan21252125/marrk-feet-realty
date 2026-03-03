@@ -5,6 +5,13 @@ import dbConnect from '@/lib/db';
 import Admin from '@/models/Admin';
 import { authOptions } from '@/lib/auth';
 import logger from '@/lib/logger';
+import { sendVerificationEmail } from '@/lib/email';
+
+const maskEmail = (email: string) => {
+    const [local, domain] = email.split('@');
+    if (!local || !domain) return '***';
+    return `${local.slice(0, 2)}***@${domain}`;
+};
 
 export async function POST() {
     try {
@@ -28,11 +35,10 @@ export async function POST() {
         admin.verificationCode = verificationCode;
         await admin.save();
 
-        logger.info(`Verification code issued for ${admin.email}`);
+        logger.info(`Verification code issued for ${maskEmail(admin.email)}`);
 
-        // In a real production app, we would send an email here.
-        // For now, we return it in dev or just assume user sees logs.
-        // The user specifically asked to "send the verification code and store to db"
+        // Send verification email (professional template used)
+        await sendVerificationEmail(admin.email, verificationCode);
 
         return NextResponse.json({
             message: 'Verification code sent',

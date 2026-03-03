@@ -41,6 +41,7 @@ const RENT_BUDGETS = [
     { label: '1 Lakh+', min: 100, max: 1000 },
 ];
 
+
 export function PropertyFilter({ onFilterChange, initialStatus, initialLocation, initialBudgetLabel }: PropertyFilterProps) {
     const [status, setStatus] = useState<'All' | 'Buy' | 'Rent'>(initialStatus || 'All');
     const [location, setLocation] = useState(initialLocation || "");
@@ -48,18 +49,18 @@ export function PropertyFilter({ onFilterChange, initialStatus, initialLocation,
     const [bhkType, setBhkType] = useState("");
     const [budgetRange, setBudgetRange] = useState(initialBudgetLabel || "");
 
-    // Sync state if props change (only if they are different from current state)
+    // Sync state if props change
     useEffect(() => {
-        if (initialStatus && initialStatus !== status) setStatus(initialStatus);
-    }, [initialStatus]);
+        if (initialStatus !== undefined && initialStatus !== status) setStatus(initialStatus);
+    }, [initialStatus, status]);
 
     useEffect(() => {
-        if (initialLocation && initialLocation !== location) setLocation(initialLocation);
-    }, [initialLocation]);
+        if (initialLocation !== undefined && initialLocation !== location) setLocation(initialLocation);
+    }, [initialLocation, location]);
 
     useEffect(() => {
-        if (initialBudgetLabel && initialBudgetLabel !== budgetRange) setBudgetRange(initialBudgetLabel);
-    }, [initialBudgetLabel]);
+        if (initialBudgetLabel !== undefined && initialBudgetLabel !== budgetRange) setBudgetRange(initialBudgetLabel);
+    }, [initialBudgetLabel, budgetRange]);
 
     useEffect(() => {
         let min = 0;
@@ -82,6 +83,12 @@ export function PropertyFilter({ onFilterChange, initialStatus, initialLocation,
             budget: [min, max],
         });
     }, [status, location, propertyType, bhkType, budgetRange, onFilterChange]);
+
+    const supportsBhk = propertyType === "" || propertyType === "Apartment" || propertyType === "Villa" || propertyType === "House";
+
+    useEffect(() => {
+        if (!supportsBhk && bhkType) setBhkType("");
+    }, [supportsBhk, bhkType]);
 
     return (
         <div className="bg-white dark:bg-brand-navy p-6 rounded-[2rem] border border-gray-100 dark:border-white/5 shadow-sm">
@@ -129,7 +136,7 @@ export function PropertyFilter({ onFilterChange, initialStatus, initialLocation,
                 </Select>
 
                 {/* BHK Type Select */}
-                {(propertyType === "" || propertyType === "Apartment" || propertyType === "Villa" || propertyType === "House") && (
+                {supportsBhk && (
                     <div className="animate-in fade-in slide-in-from-top-2 duration-300">
                         <OptionGroup
                             label="Configurations (BHK)"

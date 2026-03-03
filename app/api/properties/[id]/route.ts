@@ -103,7 +103,13 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
             await deleteFromCloudinary(imagesToDelete);
         }
 
-        const property = await Property.findByIdAndUpdate(id, sanitizedBody, { new: true });
+        logger.info(`PUT /api/properties/${id} - Data to update: ${JSON.stringify({ ...sanitizedBody, youtubeUrl: sanitizedBody.youtubeUrl })}`);
+
+        const property = await Property.findByIdAndUpdate(
+            id,
+            { $set: sanitizedBody },
+            { new: true, runValidators: true }
+        );
 
         logger.info(`PUT /api/properties/${id} - Updated`);
         return NextResponse.json(property);

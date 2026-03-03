@@ -21,7 +21,7 @@ export function FloatingActions() {
 
     const openWhatsApp = () => {
         const message = encodeURIComponent("Hello, I'm interested in Marrk Feet Realty properties.");
-        window.open(`https://wa.me/91${CONTACT_INFO.phone}?text=${message}`, '_blank');
+        window.open(`https://wa.me/91${CONTACT_INFO.phone}?text=${message}`, '_blank', 'noopener noreferrer');
     };
 
     return (

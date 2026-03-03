@@ -11,10 +11,15 @@ export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
 
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     ({ className, children, label, error, icon: Icon, containerClassName, ...props }, ref) => {
+        const generatedId = React.useId();
+        const selectId = props.id ?? generatedId;
         return (
             <div className={cn("w-full space-y-2", containerClassName)}>
                 {label && (
-                    <label className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest block ml-1 transition-colors group-focus-within:text-brand-orange">
+                    <label
+                        htmlFor={selectId}
+                        className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest block ml-1 transition-colors group-focus-within:text-brand-orange"
+                    >
                         {label}
                     </label>
                 )}
@@ -26,6 +31,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                     )}
                     <select
                         ref={ref}
+                        id={selectId}
                         className={cn(
                             "w-full appearance-none rounded-2xl border border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-brand-navy px-4 py-4 text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-brand-orange/10 focus:border-brand-orange/40 text-brand-navy dark:text-white cursor-pointer",
                             "form-select", // Adding a class for easier global styling if needed

@@ -33,13 +33,17 @@ export const LEADERSHIP_TEAM = [
         name: 'Ankit Rajput',
         role: 'Founder',
         description: 'With over a decade of experience in the Mumbai real estate market, Ankit leads the vision of Marrk Feet Realty with a focus on transparency and client-first solutions.',
-        image: '/founder.jpeg'
+        image: '/founder.jpeg',
+        email: 'ankit@marrkfeetrealty.in',
+        linkedinUrl: 'https://linkedin.com/in/ankitrajput'
     },
     {
         name: 'Amit Rajput',
         role: 'Co-Founder',
         description: 'Amit brings strategic operational excellence to the company, ensuring every property transaction is handled with meticulous care and professionalism.',
-        image: '/co-founder.jpeg'
+        image: '/co-founder.jpeg',
+        email: 'amit@marrkfeetrealty.in',
+        linkedinUrl: 'https://linkedin.com/in/amitrajput'
     },
 ];
 

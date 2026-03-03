@@ -51,6 +51,7 @@ export function Footer() {
                                     key={i}
                                     href={social.href}
                                     target="_blank"
+                                    rel="noopener noreferrer"
                                     aria-label={`Follow us on ${social.label}`}
                                     className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-orange hover:border-brand-orange text-white transition-all duration-300 group shadow-lg"
                                 >

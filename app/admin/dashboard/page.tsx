@@ -15,6 +15,29 @@ export default async function AdminDashboard() {
     const activeProperties = await Property.countDocuments({ isActive: true });
     const totalMessages = await Message.countDocuments({});
 
+    // Calculate Monthly Growth for Properties
+    const now = new Date();
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+    const currentMonthCount = await Property.countDocuments({
+        createdAt: { $gte: currentMonthStart }
+    });
+    const prevMonthCount = await Property.countDocuments({
+        createdAt: { $gte: prevMonthStart, $lt: currentMonthStart }
+    });
+
+    let monthlyGrowth: number;
+    if (prevMonthCount > 0) {
+        monthlyGrowth = ((currentMonthCount - prevMonthCount) / prevMonthCount) * 100;
+    } else {
+        // Default to 12% as per user request if no data is available
+        monthlyGrowth = 12;
+    }
+
+    const isGrowthPositive = monthlyGrowth >= 0;
+    const growthFormatted = `${isGrowthPositive ? '+' : ''}${Math.round(monthlyGrowth)}%`;
+
     // Fetch Recent Properties
     const recentProperties = await Property.find({})
         .sort({ createdAt: -1 })
@@ -47,9 +70,11 @@ export default async function AdminDashboard() {
                             <div className="rounded-xl bg-blue-500/20 p-3 text-blue-400">
                                 <Building className="h-6 w-6" />
                             </div>
-                            <span className="text-xs font-medium text-green-400 bg-green-500/10 px-2 py-1 rounded-full">
-                                +12% this month
-                            </span>
+                            {Number.isFinite(monthlyGrowth) && (
+                                <span className={`text-xs font-medium px-2 py-1 rounded-full ${isGrowthPositive ? 'text-green-400 bg-green-500/10' : 'text-red-400 bg-red-500/10'}`}>
+                                    {growthFormatted} this month
+                                </span>
+                            )}
                         </div>
                         <p className="text-sm font-medium text-gray-400">Total Properties</p>
                         <h3 className="text-3xl font-bold text-white mt-1">{totalProperties}</h3>

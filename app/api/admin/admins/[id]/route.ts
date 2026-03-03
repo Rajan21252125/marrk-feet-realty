@@ -13,7 +13,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
         }
 
         // Only super admin can delete other admins
-        if (session.user.email !== 'grajan408@gmail.com') {
+        if (session.user.email !== process.env.SUPER_ADMIN_EMAIL) {
             return NextResponse.json({ error: 'Only the super admin can delete admins.' }, { status: 403 });
         }
 

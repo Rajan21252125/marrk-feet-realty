@@ -118,10 +118,11 @@ export default function ContactPage() {
                                     <form onSubmit={handleSubmit} className="space-y-6">
                                         <div className="grid gap-6 md:grid-cols-2">
                                             <div className="space-y-2">
-                                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
+                                                <label htmlFor="contact-name" className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
                                                 <input
                                                     type="text"
                                                     name="name"
+                                                    id="contact-name"
                                                     value={formData.name}
                                                     onChange={handleChange}
                                                     className="w-full h-14 rounded-2xl border border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-6 focus:ring-2 focus:ring-brand-orange/20 focus:border-brand-orange outline-none transition-all font-medium text-brand-navy dark:text-white"
@@ -130,10 +131,11 @@ export default function ContactPage() {
                                                 />
                                             </div>
                                             <div className="space-y-2">
-                                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
+                                                <label htmlFor="contact-phone" className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
                                                 <input
                                                     type="tel"
                                                     name="phone"
+                                                    id="contact-phone"
                                                     value={formData.phone}
                                                     onChange={handleChange}
                                                     className="w-full h-14 rounded-2xl border border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-6 focus:ring-2 focus:ring-brand-orange/20 focus:border-brand-orange outline-none transition-all font-medium text-brand-navy dark:text-white"
@@ -143,10 +145,11 @@ export default function ContactPage() {
                                             </div>
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Email Address</label>
+                                            <label htmlFor="contact-email" className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Email Address</label>
                                             <input
                                                 type="email"
                                                 name="email"
+                                                id="contact-email"
                                                 value={formData.email}
                                                 onChange={handleChange}
                                                 className="w-full h-14 rounded-2xl border border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-6 focus:ring-2 focus:ring-brand-orange/20 focus:border-brand-orange outline-none transition-all font-medium text-brand-navy dark:text-white"
@@ -155,9 +158,10 @@ export default function ContactPage() {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Your Message</label>
+                                            <label htmlFor="contact-message" className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Your Message</label>
                                             <textarea
                                                 name="message"
+                                                id="contact-message"
                                                 value={formData.message}
                                                 onChange={handleChange}
                                                 className="w-full min-h-[160px] rounded-2xl border border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-6 focus:ring-2 focus:ring-brand-orange/20 focus:border-brand-orange outline-none transition-all font-medium text-brand-navy dark:text-white"
@@ -200,6 +204,7 @@ export default function ContactPage() {
 
                                     <div className="h-[400px] w-full rounded-[2.5rem] overflow-hidden border-8 border-white dark:border-white/5 shadow-2xl">
                                         <iframe
+                                            title="MarrkFeet Realty office location map"
                                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15065.98661605658!2d72.8441!3d19.2812!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7b06821814e51%3A0x64323d85fd7db926!2sShanti%20Park%2C%20Mira%20Road%2C%20Mira%20Bhayandar%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1707328492021!5m2!1sen!2sin"
                                             width="100%"
                                             height="100%"

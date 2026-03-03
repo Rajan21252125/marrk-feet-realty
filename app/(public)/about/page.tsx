@@ -135,12 +135,22 @@ export default function AboutPage() {
                                             </p>
 
                                             <div className="flex gap-4 justify-center md:justify-start">
-                                                <button className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-orange hover:text-white hover:border-brand-orange transition-all duration-300 group/icon" aria-label={`Contact ${member.name}`}>
+                                                <a
+                                                    href={`mailto:${member.email}`}
+                                                    className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-orange hover:text-white hover:border-brand-orange transition-all duration-300 group/icon"
+                                                    aria-label={`Email ${member.name}`}
+                                                >
                                                     <Mail size={16} className="group-hover/icon:scale-110 transition-transform" />
-                                                </button>
-                                                <button className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-orange hover:text-white hover:border-brand-orange transition-all duration-300 group/icon" aria-label={`${member.name} LinkedIn`}>
+                                                </a>
+                                                <a
+                                                    href={member.linkedinUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-orange hover:text-white hover:border-brand-orange transition-all duration-300 group/icon"
+                                                    aria-label={`${member.name} LinkedIn`}
+                                                >
                                                     <Users size={16} className="group-hover/icon:scale-110 transition-transform" />
-                                                </button>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>

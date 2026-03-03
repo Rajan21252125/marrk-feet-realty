@@ -28,6 +28,7 @@ const PropertiesContent: React.FC<PropertiesContentProps> = ({ initialProperties
     const [sortBy, setSortBy] = useState('newest');
     const itemsPerPage = 9;
     const isFirstMount = useRef(true);
+    const lastController = useRef<AbortController | null>(null);
 
     // Normalize Search Parameters from URL
     const typeParam = searchParams.get('type')?.toLowerCase();
@@ -63,6 +64,14 @@ const PropertiesContent: React.FC<PropertiesContentProps> = ({ initialProperties
     });
 
     const fetchProperties = useCallback(async (filters?: FilterState) => {
+        // Abort any ongoing request before starting a new one
+        if (lastController.current) {
+            lastController.current.abort();
+        }
+
+        const controller = new AbortController();
+        lastController.current = controller;
+
         try {
             setLoading(true);
             const params = new URLSearchParams();
@@ -88,7 +97,14 @@ const PropertiesContent: React.FC<PropertiesContentProps> = ({ initialProperties
                 }
             }
 
-            const res = await fetch(`/api/properties${params.toString() ? `?${params.toString()}` : ''}`);
+            const res = await fetch(`/api/properties${params.toString() ? `?${params.toString()}` : ''}`, {
+                signal: controller.signal
+            });
+
+            if (!res.ok) {
+                throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
+            }
+
             const data = await res.json();
             if (Array.isArray(data)) {
                 // API already filters isActive:true
@@ -96,10 +112,16 @@ const PropertiesContent: React.FC<PropertiesContentProps> = ({ initialProperties
                 setFilteredProperties(data);
             }
         } catch (error) {
+            if (error instanceof Error && error.name === 'AbortError') {
+                return; // Ignore intentional cancellation
+            }
             console.error("Failed to fetch properties", error);
             toast.error("Failed to load properties");
         } finally {
-            setLoading(false);
+            // Only clear loading if this was the latest request
+            if (lastController.current === controller) {
+                setLoading(false);
+            }
         }
     }, []);
 
@@ -112,6 +134,10 @@ const PropertiesContent: React.FC<PropertiesContentProps> = ({ initialProperties
 
         fetchProperties(lastFiltersRef.current);
     }, [initialProperties, fetchProperties]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, sortBy]);
 
     const handleFilterChange = useCallback((filters: FilterState) => {
         lastFiltersRef.current = filters;

@@ -255,7 +255,7 @@ export default function SettingsPage() {
                                             className="text-gray-500 hover:text-red-400 hover:bg-red-500/10 h-8 w-8 p-0 rounded-full"
                                             disabled={session?.user?.email === admin.email}
                                             // Only show/enable delete if current user is super admin
-                                            style={{ display: session?.user?.email === 'grajan408@gmail.com' ? 'inline-flex' : 'none' }}
+                                            style={{ display: session?.user?.email === process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL ? 'inline-flex' : 'none' }}
                                             onClick={() => {
                                                 if (confirm('Are you sure you want to delete this admin? This action cannot be undone.')) {
                                                     handleDeleteAdmin(admin._id);

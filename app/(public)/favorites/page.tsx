@@ -23,7 +23,10 @@ export default function FavoritesPage() {
             }
 
             // Using the existing API with IDs filter
-            const res = await fetch(`/api/properties?ids=${savedIds.join(',')}`);
+            const res = await fetch(`/api/properties?ids=${encodeURIComponent(savedIds.join(','))}`);
+            if (!res.ok) {
+                throw new Error(`Failed to fetch favorites: ${res.status}`);
+            }
             const data = await res.json();
 
             if (Array.isArray(data)) {
@@ -39,6 +42,11 @@ export default function FavoritesPage() {
 
     useEffect(() => {
         fetchLikedProperties();
+        const refresh = () => fetchLikedProperties();
+        window.addEventListener('favoritesUpdated', refresh);
+        return () => {
+            window.removeEventListener('favoritesUpdated', refresh);
+        };
     }, []);
 
     if (loading) {

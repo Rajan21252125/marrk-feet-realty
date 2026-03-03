@@ -5,6 +5,14 @@ import Admin from '@/models/Admin';
 import bcrypt from 'bcrypt';
 import logger from '@/lib/logger';
 
+
+
+const maskEmail = (email: string) => {
+    const [local, domain] = email.split('@');
+    if (!local || !domain) return '***';
+    return `${local.slice(0, 2)}***@${domain}`;
+};
+
 export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
@@ -29,7 +37,7 @@ export const authOptions: NextAuthOptions = {
                     const admin = await Admin.findOne({ email: credentials.email });
 
                     if (!admin) {
-                        logger.warn(`Login failed: Invalid email ${credentials.email}`);
+                        logger.warn(`Login failed: Invalid email ${maskEmail(credentials.email)}`);
                         throw new Error('Invalid credentials');
                     }
 
@@ -38,7 +46,7 @@ export const authOptions: NextAuthOptions = {
                     const now = new Date();
                     if (admin.lockoutUntil && admin.lockoutUntil instanceof Date && admin.lockoutUntil > now) {
                         const minutesLeft = Math.ceil((admin.lockoutUntil.getTime() - now.getTime()) / 60000);
-                        logger.warn(`Login blocked: Account locked for ${credentials.email}`);
+                        logger.warn(`Login blocked: Account locked for ${maskEmail(credentials.email)}`);
                         throw new Error(`Account locked. Try again in ${minutesLeft} minutes.`);
                     }
 
@@ -46,25 +54,23 @@ export const authOptions: NextAuthOptions = {
 
                     if (!isValid) {
                         // Increment failed attempts safely
-                        const currentAttempts = typeof admin.failedLoginAttempts === 'number' ? admin.failedLoginAttempts : 0;
-                        admin.failedLoginAttempts = currentAttempts + 1;
-
-                        // Lockout logic: 5 failed attempts = 15 minutes lockout
-                        if (admin.failedLoginAttempts >= 5) {
-                            admin.lockoutUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
-                            // Reset attempts logic: usually we keep the attempts count high or reset? 
-                            // If we don't reset, every subsequent failure locks again immediately.
-                            // If we reset, they get another 5 tries after lockout. 
-                            // Standard: Lockout expires, attempts reset implies they have another 5 tries.
-                            admin.failedLoginAttempts = 0;
-                        }
-
-                        await admin.save();
-                        logger.warn(`Login failed: Invalid password for ${credentials.email}. Attempts: ${admin.failedLoginAttempts}`);
-
-                        if (admin.lockoutUntil && admin.lockoutUntil > new Date()) {
+                        const updatedAdmin = await Admin.findByIdAndUpdate(
+                            admin._id,
+                            { $inc: { failedLoginAttempts: 1 } },
+                            { new: true }
+                        );
+                        const attempts = updatedAdmin?.failedLoginAttempts ?? 0;
+                        if (attempts >= 5) {
+                            await Admin.findByIdAndUpdate(admin._id, {
+                                $set: {
+                                    lockoutUntil: new Date(Date.now() + 15 * 60 * 1000),
+                                    failedLoginAttempts: 0,
+                                },
+                            });
                             throw new Error('Account locked due to too many failed attempts.');
                         }
+
+                        logger.warn(`Login failed: Invalid password. Attempts: ${attempts} for ${maskEmail(credentials.email)}`);
                         throw new Error('Invalid credentials');
                     }
 
@@ -78,7 +84,7 @@ export const authOptions: NextAuthOptions = {
 
                     await admin.save();
 
-                    logger.info(`Admin logged in: ${admin.email} (Session v${admin.sessionVersion})`);
+                    logger.info(`Admin logged in: ${maskEmail(admin.email)} (Session v${admin.sessionVersion})`);
 
                     return {
                         id: admin._id.toString(),
