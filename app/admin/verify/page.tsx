@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
@@ -15,6 +15,7 @@ export default function VerifyPage() {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [resending, setResending] = useState(false);
+    const hasAutoSent = useRef(false);
 
     const resendCode = useCallback(async (isAuto = false) => {
         try {
@@ -38,8 +39,9 @@ export default function VerifyPage() {
         if (status === 'authenticated') {
             if (user?.isVerified) {
                 router.push('/admin/dashboard');
-            } else {
-                // Auto-trigger code generation on mount if not verified
+            } else if (!hasAutoSent.current) {
+                // Auto-trigger code generation on mount if not verified (only once)
+                hasAutoSent.current = true;
                 resendCode(true);
             }
         }

@@ -157,3 +157,176 @@ export const getVerificationEmailHtml = (code: string) => {
 </body>
 </html>
 `};
+/**
+ * Generates a professional HTML template for admin inquiry notifications.
+ */
+export const getInquiryNotificationEmailHtml = (data: {
+    name: string;
+    email?: string;
+    phone?: string;
+    message: string;
+    propertyLink?: string;
+}) => {
+    const safeName = escapeHtml(data.name);
+    const safeEmail = data.email ? escapeHtml(data.email) : 'Not Provided';
+    const safePhone = data.phone ? escapeHtml(data.phone) : 'N/A';
+    const safeMessage = escapeHtml(data.message).replace(/\n/g, '<br>');
+
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Inquiry Received - ${SITE_NAME}</title>
+    <style>
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            line-height: 1.6; 
+            color: #1a1a1a; 
+            margin: 0; 
+            padding: 0;
+            background-color: #f8fafc;
+        }
+        .wrapper {
+            width: 100%;
+            table-layout: fixed;
+            background-color: #f8fafc;
+            padding-bottom: 40px;
+        }
+        .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background-color: #ffffff;
+            border-radius: 12px; 
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .header { 
+            background-color: #e97108; 
+            color: #ffffff; 
+            padding: 40px 20px; 
+            text-align: center; 
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            color: #ffffff;
+        }
+        .content { 
+            padding: 40px; 
+        }
+        .content h2 {
+            margin-top: 0;
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 24px;
+        }
+        .info-grid {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .info-row {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            width: 120px;
+            background-color: #f8fafc;
+            padding: 12px 16px;
+            font-weight: 600;
+            color: #64748b;
+            font-size: 14px;
+        }
+        .info-value {
+            flex: 1;
+            padding: 12px 16px;
+            color: #0f172a;
+            font-size: 14px;
+        }
+        .message-box {
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            padding: 20px;
+            color: #475569;
+            font-size: 15px;
+            line-height: 1.8;
+            border-left: 4px solid #e97108;
+            margin-bottom: 24px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #0f172a;
+            color: #ffffff !important;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .footer { 
+            background-color: #f1f5f9; 
+            padding: 32px; 
+            text-align: center; 
+            font-size: 12px; 
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div style="height: 40px;"></div>
+        <div class="container">
+            <div class="header">
+                <h1>NEW INQUIRY REGISTERED</h1>
+            </div>
+            <div class="content">
+                <h2>Hello Team,</h2>
+                <p style="color: #475569; margin-bottom: 24px;">A new lead has been generated through the ${SITE_NAME} website. Details are provided below:</p>
+                
+                <div class="info-grid">
+                    <div class="info-row">
+                        <div class="info-label">Full Name</div>
+                        <div class="info-value">${safeName}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Email</div>
+                        <div class="info-value">${safeEmail}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Phone</div>
+                        <div class="info-value">${safePhone}</div>
+                    </div>
+                </div>
+                
+                <h3 style="font-size: 16px; color: #0f172a; margin-bottom: 12px;">Inquiry / Message:</h3>
+                <div class="message-box">
+                    ${safeMessage}
+                </div>
+
+                ${data.propertyLink ? `
+                <div style="text-align: center; margin-top: 32px;">
+                    <p style="font-size: 14px; color: #64748b; margin-bottom: 16px;">Direct Link to Property:</p>
+                    <a href="${data.propertyLink}" class="btn">View Property Details</a>
+                </div>
+                ` : ''}
+            </div>
+            <div class="footer">
+                <p><strong>${SITE_NAME} - Automated Lead Notification</strong></p>
+                <p>&copy; ${new Date().getFullYear()} MarrkFeet Realty. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+`};

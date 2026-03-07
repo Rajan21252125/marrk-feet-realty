@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { CONTACT_INFO } from "@/lib/constants";
+import { SuccessModal } from "@/components/ui/SuccessModal";
 
 export function Contact() {
     const [loading, setLoading] = useState(false);
@@ -15,6 +16,7 @@ export function Contact() {
         phone: '',
         message: ''
     });
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -39,7 +41,7 @@ export function Contact() {
             });
 
             if (res.ok) {
-                toast.success('Message sent successfully!');
+                setIsSuccessModalOpen(true);
                 setFormData({ firstName: '', lastName: '', email: '', phone: '', message: '' });
             } else {
                 toast.error('Failed to send message.');
@@ -142,7 +144,7 @@ export function Contact() {
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                                <label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">Email (Optional)</label>
                                 <input
                                     id="email"
                                     type="email"
@@ -150,7 +152,6 @@ export function Contact() {
                                     onChange={handleChange}
                                     className="flex h-12 w-full rounded-lg border border-gray-300 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-4 py-2 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
                                     placeholder="john@example.com"
-                                    required
                                 />
                             </div>
                             <div className="space-y-2">
@@ -188,6 +189,11 @@ export function Contact() {
                     </div>
                 </div>
             </div>
+
+            <SuccessModal
+                isOpen={isSuccessModalOpen}
+                onClose={() => setIsSuccessModalOpen(false)}
+            />
         </section>
     );
 }

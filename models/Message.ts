@@ -13,7 +13,7 @@ export interface IMessage extends Document {
 const MessageSchema: Schema = new Schema(
     {
         name: { type: String, required: true },
-        email: { type: String, required: true },
+        email: { type: String, required: false },
         phone: { type: String, required: false },
         message: { type: String, required: true },
         propertyId: { type: Schema.Types.ObjectId, ref: 'Property' },

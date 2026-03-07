@@ -6,6 +6,7 @@ import { authOptions } from '@/lib/auth';
 import logger from '@/lib/logger';
 import { rateLimit } from '@/lib/rate-limit';
 import { sanitize } from '@/lib/sanitization';
+import { sendInquiryNotification } from '@/lib/email';
 
 export async function GET() {
     logger.info(`GET /api/messages - Fetching messages`);
@@ -43,23 +44,38 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { name, email, phone, message } = sanitize(body);
+        const { name, email, phone, message, propertyId } = sanitize(body);
 
-        if (!name || !email || !message) {
-            logger.warn(`POST /api/messages - Validation failed: Missing required fields`);
-            return NextResponse.json({ error: 'Name, email, and message are required' }, { status: 400 });
+        if (!name || !message) {
+            logger.warn(`POST /api/messages - Validation failed: Missing required fields (name or message)`);
+            return NextResponse.json({ error: 'Name and message are required' }, { status: 400 });
         }
 
         await dbConnect();
 
         const newMessage = await Message.create({
             name,
-            email,
-            phone: phone || '', // Handle optional phone
+            email: email || '', // Optional email
+            phone: phone || '', // Optional phone
             message,
+            propertyId: propertyId || undefined
         });
 
         logger.info(`POST /api/messages - Message created successfully: ${newMessage._id}`);
+
+        // Trigger email notification (don't block the response)
+        try {
+            sendInquiryNotification({
+                name: newMessage.name,
+                email: newMessage.email,
+                phone: newMessage.phone,
+                message: newMessage.message,
+                propertyId: newMessage.propertyId ? newMessage.propertyId.toString() : undefined
+            }).catch(err => logger.error(`[EMAIL ERROR] Email notification failed: ${err}`));
+        } catch (emailError) {
+            logger.error(`[EMAIL ERROR] Sync error in notification call: ${emailError}`);
+        }
+
         return NextResponse.json({ message: 'Message sent successfully', data: newMessage }, { status: 201 });
     } catch (error) {
         logger.error(`POST /api/messages - Error: ${error}`);

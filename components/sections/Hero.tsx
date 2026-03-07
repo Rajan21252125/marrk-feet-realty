@@ -33,8 +33,8 @@ export function Hero() {
             {/* Background Image with Navy Overlay */}
             <div className="absolute inset-0 z-0">
                 <div
-                    className="h-full w-full bg-cover bg-center"
-                    style={{ backgroundImage: "url('https://images.unsplash.com/photo-1570160813944-24711bc93902?q=80&w=2070&auto=format&fit=crop')" }}
+                    className="h-full w-full bg-cover bg-center transition-transform duration-1000 md:scale-105"
+                    style={{ backgroundImage: "url('/hero-background.jpeg')" }}
                 />
                 <div className="absolute inset-0 bg-brand-navy/80 backdrop-blur-[2px]"></div>
             </div>

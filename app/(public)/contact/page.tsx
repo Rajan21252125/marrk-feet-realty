@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { CONTACT_INFO } from '@/lib/constants';
 import { FadeIn } from '@/components/ui/FadeIn';
+import { SuccessModal } from '@/components/ui/SuccessModal';
 
 export default function ContactPage() {
     const [loading, setLoading] = useState(false);
@@ -17,6 +18,7 @@ export default function ContactPage() {
         message: '',
         subject: ''
     });
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,7 +41,7 @@ export default function ContactPage() {
             });
 
             if (res.ok) {
-                toast.success('Message sent successfully!');
+                setIsSuccessModalOpen(true);
                 setFormData({ name: '', email: '', phone: '', message: '', subject: '' });
             } else {
                 toast.error('Failed to send message.');
@@ -145,7 +147,7 @@ export default function ContactPage() {
                                             </div>
                                         </div>
                                         <div className="space-y-2">
-                                            <label htmlFor="contact-email" className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Email Address</label>
+                                            <label htmlFor="contact-email" className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Email Address (Optional)</label>
                                             <input
                                                 type="email"
                                                 name="email"
@@ -154,7 +156,6 @@ export default function ContactPage() {
                                                 onChange={handleChange}
                                                 className="w-full h-14 rounded-2xl border border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-6 focus:ring-2 focus:ring-brand-orange/20 focus:border-brand-orange outline-none transition-all font-medium text-brand-navy dark:text-white"
                                                 placeholder="example@gmail.com"
-                                                required
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -220,6 +221,11 @@ export default function ContactPage() {
                     </div>
                 </div>
             </section>
+
+            <SuccessModal
+                isOpen={isSuccessModalOpen}
+                onClose={() => setIsSuccessModalOpen(false)}
+            />
         </div>
     );
 }

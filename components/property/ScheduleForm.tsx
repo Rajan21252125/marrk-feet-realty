@@ -5,7 +5,7 @@ import { Calendar, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
-export function ScheduleForm({ propertyTitle }: { propertyTitle: string }) {
+export function ScheduleForm({ propertyTitle, propertyId }: { propertyTitle: string, propertyId?: string }) {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [formData, setFormData] = useState({
@@ -34,6 +34,7 @@ export function ScheduleForm({ propertyTitle }: { propertyTitle: string }) {
                     email: formData.email,
                     phone: formData.phone,
                     message: `Inquiry for property: ${propertyTitle}. Preferred Date: ${formData.date}`,
+                    propertyId: propertyId
                 }),
             });
 
@@ -81,7 +82,7 @@ export function ScheduleForm({ propertyTitle }: { propertyTitle: string }) {
                 />
             </div>
             <div>
-                <label htmlFor="email" className="mb-2 block text-sm font-medium">Email</label>
+                <label htmlFor="email" className="mb-2 block text-sm font-medium">Email (Optional)</label>
                 <input
                     id="email"
                     type="email"
@@ -89,7 +90,6 @@ export function ScheduleForm({ propertyTitle }: { propertyTitle: string }) {
                     onChange={handleChange}
                     className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus:border-transparent"
                     placeholder="john@example.com"
-                    required
                 />
             </div>
             <div>
@@ -100,7 +100,7 @@ export function ScheduleForm({ propertyTitle }: { propertyTitle: string }) {
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus:border-transparent"
-                    placeholder="+1 (555) 000-0000"
+                    placeholder="+91 00000 00000"
                     required
                 />
             </div>

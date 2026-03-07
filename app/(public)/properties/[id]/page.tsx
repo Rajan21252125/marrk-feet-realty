@@ -109,10 +109,10 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 animate-fade-in text-balance">
                         <div className="max-w-3xl flex-1">
                             <div className="flex flex-wrap items-center gap-2 mb-4">
-                                <span className="bg-brand-orange text-white px-3 py-1 rounded-full text-[7px] font-black uppercase tracking-[0.2em] shadow-lg shadow-brand-orange/20 leading-none">
+                                <span className="bg-brand-orange text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-brand-orange/20 leading-none">
                                     {property.listingType || 'For Sale'}
                                 </span>
-                                <span className="bg-white/10 backdrop-blur-md text-white px-3 py-1 rounded-full text-[7px] font-black uppercase tracking-[0.2em] border border-white/10 leading-none">
+                                <span className="bg-white/10 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border border-white/10 leading-none">
                                     {property.propertyType}
                                 </span>
                             </div>
@@ -129,10 +129,10 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
 
                         <div className="lg:text-right bg-white/5 backdrop-blur-2xl p-4 md:p-6 rounded-[1.5rem] border border-white/5 shadow-xl min-w-[240px]">
                             <p className="text-[8px] font-black text-white/20 uppercase tracking-[0.4em] mb-1">Value</p>
-                            <p className="text-2xl md:text-4xl font-black text-brand-orange mb-2 tracking-tighter">
+                            <p className="text-3xl md:text-4xl font-black text-brand-orange mb-2 tracking-tighter">
                                 {formatPrice(property.price)}
                             </p>
-                            <div className="inline-flex items-center gap-1.5 text-gray-500 font-bold text-[9px] bg-black/10 px-3 py-1.5 rounded-full border border-white/5">
+                            <div className="inline-flex items-center gap-1.5 text-gray-500 font-bold text-[12px] bg-black/10 px-3 py-1.5 rounded-full border border-white/5">
                                 <Sparkles size={10} className="text-brand-orange" />
                                 Est. EMI: {formatPrice(property.price * EMI_MONTHLY_RATE)}*
                             </div>
@@ -246,7 +246,10 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                                     <p className="text-gray-500 text-[11px] md:text-xs font-medium mb-6 md:mb-8 leading-relaxed">Submit your details and we will reach out with an exclusive site visit plan.</p>
 
                                     <div className="space-y-4">
-                                        <ScheduleForm propertyTitle={property.title} />
+                                        <ScheduleForm
+                                            propertyTitle={property.title}
+                                            propertyId={property._id}
+                                        />
                                     </div>
 
                                     {/* Founder Branding Section */}
