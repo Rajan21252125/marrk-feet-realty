@@ -269,7 +269,7 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                 area: parseInt(formData.area.toString()),
                 images: finalImages,
                 tags: formData.tags,
-                isActive: true, // Ensuring it's active
+                isActive: initialData?.isActive ?? true,
                 furnishType: formData.furnishType,
                 coveredParking: formData.coveredParking ? parseInt(formData.coveredParking.toString()) : 0,
                 openParking: formData.openParking ? parseInt(formData.openParking.toString()) : 0,

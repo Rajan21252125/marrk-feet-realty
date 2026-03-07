@@ -1,9 +1,23 @@
 import { SITE_NAME, CONTACT_INFO, SOCIAL_LINKS } from './constants';
 
+
+const escapeHtml = (value: string) =>
+    value.replace(/[&<>"']/g, (ch) => {
+        const map: Record<string, string> = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+        };
+        return map[ch] ?? ch;
+    });
 /**
  * Generates a professional HTML template for verification emails.
  */
-export const getVerificationEmailHtml = (code: string) => `
+export const getVerificationEmailHtml = (code: string) => {
+    const safeCode = escapeHtml(code);
+    return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,7 +45,7 @@ export const getVerificationEmailHtml = (code: string) => `
             background-color: #ffffff;
             border-radius: 12px; 
             overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2-4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
         .header { 
             background-color: #0f172a; 
@@ -120,7 +134,7 @@ export const getVerificationEmailHtml = (code: string) => `
                 <p>A sign-in or administrative action was requested. Please use the following one-time verification code to secure your access.</p>
                 
                 <div class="code-container">
-                    <div class="code-box">${code}</div>
+                    <div class="code-box">${safeCode}</div>
                 </div>
                 
                 <p>This code is valid for professional use within the <span class="highlight">Admin Dashboard</span>. If you did not initiate this request, please secure your account immediately.</p>
@@ -142,4 +156,4 @@ export const getVerificationEmailHtml = (code: string) => `
     </div>
 </body>
 </html>
-`;
+`};

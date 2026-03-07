@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -37,6 +37,10 @@ export default function PropertyCarousel({ images, title, youtubeUrl, hero = fal
     const prevSlide = () => {
         setCurrentIndex((prev) => (prev === 0 ? totalSlides - 1 : prev - 1));
     };
+
+    useEffect(() => {
+        setCurrentIndex((prev) => Math.min(prev, totalSlides - 1));
+    }, [totalSlides]);
 
     return (
         <div className={`relative w-full overflow-hidden ${hero ? 'h-full bg-brand-navy' : 'mb-12 group'}`}>
@@ -96,15 +100,18 @@ export default function PropertyCarousel({ images, title, youtubeUrl, hero = fal
                     <>
                         <div className={`absolute inset-y-0 left-6 flex items-center z-20 ${hero ? 'opacity-40 group-hover:opacity-100 transition-opacity' : ''}`}>
                             <Button
+                                aria-label="Previous slide"
                                 variant="outline"
                                 onClick={(e) => { e.stopPropagation(); prevSlide(); }}
-                                className="bg-white/10 backdrop-blur-2xl hover:bg-brand-orange text-white border-white/20 rounded-full h-16 w-16 p-0 opacity-0 group-hover:opacity-100 transition-all duration-500 hover:scale-110 shadow-2xl"
+                                className={`bg-white/10 backdrop-blur-2xl hover:bg-brand-orange text-white border-white/20 rounded-full h-16 w-16 p-0 transition-all duration-500 hover:scale-110 shadow-2xl ${hero ? 'opacity-40 hover:opacity-100' : 'opacity-0 group-hover:opacity-100'
+                                    }`}
                             >
                                 <ChevronLeft size={36} />
                             </Button>
                         </div>
                         <div className={`absolute inset-y-0 right-6 flex items-center z-20 ${hero ? 'opacity-40 group-hover:opacity-100 transition-opacity' : ''}`}>
                             <Button
+                                aria-label="Next slide"
                                 variant="outline"
                                 onClick={(e) => { e.stopPropagation(); nextSlide(); }}
                                 className="bg-white/10 backdrop-blur-2xl hover:bg-brand-orange text-white border-white/20 rounded-full h-16 w-16 p-0 opacity-0 group-hover:opacity-100 transition-all duration-500 hover:scale-110 shadow-2xl"
@@ -119,6 +126,8 @@ export default function PropertyCarousel({ images, title, youtubeUrl, hero = fal
                             {Array.from({ length: totalSlides }).map((_, index) => (
                                 <button
                                     key={index}
+                                    aria-label={`Go to slide ${index + 1}`}
+                                    aria-current={index === currentIndex}
                                     onClick={(e) => { e.stopPropagation(); setCurrentIndex(index); }}
                                     className={`h-1.5 rounded-full transition-all duration-500 ${index === currentIndex ? 'w-10 bg-brand-orange shadow-[0_0_15px_rgba(255,107,0,0.5)]' : 'w-2 bg-white/30 hover:bg-white/60'
                                         }`}

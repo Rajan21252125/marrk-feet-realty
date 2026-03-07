@@ -24,9 +24,17 @@ export async function sendVerificationEmail(email: string, code: string) {
 
     // Check environment
     const isDev = process.env.NODE_ENV === 'development';
+    const smtpConfigured =
+        Boolean(process.env.SMTP_HOST) &&
+        Boolean(process.env.SMTP_USER) &&
+        Boolean(process.env.SMTP_PASS);
 
     try {
         if (!isDev) {
+            if (!smtpConfigured) {
+                logger.error('[EMAIL ERROR] SMTP configuration is incomplete');
+                throw new Error('Email service is not configured');
+            }
             // PRODUCTION LOGIC: Actual delivery
             await transporter.sendMail({
                 from: process.env.SMTP_FROM || `"${SITE_NAME}" <${CONTACT_INFO.email}>`,
@@ -35,27 +43,27 @@ export async function sendVerificationEmail(email: string, code: string) {
                 html: html,
             });
 
-            logger.info(`[EMAIL] Verification email sent to ${email}`);
+            logger.info('[EMAIL] Verification email sent');
             return;
         }
 
         // DEVELOPMENT LOGIC:
         // In dev, we log the code and optionally try to send (if credentials are provided)
-        logger.info(`[DEV EMAIL] Verification code for ${email}: ${code}`);
+        logger.info('[DEV EMAIL] Verification code generated');
 
         // If developer has configured SMTP in dev, send it too
-        if (process.env.SMTP_USER && process.env.SMTP_PASS && process.env.SMTP_USER !== 'your-email@gmail.com') {
+        if (smtpConfigured) {
             await transporter.sendMail({
                 from: process.env.SMTP_FROM || `"${SITE_NAME} Admin" <${CONTACT_INFO.email}>`,
                 to: email,
                 subject: `[DEV] Verify Your Identity - ${SITE_NAME}`,
                 html: html,
             });
-            logger.info(`[DEV EMAIL] Actual email also sent to ${email}`);
+            logger.info('[DEV EMAIL] Actual email also sent');
         }
     } catch (error) {
-        logger.error(`[EMAIL ERROR] Failed to send verification email to ${email}: ${error}`);
+        logger.error('[EMAIL ERROR] Failed to send verification email');
         // In dev, we don't throw so the app doesn't crash if SMTP is unconfigured
-        if (!isDev) throw error;
+        if (!isDev || smtpConfigured) throw error;
     }
 }

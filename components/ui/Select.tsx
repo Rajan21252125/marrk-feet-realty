@@ -14,7 +14,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         const generatedId = React.useId();
         const selectId = props.id ?? generatedId;
         return (
-            <div className={cn("w-full space-y-2", containerClassName)}>
+            <div className={cn("w-full space-y-2 group", containerClassName)}>
                 {label && (
                     <label
                         htmlFor={selectId}
@@ -23,7 +23,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                         {label}
                     </label>
                 )}
-                <div className="relative group">
+                <div className="relative">
                     {Icon && (
                         <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
                             <Icon className="text-brand-orange transition-colors group-focus-within:text-brand-orange" size={18} />

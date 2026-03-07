@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { IPropertyData } from '@/models/Property';
 import { PropertyCard } from '@/components/ui/PropertyCard';
 import { FadeIn } from '@/components/ui/FadeIn';
@@ -12,8 +12,12 @@ import { toast } from 'react-hot-toast';
 export default function FavoritesPage() {
     const [properties, setProperties] = useState<IPropertyData[]>([]);
     const [loading, setLoading] = useState(true);
+    const requestRef = useRef<AbortController | null>(null);
 
     const fetchLikedProperties = async () => {
+        requestRef.current?.abort();
+        const controller = new AbortController();
+        requestRef.current = controller;
         try {
             const savedIds = JSON.parse(localStorage.getItem('savedProperties') || '[]');
             if (savedIds.length === 0) {
@@ -23,20 +27,22 @@ export default function FavoritesPage() {
             }
 
             // Using the existing API with IDs filter
-            const res = await fetch(`/api/properties?ids=${encodeURIComponent(savedIds.join(','))}`);
+            const res = await fetch(`/api/properties?ids=${encodeURIComponent(savedIds.join(','))}`, {
+                signal: controller.signal
+            });
             if (!res.ok) {
                 throw new Error(`Failed to fetch favorites: ${res.status}`);
             }
             const data = await res.json();
 
-            if (Array.isArray(data)) {
+            if (!controller.signal.aborted && Array.isArray(data)) {
                 setProperties(data);
             }
         } catch (error) {
-            console.error("Failed to fetch favorites", error);
-            // toast.error("Failed to load your favorites");
+            if ((error as DOMException)?.name === 'AbortError') return;
+            toast.error("Failed to load your favorites");
         } finally {
-            setLoading(false);
+            if (!controller.signal.aborted) setLoading(false);
         }
     };
 
@@ -46,6 +52,7 @@ export default function FavoritesPage() {
         window.addEventListener('favoritesUpdated', refresh);
         return () => {
             window.removeEventListener('favoritesUpdated', refresh);
+            requestRef.current?.abort();
         };
     }, []);
 

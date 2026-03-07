@@ -44,7 +44,8 @@ const RENT_BUDGETS = [
 
 export function PropertyFilter({ onFilterChange, initialStatus, initialLocation, initialBudgetLabel }: PropertyFilterProps) {
     const [status, setStatus] = useState<'All' | 'Buy' | 'Rent'>(initialStatus || 'All');
-    const [location, setLocation] = useState(initialLocation || "");
+    const normalizeLocation = (v?: string) => (v || '').trim().toLowerCase();
+    const [location, setLocation] = useState(normalizeLocation(initialLocation));
     const [propertyType, setPropertyType] = useState("");
     const [bhkType, setBhkType] = useState("");
     const [budgetRange, setBudgetRange] = useState(initialBudgetLabel || "");
@@ -55,7 +56,8 @@ export function PropertyFilter({ onFilterChange, initialStatus, initialLocation,
     }, [initialStatus, status]);
 
     useEffect(() => {
-        if (initialLocation !== undefined && initialLocation !== location) setLocation(initialLocation);
+        const normalized = normalizeLocation(initialLocation);
+        if (initialLocation !== undefined && normalized !== location) setLocation(normalized);
     }, [initialLocation, location]);
 
     useEffect(() => {
@@ -77,7 +79,7 @@ export function PropertyFilter({ onFilterChange, initialStatus, initialLocation,
 
         onFilterChange({
             status,
-            location: location ? [location] : [],
+            location: location ? [normalizeLocation(location)] : [],
             propertyType,
             bhkType,
             budget: [min, max],

@@ -40,10 +40,12 @@ export async function GET(req: Request) {
         }
 
         if (minPrice || maxPrice) {
-            const min = minPrice ? Number(minPrice) : 0;
-            const max = maxPrice ? Number(maxPrice) : Infinity;
+            const hasMin = minPrice !== null;
+            const hasMax = maxPrice !== null;
+            const min = hasMin ? Number(minPrice) : 0;
+            const max = hasMax ? Number(maxPrice) : Number.MAX_SAFE_INTEGER;
 
-            if (!Number.isFinite(min) || !Number.isFinite(max)) {
+            if ((hasMin && !Number.isFinite(min)) || (hasMax && !Number.isFinite(max))) {
                 return NextResponse.json({ error: 'Price parameters must be valid numbers' }, { status: 400 });
             }
 
@@ -125,8 +127,14 @@ export async function PATCH(req: Request) {
         const data = await req.json();
         const { id, isActive } = data;
 
-        if (!id || isActive === undefined) {
+        if (!id) {
             return NextResponse.json({ error: 'Missing id or isActive status' }, { status: 400 });
+        }
+        if (!/^[a-f\d]{24}$/i.test(String(id))) {
+            return NextResponse.json({ error: 'Invalid property id' }, { status: 400 });
+        }
+        if (typeof isActive !== 'boolean') {
+            return NextResponse.json({ error: 'isActive must be boolean' }, { status: 400 });
         }
 
         await dbConnect();

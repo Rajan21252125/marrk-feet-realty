@@ -71,7 +71,11 @@ const PropertySchema: Schema = new Schema(
         possessionStatus: { type: String },
         listingType: { type: String, enum: ['Sale', 'Rent'], default: 'Sale' },
         status: { type: String, enum: ['Available', 'Sold'], default: 'Available' },
-        youtubeUrl: { type: String },
+        youtubeUrl: {
+            type: String,
+            trim: true,
+            match: [/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i, 'Invalid YouTube URL'],
+        },
     },
     { timestamps: true }
 );

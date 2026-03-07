@@ -47,10 +47,14 @@ export function PropertyCard({
     };
 
     useEffect(() => {
-        const savedProperties = getSavedProperties();
-        if (savedProperties.includes(id)) {
-            setIsLiked(true);
-        }
+        const syncLikedState = () => {
+            const savedProperties = getSavedProperties();
+            setIsLiked(savedProperties.includes(id));
+        };
+
+        syncLikedState();
+        window.addEventListener('favoritesUpdated', syncLikedState);
+        return () => window.removeEventListener('favoritesUpdated', syncLikedState);
     }, [id]);
 
     const toggleLike = (e: React.MouseEvent) => {
@@ -66,7 +70,7 @@ export function PropertyCard({
             setIsLiked(false);
             toast.success('Removed from favorites');
         } else {
-            updatedProperties = [...savedProperties, id];
+            updatedProperties = Array.from(new Set([...savedProperties, id]));
             localStorage.setItem('savedProperties', JSON.stringify(updatedProperties));
             setIsLiked(true);
             toast.success('Added to favorites');

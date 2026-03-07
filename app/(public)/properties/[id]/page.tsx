@@ -308,7 +308,7 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                                         beds={p.beds}
                                         baths={p.baths}
                                         area={p.area}
-                                        imageUrl={p.images[0]}
+                                        imageUrl={p.images?.[0] || 'https://images.unsplash.com/photo-1600596542815-e32c0ee3ad11'}
                                         category={p.propertyType}
                                         builder={p.builder}
                                         tags={p.tags}

@@ -121,7 +121,11 @@ export const authOptions: NextAuthOptions = {
                     const dbUser = await Admin.findOne({ email: token.email });
                     if (dbUser) {
                         // Enforce single session: if token version doesn't match DB version, invalidate.
-                        if (token.sessionVersion && dbUser.sessionVersion && token.sessionVersion !== dbUser.sessionVersion) {
+                        if (
+                            token.sessionVersion !== undefined &&
+                            dbUser.sessionVersion !== undefined &&
+                            token.sessionVersion !== dbUser.sessionVersion
+                        ) {
                             return { ...token, error: 'SessionInvalid' };
                         }
 

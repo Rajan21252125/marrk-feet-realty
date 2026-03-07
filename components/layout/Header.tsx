@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Menu, X, Heart, Phone, Moon, Sun } from "lucide-react";
@@ -15,6 +15,7 @@ export function Header() {
     const [mounted, setMounted] = useState(false);
     const { resolvedTheme, setTheme } = useTheme();
     const pathname = usePathname();
+    const wasMobileMenuOpen = useRef(false);
 
     useEffect(() => {
         setMounted(true);
@@ -68,9 +69,13 @@ export function Header() {
         } else {
             document.body.style.overflow = 'unset';
             window.removeEventListener('keydown', handleKeyDown);
-            // Restore focus to toggle button
-            toggleBtn?.focus();
+            // Restore focus only if menu was previously open
+            if (wasMobileMenuOpen.current) {
+                toggleBtn?.focus();
+            }
         }
+
+        wasMobileMenuOpen.current = isMobileMenuOpen;
 
         return () => {
             document.body.style.overflow = 'unset';

@@ -25,10 +25,13 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 });
         }
 
-        const signature = cloudinary.utils.api_sign_request(
-            paramsToSign,
-            apiSecret
-        );
+        const allowedKeys = new Set(['folder', 'timestamp', 'public_id']);
+        const entries = Object.entries(paramsToSign);
+        if (entries.some(([key]) => !allowedKeys.has(key))) {
+            return NextResponse.json({ error: 'Unsupported signing parameters' }, { status: 400 });
+        }
+        const safeParams = Object.fromEntries(entries);
+        const signature = cloudinary.utils.api_sign_request(safeParams, apiSecret);
 
         logger.info('POST /api/admin/sign-cloudinary - Signature generated');
         return NextResponse.json({ signature });

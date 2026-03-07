@@ -32,6 +32,10 @@ export default function EMICalculator({ propertyPrice }: EMICalculatorProps) {
         calculateEMI();
     }, [loanAmount, interestRate, tenure]);
 
+    useEffect(() => {
+        setLoanAmount(propertyPrice * 0.8);
+    }, [propertyPrice]);
+
     return (
         <div className="p-8 rounded-[2rem] bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 shadow-sm mb-12">
             <div className="flex items-center gap-3 mb-8">

@@ -4,6 +4,7 @@ import Admin from '@/models/Admin';
 import logger from '@/lib/logger';
 import bcrypt from 'bcrypt';
 import { sendVerificationEmail } from '@/lib/email';
+import crypto from 'node:crypto';
 
 const MASTER_KEY = process.env.ADMIN_CREATION_SECRET;
 
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
 
         const passwordHash = await bcrypt.hash(password, 10);
         // Generate a simple 6-digit code for verification
-        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const verificationCode = crypto.randomInt(100000, 1000000).toString();
 
         const newAdmin = await Admin.create({
             email,
@@ -48,11 +49,18 @@ export async function POST(req: Request) {
 
         logger.info(`New admin created: ${maskEmail(email)} (Unverified)`);
 
-        // Send verification email (professional template used)
-        await sendVerificationEmail(email, verificationCode);
+        let emailSent = true;
+        try {
+            await sendVerificationEmail(email, verificationCode);
+        } catch (emailError) {
+            emailSent = false;
+            logger.error(`Admin created but verification email failed for ${maskEmail(email)}: ${emailError}`);
+        }
 
         return NextResponse.json({
-            message: 'Admin created successfully. Please verify your account.',
+            message: emailSent
+                ? 'Admin created successfully. Please verify your account.'
+                : 'Admin created, but verification email could not be sent. Please retry resend verification.',
             verificationCode: process.env.NODE_ENV === 'development' ? verificationCode : undefined
         }, { status: 201 });
 

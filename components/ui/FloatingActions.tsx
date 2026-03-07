@@ -32,6 +32,8 @@ export function FloatingActions() {
                 className={`fixed bottom-4 md:bottom-8 left-4 md:left-8 z-50 w-10 md:w-12 h-10 md:h-12 bg-brand-navy dark:bg-black text-white rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:bg-brand-orange hover:scale-110 border border-white/10 ${showScrollTop ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-50'
                     }`}
                 aria-label="Back to Top"
+                aria-hidden={!showScrollTop}
+                tabIndex={showScrollTop ? 0 : -1}
             >
                 <ArrowUp size={20} className="md:w-6 md:h-6" />
             </button>

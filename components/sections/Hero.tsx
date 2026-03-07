@@ -21,6 +21,11 @@ export function Hero() {
         router.push(`/properties?${query.toString()}`);
     };
 
+    const handleTabChange = (tab: 'buy' | 'rent') => {
+        setActiveTab(tab);
+        setBudget('');
+    };
+
     const popularLocalities = ["Mira Road", "Bhayandar", "Borivali", "Andheri"];
 
     return (
@@ -58,7 +63,7 @@ export function Hero() {
                     {/* Tabs */}
                     <div className="flex mb-4 px-2 pt-2" role="tablist">
                         <button
-                            onClick={() => setActiveTab('buy')}
+                            onClick={() => handleTabChange('buy')}
                             role="tab"
                             aria-selected={activeTab === 'buy'}
                             className={`flex-1 py-4 text-sm font-bold tracking-widest uppercase transition-all flex items-center justify-center gap-2 rounded-2xl ${activeTab === 'buy'
@@ -70,7 +75,7 @@ export function Hero() {
                             Buy
                         </button>
                         <button
-                            onClick={() => setActiveTab('rent')}
+                            onClick={() => handleTabChange('rent')}
                             role="tab"
                             aria-selected={activeTab === 'rent'}
                             className={`flex-1 py-4 text-sm font-bold tracking-widest uppercase transition-all flex items-center justify-center gap-2 rounded-2xl ${activeTab === 'rent'
