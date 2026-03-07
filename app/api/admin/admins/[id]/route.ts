@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import dbConnect from '@/lib/db';
 import Admin from '@/models/Admin';
 import { getServerSession } from 'next-auth';
@@ -6,6 +7,11 @@ import { authOptions } from '@/lib/auth';
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return NextResponse.json({ error: 'Invalid admin id' }, { status: 400 });
+    }
+
     try {
         const session = await getServerSession(authOptions);
         if (!session || !session.user?.email) {
@@ -15,7 +21,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
         const superAdminEmail = process.env.SUPER_ADMIN_EMAIL;
         if (!superAdminEmail) {
             return NextResponse.json(
-                { error: 'Server misconfigured: SUPER_ADMIN_EMAIL is missing.' },
+                { error: 'Server misconfigured: SUPER_ADMIN_EMAIL' },
                 { status: 500 }
             );
         }
@@ -49,6 +55,9 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
         return NextResponse.json({ message: 'Admin deleted successfully' });
     } catch (error) {
+        if (error instanceof mongoose.Error.CastError) {
+            return NextResponse.json({ error: 'Invalid admin id' }, { status: 400 });
+        }
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

@@ -40,7 +40,10 @@ export default function PropertyCarousel({ images, title, youtubeUrl, hero = fal
 
     useEffect(() => {
         setCurrentIndex((prev) => Math.min(prev, totalSlides - 1));
-    }, [totalSlides]);
+        setIsZoomed(false); // Reset zoom when index changes
+    }, [totalSlides, currentIndex]);
+
+    const safeIndex = currentIndex < displayImages.length ? currentIndex : 0;
 
     return (
         <div className={`relative w-full overflow-hidden ${hero ? 'h-full bg-brand-navy' : 'mb-12 group'}`}>
@@ -80,9 +83,10 @@ export default function PropertyCarousel({ images, title, youtubeUrl, hero = fal
                             onClick={() => !hero && setIsZoomed(!isZoomed)}
                         >
                             <Image
-                                src={displayImages[currentIndex]}
+                                src={displayImages[safeIndex]}
                                 alt={`${title} - Image ${currentIndex + 1}`}
                                 fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
                                 className={`object-cover transition-transform duration-[1.5s] ease-out ${isZoomed ? 'scale-110' : 'scale-100 group-hover:scale-105'}`}
                                 priority
                             />
@@ -114,7 +118,8 @@ export default function PropertyCarousel({ images, title, youtubeUrl, hero = fal
                                 aria-label="Next slide"
                                 variant="outline"
                                 onClick={(e) => { e.stopPropagation(); nextSlide(); }}
-                                className="bg-white/10 backdrop-blur-2xl hover:bg-brand-orange text-white border-white/20 rounded-full h-16 w-16 p-0 opacity-0 group-hover:opacity-100 transition-all duration-500 hover:scale-110 shadow-2xl"
+                                className={`bg-white/10 backdrop-blur-2xl hover:bg-brand-orange text-white border-white/20 rounded-full h-16 w-16 p-0 transition-all duration-500 hover:scale-110 shadow-2xl ${hero ? 'opacity-40 hover:opacity-100' : 'opacity-0 group-hover:opacity-100'
+                                    }`}
                             >
                                 <ChevronRight size={36} />
                             </Button>
@@ -152,6 +157,7 @@ export default function PropertyCarousel({ images, title, youtubeUrl, hero = fal
                                 src={img}
                                 alt={`${title} Thumbnail ${index + 1}`}
                                 fill
+                                sizes="(max-width: 768px) 160px, 200px"
                                 className="object-cover"
                             />
                         </button>

@@ -20,12 +20,14 @@ export default function EMICalculator({ propertyPrice }: EMICalculatorProps) {
         const months = tenure * 12;
 
         if (ratePerMonth === 0) {
-            setMonthlyEMI(principal / months);
+            const roundedOffAmount = Math.round(principal / months);
+            setMonthlyEMI(roundedOffAmount);
             return;
         }
 
         const emi = (principal * ratePerMonth * Math.pow(1 + ratePerMonth, months)) / (Math.pow(1 + ratePerMonth, months) - 1);
-        setMonthlyEMI(emi);
+        const roundedOffAmount = Math.round(emi);
+        setMonthlyEMI(roundedOffAmount);
     };
 
     useEffect(() => {
@@ -53,10 +55,11 @@ export default function EMICalculator({ propertyPrice }: EMICalculatorProps) {
                     {/* Loan Amount */}
                     <div className="space-y-4">
                         <div className="flex justify-between items-end">
-                            <label className="text-xs font-black uppercase tracking-widest text-gray-400">Loan Amount</label>
+                            <label htmlFor="emi-loan-amount" className="text-xs font-black uppercase tracking-widest text-gray-400">Loan Amount</label>
                             <span className="text-lg font-bold text-brand-navy dark:text-white">{formatPrice(loanAmount)}</span>
                         </div>
                         <input
+                            id="emi-loan-amount"
                             type="range"
                             min={propertyPrice * 0.1}
                             max={propertyPrice}
@@ -75,10 +78,11 @@ export default function EMICalculator({ propertyPrice }: EMICalculatorProps) {
                     {/* Interest Rate */}
                     <div className="space-y-4">
                         <div className="flex justify-between items-end">
-                            <label className="text-xs font-black uppercase tracking-widest text-gray-400">Interest Rate (p.a)</label>
+                            <label htmlFor="emi-interest-rate" className="text-xs font-black uppercase tracking-widest text-gray-400">Interest Rate (p.a)</label>
                             <span className="text-lg font-bold text-brand-navy dark:text-white">{interestRate}%</span>
                         </div>
                         <input
+                            id="emi-interest-rate"
                             type="range"
                             min="5"
                             max="15"
@@ -92,10 +96,11 @@ export default function EMICalculator({ propertyPrice }: EMICalculatorProps) {
                     {/* Tenure */}
                     <div className="space-y-4">
                         <div className="flex justify-between items-end">
-                            <label className="text-xs font-black uppercase tracking-widest text-gray-400">Loan Tenure</label>
+                            <label htmlFor="emi-loan-tenure" className="text-xs font-black uppercase tracking-widest text-gray-400">Loan Tenure</label>
                             <span className="text-lg font-bold text-brand-navy dark:text-white">{tenure} Years</span>
                         </div>
                         <input
+                            id="emi-loan-tenure"
                             type="range"
                             min="1"
                             max="30"

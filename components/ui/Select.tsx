@@ -32,6 +32,8 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                     <select
                         ref={ref}
                         id={selectId}
+                        aria-invalid={!!error}
+                        aria-describedby={error ? `${selectId}-error` : undefined}
                         className={cn(
                             "w-full appearance-none rounded-2xl border border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-brand-navy px-4 py-4 text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-brand-orange/10 focus:border-brand-orange/40 text-brand-navy dark:text-white cursor-pointer",
                             "form-select", // Adding a class for easier global styling if needed
@@ -48,7 +50,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                         <ChevronDown className="h-4 w-4" />
                     </div>
                 </div>
-                {error && <p className="text-xs text-red-500 font-medium ml-1">{error}</p>}
+                {error && <p id={`${selectId}-error`} className="text-xs text-red-500 font-medium ml-1">{error}</p>}
             </div>
         );
     }

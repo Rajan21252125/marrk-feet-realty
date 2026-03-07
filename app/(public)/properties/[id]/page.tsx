@@ -13,6 +13,9 @@ import PropertyCarousel from '@/components/property/PropertyCarousel';
 import EMICalculator from '@/components/property/EMICalculator';
 import { PropertyCard } from '@/components/ui/PropertyCard';
 import { Button } from '@/components/ui/Button';
+import { IPropertyData } from '@/models/Property';
+
+const EMI_MONTHLY_RATE = 0.008; // 0.8% estimated monthly rate
 
 async function getProperty(id: string) {
     await dbConnect();
@@ -25,7 +28,7 @@ async function getProperty(id: string) {
     }
 }
 
-async function getRelatedProperties(currentId: string, propertyType: string, listingType: string, beds: number) {
+async function getRelatedProperties(currentId: string, propertyType: string, listingType: string) {
     await dbConnect();
     try {
         const related = await Property.find({
@@ -72,8 +75,7 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
     const relatedProperties = await getRelatedProperties(
         property._id,
         property.propertyType,
-        property.listingType,
-        property.beds
+        property.listingType
     );
 
     const images = property.images && property.images.length > 0
@@ -132,7 +134,7 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                             </p>
                             <div className="inline-flex items-center gap-1.5 text-gray-500 font-bold text-[9px] bg-black/10 px-3 py-1.5 rounded-full border border-white/5">
                                 <Sparkles size={10} className="text-brand-orange" />
-                                Est. EMI: {formatPrice(property.price * 0.008)}*
+                                Est. EMI: {formatPrice(property.price * EMI_MONTHLY_RATE)}*
                             </div>
                         </div>
                     </div>
@@ -161,11 +163,11 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-5 mb-16 md:mb-20">
                             {[
                                 { icon: Building2, label: "Structure", value: property.propertyType },
-                                { icon: Move, label: "Total Area", value: `${property.area} Sqft` },
-                                { icon: Bed, label: "Configuration", value: `${property.beds} BHK` },
-                                { icon: Compass, label: "Vastu / Facing", value: property.facing || "East" },
-                                { icon: Layers, label: "Floor Elevation", value: `${property.floorNumber || 0}/${property.totalFloors || 7}` },
-                                { icon: Clock, label: "Availability", value: property.possessionStatus || "Immediate" }
+                                { icon: Move, label: "Total Area", value: property.area ? `${property.area} Sqft` : "N/A" },
+                                { icon: Bed, label: "Configuration", value: property.beds ? `${property.beds} BHK` : "N/A" },
+                                { icon: Compass, label: "Vastu / Facing", value: property.facing || "N/A" },
+                                { icon: Layers, label: "Floor Elevation", value: (property.floorNumber !== undefined && property.totalFloors !== undefined) ? `${property.floorNumber}/${property.totalFloors}` : "N/A" },
+                                { icon: Clock, label: "Availability", value: property.possessionStatus || "N/A" }
                             ].map((spec, i) => (
                                 <FadeIn key={i} delay={i * 0.05}>
                                     <div className="p-5 md:p-6 rounded-2xl md:rounded-3xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 flex flex-col items-center text-center group hover:bg-white dark:hover:bg-brand-navy/80 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-500">
@@ -214,7 +216,10 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                                 <div className="h-px flex-1 bg-brand-navy/10 dark:bg-white/10" />
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                                {['24/7 Security', 'Power Backup', 'Lift Access', 'Parking Area', 'Water Supply', 'Fire Safety', 'Club House', 'Gym'].map((amenity, i) => (
+                                {(property.amenities && property.amenities.length > 0
+                                    ? property.amenities
+                                    : ['24/7 Security', 'Power Backup', 'Lift Access', 'Parking Area', 'Water Supply', 'Fire Safety', 'Club House', 'Gym']
+                                ).map((amenity: string, i: number) => (
                                     <div key={i} className="flex items-center gap-2.5 p-3.5 md:p-4 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 hover:border-brand-orange/30 transition-colors group">
                                         <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-brand-orange/5 flex items-center justify-center text-brand-orange group-hover:bg-brand-orange group-hover:text-white transition-all">
                                             <Check size={14} strokeWidth={3} />
@@ -298,7 +303,7 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-10">
-                            {relatedProperties.map((p: any, i: number) => (
+                            {relatedProperties.map((p: IPropertyData, i: number) => (
                                 <FadeIn key={p._id} delay={i * 0.1}>
                                     <PropertyCard
                                         id={p._id}

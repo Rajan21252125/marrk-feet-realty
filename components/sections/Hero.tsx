@@ -61,11 +61,10 @@ export function Hero() {
                 {/* Search Card */}
                 <div className="max-w-4xl mx-auto bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl shadow-black/40 p-1.5 md:p-2.5 mb-10 border border-white/20">
                     {/* Tabs */}
-                    <div className="flex mb-4 px-2 pt-2" role="tablist">
+                    <div className="flex mb-4 px-2 pt-2">
                         <button
                             onClick={() => handleTabChange('buy')}
-                            role="tab"
-                            aria-selected={activeTab === 'buy'}
+                            aria-pressed={activeTab === 'buy'}
                             className={`flex-1 py-4 text-sm font-bold tracking-widest uppercase transition-all flex items-center justify-center gap-2 rounded-2xl ${activeTab === 'buy'
                                 ? 'text-brand-orange-text bg-brand-orange/5 shadow-inner'
                                 : 'text-gray-500 hover:text-gray-700'
@@ -76,8 +75,7 @@ export function Hero() {
                         </button>
                         <button
                             onClick={() => handleTabChange('rent')}
-                            role="tab"
-                            aria-selected={activeTab === 'rent'}
+                            aria-pressed={activeTab === 'rent'}
                             className={`flex-1 py-4 text-sm font-bold tracking-widest uppercase transition-all flex items-center justify-center gap-2 rounded-2xl ${activeTab === 'rent'
                                 ? 'text-brand-orange-text bg-brand-orange/5 shadow-inner'
                                 : 'text-gray-500 hover:text-gray-700'

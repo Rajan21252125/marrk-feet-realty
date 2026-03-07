@@ -74,6 +74,7 @@ const PropertySchema: Schema = new Schema(
         youtubeUrl: {
             type: String,
             trim: true,
+            set: (v: string) => v === '' ? undefined : v,
             match: [/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i, 'Invalid YouTube URL'],
         },
     },

@@ -9,6 +9,8 @@ import { SITE_NAME, CONTACT_INFO } from "@/lib/constants";
 import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
 
+const transparentHeaderPages = ['/', '/about', '/services', '/contact'];
+
 export function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -40,6 +42,9 @@ export function Header() {
                 const focusableElements = menu.querySelectorAll<HTMLElement>(
                     'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])'
                 );
+
+                if (focusableElements.length === 0) return;
+
                 const firstElement = focusableElements[0];
                 const lastElement = focusableElements[focusableElements.length - 1];
 
@@ -91,12 +96,14 @@ export function Header() {
         { href: "/contact", label: "Contact" },
     ];
 
-    if (!mounted) return null;
+    if (!mounted) {
+        return <div className="h-20 w-full" />; // Prevent layout shift
+    }
 
     return (
         <>
             <header
-                className={`fixed top-0 z-100 w-full transition-all duration-300 ${isScrolled
+                className={`fixed top-0 z-50 w-full transition-all duration-300 ${isScrolled
                     ? "bg-white/95 backdrop-blur-md shadow-sm dark:bg-brand-navy/95 border-b border-gray-100 dark:border-white/5"
                     : "bg-transparent"
                     }`}
@@ -104,7 +111,7 @@ export function Header() {
                 <div className="container mx-auto px-4 md:px-6">
                     <div className={`flex items-center justify-between transition-all duration-300 ${isScrolled ? 'h-16' : 'h-20'}`}>
                         {/* Logo */}
-                        <Link href="/" className="flex items-center gap-2 group z-110">
+                        <Link href="/" className="flex items-center gap-2 group z-50">
                             <Image
                                 src="/logo.png"
                                 alt="MarrkFeet Realty - Mumbai's Premium Real Estate Agency"
@@ -113,11 +120,11 @@ export function Header() {
                                 className="object-contain"
                             />
                             <div className="flex flex-col">
-                                <span className={`text-xl font-bold tracking-tight leading-none ${!isScrolled && ['/', '/about', '/services', '/contact'].includes(pathname) ? 'text-white' : 'text-brand-navy dark:text-white'}`}>
-                                    MarrkFeet
+                                <span className={`text-xl font-bold tracking-tight leading-none ${!isScrolled && transparentHeaderPages.includes(pathname) ? 'text-white' : 'text-brand-navy dark:text-white'}`}>
+                                    {SITE_NAME.split(' ')[0]}
                                 </span>
                                 <span className={`text-[10px] font-medium tracking-[0.2em] uppercase text-brand-orange-text`}>
-                                    Realty
+                                    {SITE_NAME.split(' ').slice(1).join(' ')}
                                 </span>
                             </div>
                         </Link>
@@ -128,7 +135,7 @@ export function Header() {
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className={`text-sm font-semibold transition-all hover:text-brand-orange relative group ${!isScrolled && ['/', '/about', '/services', '/contact'].includes(pathname)
+                                    className={`text-sm font-semibold transition-all hover:text-brand-orange relative group ${!isScrolled && transparentHeaderPages.includes(pathname)
                                         ? 'text-white/90'
                                         : 'text-gray-700 dark:text-gray-200'
                                         } ${pathname === link.href ? 'text-brand-orange' : ''}`}
@@ -145,7 +152,7 @@ export function Header() {
                         <div className="hidden lg:flex items-center gap-5">
                             <button
                                 onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-                                className={`p-2 rounded-full transition-colors ${!isScrolled && ['/', '/about', '/services', '/contact'].includes(pathname)
+                                className={`p-2 rounded-full transition-colors ${!isScrolled && transparentHeaderPages.includes(pathname)
                                     ? 'text-white hover:bg-white/10'
                                     : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5'
                                     }`}
@@ -157,7 +164,7 @@ export function Header() {
                             <Link
                                 id="header-favorites-link"
                                 href="/favorites"
-                                className={`p-2 rounded-full transition-colors ${!isScrolled && ['/', '/about', '/services', '/contact'].includes(pathname)
+                                className={`p-2 rounded-full transition-colors ${!isScrolled && transparentHeaderPages.includes(pathname)
                                     ? 'text-white hover:bg-white/10'
                                     : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5'
                                     }`}
@@ -168,7 +175,7 @@ export function Header() {
 
                             <a
                                 href={`tel:${CONTACT_INFO.phone}`}
-                                className={`flex items-center gap-2 text-sm font-bold transition-colors ${!isScrolled && ['/', '/about', '/services', '/contact'].includes(pathname)
+                                className={`flex items-center gap-2 text-sm font-bold transition-colors ${!isScrolled && transparentHeaderPages.includes(pathname)
                                     ? 'text-white/90 hover:text-white'
                                     : 'text-gray-800 dark:text-gray-200 hover:text-brand-orange-text'
                                     }`}
@@ -185,10 +192,10 @@ export function Header() {
                         </div>
 
                         {/* Mobile Toggle */}
-                        <div className="flex lg:hidden items-center gap-4 z-110">
+                        <div className="flex lg:hidden items-center gap-4 z-50">
                             <button
                                 onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-                                className={`p-2 ${!isScrolled && ['/', '/about', '/services', '/contact'].includes(pathname) && !isMobileMenuOpen ? 'text-white' : 'text-brand-navy dark:text-white'}`}
+                                className={`p-2 ${!isScrolled && transparentHeaderPages.includes(pathname) && !isMobileMenuOpen ? 'text-white' : 'text-brand-navy dark:text-white'}`}
                                 aria-label={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}
                             >
                                 {resolvedTheme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
@@ -196,7 +203,7 @@ export function Header() {
                             <button
                                 id="mobile-menu-toggle"
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                                className={`p-2 ${!isScrolled && ['/', '/about', '/services', '/contact'].includes(pathname) && !isMobileMenuOpen ? 'text-white' : 'text-brand-navy dark:text-white'}`}
+                                className={`p-2 ${!isScrolled && transparentHeaderPages.includes(pathname) && !isMobileMenuOpen ? 'text-white' : 'text-brand-navy dark:text-white'}`}
                                 aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
                                 aria-expanded={isMobileMenuOpen}
                                 aria-controls="mobile-menu"
@@ -214,7 +221,7 @@ export function Header() {
                     aria-modal="true"
                     aria-label="Navigation menu"
                     className={`
-                    fixed inset-0 z-105 bg-brand-navy dark:bg-black transition-all duration-500 ease-in-out lg:hidden
+                    fixed inset-0 z-40 bg-brand-navy dark:bg-black transition-all duration-500 ease-in-out lg:hidden
                     ${isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}
                 `}>
                     {/* Background Decorative Element */}

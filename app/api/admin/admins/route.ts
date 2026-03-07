@@ -16,7 +16,13 @@ export async function GET(req: Request) {
         // Exclude passwordHash and verificationCode
         const admins = await Admin.find({}, '-passwordHash -verificationCode').sort({ createdAt: -1 });
 
-        return NextResponse.json(admins);
+        const superAdminEmail = process.env.SUPER_ADMIN_EMAIL;
+        const adminsWithFlags = admins.map(admin => ({
+            ...admin.toObject(),
+            isSuperAdmin: admin.email?.toLowerCase() === superAdminEmail?.toLowerCase()
+        }));
+
+        return NextResponse.json(adminsWithFlags);
     } catch (error) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }

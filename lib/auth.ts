@@ -34,7 +34,7 @@ export const authOptions: NextAuthOptions = {
                         throw new Error('Database connection failed');
                     }
 
-                    const admin = await Admin.findOne({ email: credentials.email });
+                    const admin = await Admin.findOne({ email: credentials.email.toLowerCase() });
 
                     if (!admin) {
                         logger.warn(`Login failed: Invalid email ${maskEmail(credentials.email)}`);
@@ -118,7 +118,7 @@ export const authOptions: NextAuthOptions = {
             if (token.email) {
                 try {
                     await dbConnect();
-                    const dbUser = await Admin.findOne({ email: token.email });
+                    const dbUser = await Admin.findOne({ email: token.email.toLowerCase() });
                     if (dbUser) {
                         // Enforce single session: if token version doesn't match DB version, invalidate.
                         if (
@@ -135,6 +135,9 @@ export const authOptions: NextAuthOptions = {
                         token.name = dbUser.name;
                         token.picture = dbUser.profileImage;
                         token.companyName = dbUser.companyName;
+                    } else {
+                        // If user not found (e.g. deleted), invalidate session
+                        return { ...token, error: 'SessionInvalid' };
                     }
                 } catch (error) {
                     console.error('Error fetching user in JWT callback:', error);

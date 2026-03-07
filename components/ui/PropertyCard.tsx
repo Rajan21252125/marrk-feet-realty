@@ -39,7 +39,10 @@ export function PropertyCard({
     const getSavedProperties = (): string[] => {
         try {
             if (typeof window === 'undefined') return [];
-            return JSON.parse(localStorage.getItem('savedProperties') || '[]');
+            const saved = localStorage.getItem('savedProperties');
+            if (!saved) return [];
+            const parsed = JSON.parse(saved);
+            return Array.isArray(parsed) && parsed.every(item => typeof item === 'string') ? parsed : [];
         } catch (error) {
             console.error('Error parsing savedProperties:', error);
             return [];

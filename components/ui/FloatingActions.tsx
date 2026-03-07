@@ -11,6 +11,7 @@ export function FloatingActions() {
         const handleScroll = () => {
             setShowScrollTop(window.scrollY > 400);
         };
+        handleScroll(); // Call on mount
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);

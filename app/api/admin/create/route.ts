@@ -16,6 +16,11 @@ const maskEmail = (email: string) => {
 
 export async function POST(req: Request) {
     try {
+        if (!MASTER_KEY) {
+            logger.error('Admin creation failed: ADMIN_CREATION_SECRET is not set in environment.');
+            return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 });
+        }
+
         const { masterKey, email, password } = await req.json();
 
         if (!masterKey || masterKey !== MASTER_KEY) {
@@ -26,6 +31,12 @@ export async function POST(req: Request) {
         if (!email || !password) {
             logger.warn(`Admin creation failed: Missing email or password`);
             return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
+        }
+
+        // bcrypt has a 72-byte limit for passwords
+        if (Buffer.byteLength(password, 'utf8') > 72) {
+            logger.warn(`Admin creation failed: Password too long (max 72 bytes) for ${email}`);
+            return NextResponse.json({ error: 'Password is too long' }, { status: 400 });
         }
 
         await dbConnect();

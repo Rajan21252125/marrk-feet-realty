@@ -24,10 +24,18 @@ export async function GET() {
         // Fetch all admins for the list
         const allAdmins = await Admin.find({}).select('email name profileImage role isVerified createdAt');
 
+        const superAdminEmail = process.env.SUPER_ADMIN_EMAIL;
+
         logger.info(`GET /api/admin/settings - Settings fetched for ${session.user.email}`);
         return NextResponse.json({
-            profile: currentAdmin,
-            admins: allAdmins,
+            profile: {
+                ...currentAdmin?.toObject(),
+                isSuperAdmin: session.user.email.toLowerCase() === superAdminEmail?.toLowerCase()
+            },
+            admins: allAdmins.map(admin => ({
+                ...admin.toObject(),
+                isSuperAdmin: admin.email?.toLowerCase() === superAdminEmail?.toLowerCase()
+            })),
         });
     } catch (error) {
         logger.error(`GET /api/admin/settings - Error: ${error}`);

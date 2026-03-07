@@ -112,6 +112,9 @@ export async function POST(req: Request) {
 
         return NextResponse.json(property, { status: 201 });
     } catch (error) {
+        if (error instanceof Error && (error.name === 'ValidationError' || error.name === 'CastError')) {
+            return NextResponse.json({ error: error.message }, { status: 400 });
+        }
         logger.error(`POST /api/properties - Error: ${error}`);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
