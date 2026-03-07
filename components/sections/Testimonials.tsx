@@ -1,73 +1,80 @@
+'use client';
+
 import { Quote, Star } from "lucide-react";
 import Image from "next/image";
+import { FadeIn } from "@/components/ui/FadeIn";
 
 const testimonials = [
     {
         id: 1,
-        name: "Jonathan Reeves",
-        role: "Portfolio Manager",
-        quote: "Markfeet Realty transformed how I handle my portfolio. Their strategic reporting and property visibility are truly unmatched in the market.",
+        name: "Rajesh Sharma",
+        role: "Property Buyer",
+        quote: "Finding a home in Mira Road was easy with MarkFeet Realty. Their team is extremely professional and guided me through every step of the RERA process.",
         image: "https://i.pravatar.cc/150?img=11"
     },
     {
         id: 2,
-        name: "Sarah Jenkins",
+        name: "Priya Mehta",
         role: "Real Estate Investor",
-        quote: "Working with Markfeet Realty was an excellent experience. They helped us find our dream home within our budget and managed everything.",
+        quote: "The best real estate agency in the Western Suburbs. Their transparent approach and cinematic property tours saved me so much time in decision making.",
         image: "https://i.pravatar.cc/150?img=5"
     },
     {
         id: 3,
-        name: "Michael Chen",
+        name: "Vikram Singh",
         role: "Venture Partner",
-        quote: "The best management interface I've ever used. Clean, intuitive, and the customer support is responsive 24/7. Highly recommended.",
+        quote: "Honest advice and great deals. They helped me close a commercial property deal in under 3 weeks. Highly recommend for any serious investor.",
         image: "https://i.pravatar.cc/150?img=3"
     },
 ];
 
 export function Testimonials() {
     return (
-        <section id="testimonials" className="py-24 bg-white dark:bg-black">
-            <div className="container mx-auto px-4 md:px-6">
+        <section id="testimonials" className="py-24 bg-brand-navy dark:bg-black text-white overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-orange/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
+
+            <div className="container mx-auto px-4 md:px-6 relative z-10">
                 <div className="text-center mb-16">
-                    <span className="text-accent font-semibold tracking-wider text-sm uppercase">Client Stories</span>
-                    <h2 className="text-3xl md:text-4xl font-bold tracking-tight mt-2 mb-4 text-primary-dark dark:text-foreground">Trusted by Excellence</h2>
-                    <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-                        Join thousands of satisfied property owners who trust Markfeet Realty with their most valuable assets.
+                    <span className="text-brand-orange font-bold tracking-[0.3em] text-xs uppercase">Client Stories</span>
+                    <h2 className="text-4xl md:text-5xl font-bold tracking-tight mt-4">What Our Clients Say</h2>
+                    <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
+                        Don't just take our word for it. Hear from dozens of families who found their dream homes through MarkFeet Realty.
                     </p>
                 </div>
 
                 <div className="grid gap-8 md:grid-cols-3">
-                    {testimonials.map((testimonial) => (
-                        <div key={testimonial.id} className="relative flex flex-col p-8 rounded-2xl bg-gray-50 dark:bg-neutral-900 border border-transparent hover:border-gray-200 dark:hover:border-neutral-800 transition-all duration-300 hover:shadow-lg group">
-                            <Quote className="absolute top-8 right-8 h-8 w-8 text-gray-200 dark:text-neutral-800 group-hover:text-accent/20 transition-colors" />
+                    {testimonials.map((testimonial, index) => (
+                        <FadeIn key={testimonial.id} delay={index * 0.1} direction="up">
+                            <div className="relative flex flex-col p-8 rounded-[2rem] bg-white/5 border border-white/10 hover:border-brand-orange/30 transition-all duration-500 hover:bg-white/10 group h-full">
+                                <Quote className="absolute top-8 right-8 h-10 w-10 text-brand-orange/20 group-hover:text-brand-orange/40 transition-colors" />
 
-                            <div className="flex gap-1 text-accent mb-6">
-                                {[...Array(5)].map((_, i) => (
-                                    <Star key={i} size={18} fill="currentColor" className="text-accent" />
-                                ))}
-                            </div>
-
-                            <p className="text-lg text-gray-700 dark:text-gray-300 mb-8 flex-grow leading-relaxed">
-                                &quot;{testimonial.quote}&quot;
-                            </p>
-
-                            <div className="flex items-center gap-4 mt-auto">
-                                <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white dark:border-neutral-800 shadow-md">
-                                    <Image
-                                        src={testimonial.image}
-                                        alt={testimonial.name}
-                                        fill
-                                        className="object-cover"
-                                        unoptimized
-                                    />
+                                <div className="flex gap-1 text-brand-orange mb-6">
+                                    {[...Array(5)].map((_, i) => (
+                                        <Star key={i} size={16} fill="currentColor" />
+                                    ))}
                                 </div>
-                                <div>
-                                    <div className="font-bold text-primary-dark dark:text-foreground">{testimonial.name}</div>
-                                    <div className="text-sm text-muted-foreground">{testimonial.role}</div>
+
+                                <p className="text-lg text-gray-300 mb-8 flex-grow leading-relaxed italic">
+                                    &quot;{testimonial.quote}&quot;
+                                </p>
+
+                                <div className="flex items-center gap-4 mt-auto">
+                                    <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-brand-orange/20 shadow-xl">
+                                        <Image
+                                            src={testimonial.image}
+                                            alt={testimonial.name}
+                                            fill
+                                            className="object-cover"
+                                            unoptimized
+                                        />
+                                    </div>
+                                    <div>
+                                        <div className="font-bold text-white text-lg">{testimonial.name}</div>
+                                        <div className="text-sm text-brand-orange/80 font-medium uppercase tracking-wider">{testimonial.role}</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </FadeIn>
                     ))}
                 </div>
             </div>

@@ -40,6 +40,7 @@ interface PropertyFormData {
     possessionStatus: string;
     listingType: string;
     status: string;
+    youtubeUrl: string;
 }
 
 interface PropertyFormProps {
@@ -83,6 +84,7 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
         possessionStatus: initialData?.possessionStatus || '',
         listingType: initialData?.listingType || 'Sale',
         status: initialData?.status || 'Available',
+        youtubeUrl: initialData?.youtubeUrl || '',
     });
 
     useEffect(() => {
@@ -118,6 +120,7 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                 possessionStatus: initialData.possessionStatus || '',
                 listingType: initialData.listingType || 'Sale',
                 status: initialData.status || 'Available',
+                youtubeUrl: initialData.youtubeUrl || '',
             });
             setImages(initialData.images || []);
         }
@@ -230,6 +233,19 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // YouTube URL Validation
+        if (formData.youtubeUrl) {
+            const ytRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+            const match = formData.youtubeUrl.match(ytRegex);
+            const isValid = match && match[1].length === 11;
+
+            if (!isValid) {
+                toast.error('Please enter a valid YouTube URL');
+                return;
+            }
+        }
+
         setLoading(true);
         setUploading(true);
 
@@ -242,18 +258,35 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
             console.log('Final Images Payload:', finalImages);
 
             const payload = {
-                ...formData,
+                title: formData.title,
+                description: formData.description,
                 price: parseFloat(formData.price.toString()),
+                builder: formData.builder,
+                location: formData.location,
+                propertyType: formData.propertyType,
                 beds: parseInt(formData.beds.toString()),
                 baths: parseInt(formData.baths.toString()),
                 area: parseInt(formData.area.toString()),
                 images: finalImages,
+                tags: formData.tags,
+                isActive: initialData?.isActive ?? true,
+                furnishType: formData.furnishType,
                 coveredParking: formData.coveredParking ? parseInt(formData.coveredParking.toString()) : 0,
                 openParking: formData.openParking ? parseInt(formData.openParking.toString()) : 0,
+                tenantPreference: formData.tenantPreference,
+                petFriendly: formData.petFriendly,
+                bhkType: formData.bhkType,
                 ageOfProperty: formData.ageOfProperty ? parseInt(formData.ageOfProperty.toString()) : 0,
                 balcony: formData.balcony ? parseInt(formData.balcony.toString()) : 0,
                 floorNumber: formData.floorNumber ? parseInt(formData.floorNumber.toString()) : 0,
                 totalFloors: formData.totalFloors ? parseInt(formData.totalFloors.toString()) : 0,
+                facing: formData.facing,
+                overlooking: formData.overlooking,
+                ownershipType: formData.ownershipType,
+                possessionStatus: formData.possessionStatus,
+                listingType: formData.listingType,
+                status: formData.status,
+                youtubeUrl: formData.youtubeUrl,
             };
 
             const url = initialData ? `/api/properties/${initialData._id}` : '/api/properties';
@@ -778,6 +811,20 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                         </div>
                         <p className="text-xs text-muted-foreground">PNG, JPG, GIF up to 10MB</p>
                     </div>
+                </div>
+
+                {/* YouTube URL */}
+                <div className="mt-6">
+                    <label className="mb-2 block text-sm font-medium">YouTube Video URL (Optional)</label>
+                    <input
+                        name="youtubeUrl"
+                        value={formData.youtubeUrl}
+                        onChange={handleChange}
+                        type="url"
+                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        placeholder="https://www.youtube.com/watch?v=..."
+                    />
+                    <p className="mt-1 text-xs text-muted-foreground">Add a virtual tour link to showcase the property.</p>
                 </div>
             </div>
 

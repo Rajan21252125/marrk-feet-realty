@@ -30,6 +30,7 @@ export interface IPropertyData {
     possessionStatus?: string;
     listingType: 'Sale' | 'Rent';
     status: 'Available' | 'Sold';
+    youtubeUrl?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -70,8 +71,18 @@ const PropertySchema: Schema = new Schema(
         possessionStatus: { type: String },
         listingType: { type: String, enum: ['Sale', 'Rent'], default: 'Sale' },
         status: { type: String, enum: ['Available', 'Sold'], default: 'Available' },
+        youtubeUrl: {
+            type: String,
+            trim: true,
+            set: (v: string) => v === '' ? undefined : v,
+            match: [/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i, 'Invalid YouTube URL'],
+        },
     },
     { timestamps: true }
 );
 
-export default mongoose.models.Property || mongoose.model<IProperty>('Property', PropertySchema);
+// For Next.js dev mode, it's better to reuse the existing model if possible, 
+// but ensure it has the latest schema if it was already compiled.
+const Property = mongoose.models.Property || mongoose.model<IProperty>('Property', PropertySchema);
+
+export default Property;

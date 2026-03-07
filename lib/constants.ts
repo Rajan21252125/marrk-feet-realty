@@ -1,4 +1,4 @@
-export const SITE_NAME = "Marrk Feet Realty";
+export const SITE_NAME = "MarrkFeet Realty";
 
 const ESTABLISHED_DATE = new Date('2024-10-12');
 
@@ -13,8 +13,8 @@ export const getYearsOfExperience = () => {
 };
 
 export const CONTACT_INFO = {
-    email: "Marrkfeetrealty2024@gmail.com",
-    salesEmail: "info@marrkfeetrealty.in",
+    email: "info@marrkfeetrealty.in",
+    supportEmail: "Marrkfeetrealty2024@gmail.com",
     phone: "9326914511",
     landline: "022-31480202",
     rera: "A51700044832",
@@ -30,16 +30,20 @@ export const CONTACT_INFO = {
 
 export const LEADERSHIP_TEAM = [
     {
-        name: 'Ankit Singh',
+        name: 'Ankit Rajput',
         role: 'Founder',
-        description: 'With expertise in real estate development, Ankit focuses on market trends and sustainable projects, leading the vision of innovation.',
-        image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=2574&auto=format&fit=crop'
+        description: 'With over a decade of experience in the Mumbai real estate market, Ankit leads the vision of Marrk Feet Realty with a focus on transparency and client-first solutions.',
+        image: '/founder.jpeg',
+        email: 'ankit@marrkfeetrealty.in',
+        linkedinUrl: 'https://linkedin.com/in/ankitrajput'
     },
     {
-        name: 'Amit Singh',
+        name: 'Amit Rajput',
         role: 'Co-Founder',
-        description: 'Amit handles sales, marketing, and business operations, building strong relationships with clients and stakeholders.',
-        image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2670&auto=format&fit=crop'
+        description: 'Amit brings strategic operational excellence to the company, ensuring every property transaction is handled with meticulous care and professionalism.',
+        image: '/co-founder.jpeg',
+        email: 'amit@marrkfeetrealty.in',
+        linkedinUrl: 'https://linkedin.com/in/amitrajput'
     },
 ];
 
@@ -105,5 +109,6 @@ export const SOCIAL_LINKS = {
     facebook: "https://facebook.com/marrkfeetrealty",
     instagram: "https://instagram.com/marrkfeetrealty",
     twitter: "https://twitter.com/marrkfeetrealty",
-    linkedin: "https://linkedin.com/company/marrkfeetrealty"
+    linkedin: "https://linkedin.com/company/marrkfeetrealty",
+    youtube: "https://youtube.com/@marrkfeetrealty"
 };

@@ -3,32 +3,53 @@ import dbConnect from '@/lib/db';
 import Admin from '@/models/Admin';
 import logger from '@/lib/logger';
 import bcrypt from 'bcrypt';
+import { sendVerificationEmail } from '@/lib/email';
+import crypto from 'node:crypto';
 
-const MASTER_KEY = process.env.ADMIN_CREATION_SECRET || 'dev_secret_key';
+const MASTER_KEY = process.env.ADMIN_CREATION_SECRET;
+
+const maskEmail = (email: string) => {
+    const [local, domain] = email.split('@');
+    if (!local || !domain) return '***';
+    return `${local.slice(0, 2)}***@${domain}`;
+};
 
 export async function POST(req: Request) {
     try {
+        if (!MASTER_KEY) {
+            logger.error('Admin creation failed: ADMIN_CREATION_SECRET is not set in environment.');
+            return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 });
+        }
+
         const { masterKey, email, password } = await req.json();
 
-        if (masterKey !== MASTER_KEY) {
+        if (!masterKey || masterKey !== MASTER_KEY) {
             logger.warn(`Admin creation failed: Invalid master key`);
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         if (!email || !password) {
+            logger.warn(`Admin creation failed: Missing email or password`);
             return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
+        }
+
+        // bcrypt has a 72-byte limit for passwords
+        if (Buffer.byteLength(password, 'utf8') > 72) {
+            logger.warn(`Admin creation failed: Password too long (max 72 bytes) for ${email}`);
+            return NextResponse.json({ error: 'Password is too long' }, { status: 400 });
         }
 
         await dbConnect();
 
         const existingAdmin = await Admin.findOne({ email });
         if (existingAdmin) {
+            logger.warn(`Admin creation failed: Admin already exists`);
             return NextResponse.json({ error: 'Admin already exists' }, { status: 409 });
         }
 
         const passwordHash = await bcrypt.hash(password, 10);
         // Generate a simple 6-digit code for verification
-        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const verificationCode = crypto.randomInt(100000, 1000000).toString();
 
         const newAdmin = await Admin.create({
             email,
@@ -37,14 +58,20 @@ export async function POST(req: Request) {
             verificationCode,
         });
 
-        logger.info(`New admin created: ${email} (Unverified)`);
+        logger.info(`New admin created: ${maskEmail(email)} (Unverified)`);
 
-        // In production, send email with code here.
-        // For dev, return the code in response or log it.
-        logger.info(`Verification Code for ${email}: ${verificationCode}`);
+        let emailSent = true;
+        try {
+            await sendVerificationEmail(email, verificationCode);
+        } catch (emailError) {
+            emailSent = false;
+            logger.error(`Admin created but verification email failed for ${maskEmail(email)}: ${emailError}`);
+        }
 
         return NextResponse.json({
-            message: 'Admin created successfully. Please verify your account.',
+            message: emailSent
+                ? 'Admin created successfully. Please verify your account.'
+                : 'Admin created, but verification email could not be sent. Please retry resend verification.',
             verificationCode: process.env.NODE_ENV === 'development' ? verificationCode : undefined
         }, { status: 201 });
 

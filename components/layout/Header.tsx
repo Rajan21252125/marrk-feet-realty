@@ -1,17 +1,26 @@
 'use client';
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
-import { Menu, X, BadgeCheck, Heart } from "lucide-react";
+import { Menu, X, Heart, Phone, Moon, Sun } from "lucide-react";
 import { SITE_NAME, CONTACT_INFO } from "@/lib/constants";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { useTheme } from "next-themes";
+import { usePathname } from "next/navigation";
+
+const transparentHeaderPages = ['/', '/about', '/services', '/contact'];
 
 export function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
+    const { resolvedTheme, setTheme } = useTheme();
+    const pathname = usePathname();
+    const wasMobileMenuOpen = useRef(false);
 
     useEffect(() => {
+        setMounted(true);
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 20);
         };
@@ -19,133 +28,244 @@ export function Header() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // Lock body scroll when mobile menu is open
+    // Lock body scroll and handle focus/keyboard when mobile menu is open
     useEffect(() => {
+        const toggleBtn = document.getElementById('mobile-menu-toggle');
+        const menu = document.getElementById('mobile-menu');
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                setIsMobileMenuOpen(false);
+            }
+
+            if (e.key === 'Tab' && menu) {
+                const focusableElements = menu.querySelectorAll<HTMLElement>(
+                    'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])'
+                );
+
+                if (focusableElements.length === 0) return;
+
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+
+                if (e.shiftKey) {
+                    if (document.activeElement === firstElement) {
+                        e.preventDefault();
+                        lastElement.focus();
+                    }
+                } else {
+                    if (document.activeElement === lastElement) {
+                        e.preventDefault();
+                        firstElement.focus();
+                    }
+                }
+            }
+        };
+
         if (isMobileMenuOpen) {
             document.body.style.overflow = 'hidden';
+            window.addEventListener('keydown', handleKeyDown);
+
+            // Move focus to first element in menu
+            if (menu) {
+                const firstElement = menu.querySelector<HTMLElement>('a, button');
+                firstElement?.focus();
+            }
         } else {
             document.body.style.overflow = 'unset';
+            window.removeEventListener('keydown', handleKeyDown);
+            // Restore focus only if menu was previously open
+            if (wasMobileMenuOpen.current) {
+                toggleBtn?.focus();
+            }
         }
+
+        wasMobileMenuOpen.current = isMobileMenuOpen;
+
         return () => {
             document.body.style.overflow = 'unset';
+            window.removeEventListener('keydown', handleKeyDown);
         };
     }, [isMobileMenuOpen]);
+
+    const navLinks = [
+        { href: "/", label: "Home" },
+        { href: "/properties", label: "Properties" },
+        { href: "/about", label: "About" },
+        { href: "/services", label: "Services" },
+        { href: "/contact", label: "Contact" },
+    ];
+
+    if (!mounted) {
+        return <div className="h-20 w-full" />; // Prevent layout shift
+    }
 
     return (
         <>
             <header
                 className={`fixed top-0 z-50 w-full transition-all duration-300 ${isScrolled
-                    ? "bg-white/90 backdrop-blur-md shadow-sm dark:bg-black/90 border-b border-gray-200 dark:border-gray-800"
+                    ? "bg-white/95 backdrop-blur-md shadow-sm dark:bg-brand-navy/95 border-b border-gray-100 dark:border-white/5"
                     : "bg-transparent"
                     }`}
             >
-
-                <div className={`container mx-auto flex items-center justify-between px-4 md:px-6 transition-all duration-300 ${isScrolled ? 'py-3' : 'py-5'}`}>
-                    <Link href="/" className="flex items-center gap-2 z-50">
-                        <span className={`text-2xl font-bold tracking-tight transition-colors text-primary`}>
-                            {SITE_NAME}
-                        </span>
-                    </Link>
-
-                    {/* Desktop Nav */}
-                    <nav className="hidden md:flex items-center gap-8">
-                        <Link href="/" className={`text-sm font-medium transition-colors hover:text-accent ${isScrolled ? 'text-gray-700 dark:text-gray-200' : 'text-white/90'}`}>
-                            Home
-                        </Link>
-                        <Link href="/properties" className={`text-sm font-medium transition-colors hover:text-accent ${isScrolled ? 'text-gray-700 dark:text-gray-200' : 'text-white/90'}`}>
-                            Listings
-                        </Link>
-                        <Link href="/about" className={`text-sm font-medium transition-colors hover:text-accent ${isScrolled ? 'text-gray-700 dark:text-gray-200' : 'text-white/90'}`}>
-                            About
-                        </Link>
-                        <Link href="/liked" className={`text-sm font-medium transition-colors hover:text-accent flex items-center gap-1.5 ${isScrolled ? 'text-gray-700 dark:text-gray-200' : 'text-white/90'}`}>
-                            <Heart size={16} />
+                <div className="container mx-auto px-4 md:px-6">
+                    <div className={`flex items-center justify-between transition-all duration-300 ${isScrolled ? 'h-16' : 'h-20'}`}>
+                        {/* Logo */}
+                        <Link href="/" className="flex items-center gap-2 group z-50">
+                            <Image
+                                src="/logo.png"
+                                alt="MarrkFeet Realty - Mumbai's Premium Real Estate Agency"
+                                width={40}
+                                height={40}
+                                className="object-contain"
+                            />
+                            <div className="flex flex-col">
+                                <span className={`text-xl font-bold tracking-tight leading-none ${!isScrolled && transparentHeaderPages.includes(pathname) ? 'text-white' : 'text-brand-navy dark:text-white'}`}>
+                                    {SITE_NAME.split(' ')[0]}
+                                </span>
+                                <span className={`text-[10px] font-medium tracking-[0.2em] uppercase text-brand-orange-text`}>
+                                    {SITE_NAME.split(' ').slice(1).join(' ')}
+                                </span>
+                            </div>
                         </Link>
 
-                        <div className="flex items-center gap-4">
-                            {/* <ThemeToggle /> */}
+                        {/* Desktop Nav */}
+                        <nav className="hidden lg:flex items-center gap-8">
+                            {navLinks.map((link) => (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    className={`text-sm font-semibold transition-all hover:text-brand-orange relative group ${!isScrolled && transparentHeaderPages.includes(pathname)
+                                        ? 'text-white/90'
+                                        : 'text-gray-700 dark:text-gray-200'
+                                        } ${pathname === link.href ? 'text-brand-orange' : ''}`}
+                                >
+                                    {link.label}
+                                    {pathname === link.href && (
+                                        <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-brand-orange rounded-full" />
+                                    )}
+                                </Link>
+                            ))}
+                        </nav>
+
+                        {/* Right Actions */}
+                        <div className="hidden lg:flex items-center gap-5">
+                            <button
+                                onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+                                className={`p-2 rounded-full transition-colors ${!isScrolled && transparentHeaderPages.includes(pathname)
+                                    ? 'text-white hover:bg-white/10'
+                                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5'
+                                    }`}
+                                aria-label={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}
+                            >
+                                {resolvedTheme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                            </button>
+
+                            <Link
+                                id="header-favorites-link"
+                                href="/favorites"
+                                className={`p-2 rounded-full transition-colors ${!isScrolled && transparentHeaderPages.includes(pathname)
+                                    ? 'text-white hover:bg-white/10'
+                                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5'
+                                    }`}
+                                aria-label="View favorite properties"
+                            >
+                                <Heart size={20} />
+                            </Link>
+
+                            <a
+                                href={`tel:${CONTACT_INFO.phone}`}
+                                className={`flex items-center gap-2 text-sm font-bold transition-colors ${!isScrolled && transparentHeaderPages.includes(pathname)
+                                    ? 'text-white/90 hover:text-white'
+                                    : 'text-gray-800 dark:text-gray-200 hover:text-brand-orange-text'
+                                    }`}
+                            >
+                                <Phone size={16} className="text-brand-orange-text" />
+                                {CONTACT_INFO.phone}
+                            </a>
+
                             <Link href="/contact">
-                                <Button variant="default" className="bg-accent hover:bg-accent/90 text-white shadow-lg shadow-accent/20">
-                                    Get In Touch
+                                <Button className="bg-brand-orange hover:bg-brand-orange/90 text-white font-bold px-6 shadow-lg shadow-brand-orange/20">
+                                    Contact Us
                                 </Button>
                             </Link>
                         </div>
-                    </nav>
 
-                    {/* Mobile Menu Actions */}
-                    <div className="flex items-center gap-4 md:hidden">
-                        <Link href="/liked" className={`p-2 transition-colors ${isScrolled ? 'text-gray-700 dark:text-gray-200' : 'text-white'}`}>
-                            <Heart size={24} />
-                        </Link>
-                        <button
-                            className={`outline-none transition-all duration-300 ${isMobileMenuOpen ? 'fixed right-4 top-5 z-110' : 'relative z-50'}`}
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        >
-                            {isMobileMenuOpen ? (
-                                <X className="h-7 w-7 text-white" />
-                            ) : (
-                                <Menu className={`h-7 w-7 ${isScrolled ? 'text-black dark:text-white' : 'text-white'}`} />
-                            )}
-                        </button>
+                        {/* Mobile Toggle */}
+                        <div className="flex lg:hidden items-center gap-4 z-50">
+                            <button
+                                onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+                                className={`p-2 ${!isScrolled && transparentHeaderPages.includes(pathname) && !isMobileMenuOpen ? 'text-white' : 'text-brand-navy dark:text-white'}`}
+                                aria-label={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}
+                            >
+                                {resolvedTheme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
+                            </button>
+                            <button
+                                id="mobile-menu-toggle"
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                className={`p-2 ${!isScrolled && transparentHeaderPages.includes(pathname) && !isMobileMenuOpen ? 'text-white' : 'text-brand-navy dark:text-white'}`}
+                                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+                                aria-expanded={isMobileMenuOpen}
+                                aria-controls="mobile-menu"
+                            >
+                                {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Mobile Menu Overlay */}
+                <div
+                    id="mobile-menu"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Navigation menu"
+                    className={`
+                    fixed inset-0 z-40 bg-brand-navy dark:bg-black transition-all duration-500 ease-in-out lg:hidden
+                    ${isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}
+                `}>
+                    {/* Background Decorative Element */}
+                    <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,var(--tw-gradient-stops))] from-brand-orange/10 to-transparent pointer-events-none" />
+
+                    <div className="flex flex-col h-full pt-32 px-10 pb-12 relative z-10">
+                        <nav className="flex flex-col gap-8">
+                            {navLinks.map((link, i) => (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className={`text-4xl font-bold tracking-tight transition-all duration-300 hover:text-brand-orange ${pathname === link.href ? 'text-brand-orange translate-x-4' : 'text-white'
+                                        }`}
+                                    style={{ transitionDelay: `${i * 50}ms` }}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                        </nav>
+
+                        <div className="mt-auto space-y-8">
+                            <div className="h-px bg-white/10 w-full" />
+                            <div className="space-y-4">
+                                <p className="text-gray-400 text-xs font-bold uppercase tracking-[0.2em]">Contact Us</p>
+                                <a
+                                    href={`tel:${CONTACT_INFO.phone}`}
+                                    className="flex items-center gap-4 text-3xl font-bold text-white hover:text-brand-orange transition-colors"
+                                >
+                                    <div className="w-12 h-12 bg-brand-orange/10 rounded-full flex items-center justify-center text-brand-orange">
+                                        <Phone size={24} />
+                                    </div>
+                                    {CONTACT_INFO.phone}
+                                </a>
+                            </div>
+                            <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)}>
+                                <Button className="w-full h-16 bg-brand-orange hover:bg-brand-orange/90 text-white text-xl font-bold rounded-2xl shadow-xl shadow-brand-orange/20">
+                                    Enquire Now
+                                </Button>
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </header>
-
-            {/* Mobile Nav Overlay - Moved outside header to avoid containing block issues */}
-            {isMobileMenuOpen && (
-                <div className="fixed inset-0 z-100 bg-black flex flex-col items-center justify-center space-y-8 md:hidden overflow-y-auto">
-                    {/* Header in Overlay */}
-                    <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between border-b border-white/10">
-                        <span className="text-2xl font-bold tracking-tight text-primary">
-                            {SITE_NAME}
-                        </span>
-                        <div className="flex items-center gap-4">
-                            {/* <ThemeToggle /> */}
-                            <Link
-                                href="/liked"
-                                className="text-3xl font-bold text-white hover:text-accent transition-colors flex items-center gap-3"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                <Heart size={28} />
-                            </Link>
-                            <X onClick={() => setIsMobileMenuOpen(false)} className="h-7 w-7 text-white" />
-                        </div>
-                    </div>
-
-                    <Link
-                        href="/"
-                        className="text-3xl font-bold text-white hover:text-accent transition-colors"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        Home
-                    </Link>
-                    <Link
-                        href="/properties"
-                        className="text-3xl font-bold text-white hover:text-accent transition-colors"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        Listings
-                    </Link>
-                    <Link
-                        href="/about"
-                        className="text-3xl font-bold text-white hover:text-accent transition-colors"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        About
-                    </Link>
-                    <div className="w-full px-8 pt-4">
-                        <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)}>
-                            <Button
-                                variant="default"
-                                size="lg"
-                                className="bg-accent hover:bg-accent/90 text-white w-full h-14 text-xl"
-                            >
-                                Get In Touch
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
-            )}
         </>
     );
 }

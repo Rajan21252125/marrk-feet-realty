@@ -1,6 +1,7 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button } from './Button';
 import { Bed, Bath, Move, MapPin, Heart } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import { useState, useEffect } from 'react';
@@ -16,7 +17,6 @@ interface PropertyCardProps {
     area: number;
     imageUrl: string;
     category: string;
-    listingType?: string;
     builder?: string;
     tags?: string[];
 }
@@ -31,29 +31,33 @@ export function PropertyCard({
     area,
     imageUrl,
     category,
-    listingType,
     builder,
     tags
 }: PropertyCardProps) {
     const [isLiked, setIsLiked] = useState(false);
-    const [mounted, setMounted] = useState(false);
 
-    // Safe helper for localStorage parsing
     const getSavedProperties = (): string[] => {
         try {
-            return JSON.parse(localStorage.getItem('savedProperties') || '[]');
+            if (typeof window === 'undefined') return [];
+            const saved = localStorage.getItem('savedProperties');
+            if (!saved) return [];
+            const parsed = JSON.parse(saved);
+            return Array.isArray(parsed) && parsed.every(item => typeof item === 'string') ? parsed : [];
         } catch (error) {
-            console.error('Error parsing savedProperties from localStorage:', error);
+            console.error('Error parsing savedProperties:', error);
             return [];
         }
     };
 
     useEffect(() => {
-        setMounted(true);
-        const savedProperties = getSavedProperties();
-        if (savedProperties.includes(id)) {
-            setIsLiked(true);
-        }
+        const syncLikedState = () => {
+            const savedProperties = getSavedProperties();
+            setIsLiked(savedProperties.includes(id));
+        };
+
+        syncLikedState();
+        window.addEventListener('favoritesUpdated', syncLikedState);
+        return () => window.removeEventListener('favoritesUpdated', syncLikedState);
     }, [id]);
 
     const toggleLike = (e: React.MouseEvent) => {
@@ -69,7 +73,8 @@ export function PropertyCard({
             setIsLiked(false);
             toast.success('Removed from favorites');
         } else {
-            localStorage.setItem('savedProperties', JSON.stringify(savedProperties));
+            updatedProperties = Array.from(new Set([...savedProperties, id]));
+            localStorage.setItem('savedProperties', JSON.stringify(updatedProperties));
             setIsLiked(true);
             toast.success('Added to favorites');
         }
@@ -77,82 +82,85 @@ export function PropertyCard({
         window.dispatchEvent(new Event('favoritesUpdated'));
     };
 
-
-
     return (
-        <div className="group relative overflow-hidden rounded-3xl bg-neutral-900 border border-white/5 transition-all hover:bg-neutral-800/50 hover:border-white/10 shadow-2xl">
-            <Link href={`/properties/${id}`}>
-                <div className="aspect-4/3 relative overflow-hidden m-2 rounded-2xl">
+        <div className="group bg-white dark:bg-brand-navy/40 rounded-[2rem] overflow-hidden border border-gray-100 dark:border-white/5 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] hover:-translate-y-2 relative">
+            <Link href={`/properties/${id}`} className="block">
+                {/* Image Section */}
+                <div className="aspect-[4/3] relative overflow-hidden">
                     <Image
                         src={imageUrl}
                         alt={title}
                         fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
                     />
 
-                    {/* Badge Overlay */}
-                    <div className="absolute top-4 left-4">
-                        <div className="rounded-full bg-orange-600 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-white shadow-xl backdrop-blur-md">
+                    {/* Badges */}
+                    <div className="absolute top-4 left-4 flex flex-col gap-2">
+                        <div className="bg-brand-orange text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg">
                             {tags && tags.length > 0 ? tags[0] : category}
+                        </div>
+                        <div className="bg-brand-navy/80 backdrop-blur-md text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg">
+                            RERA Approved
                         </div>
                     </div>
 
-                    {/* Heart Button Overlay */}
-                    <button
-                        onClick={toggleLike}
-                        className="absolute top-4 right-4 z-10 p-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 transition-all hover:scale-110 active:scale-90"
-                    >
-                        <Heart
-                            size={18}
-                            className={`transition-colors ${isLiked ? 'fill-white text-white' : 'text-white/80'}`}
-                        />
-                    </button>
-
-                    {/* Price Overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-linear-to-t from-black/80 to-transparent flex items-end p-6">
-                        <span className="text-2xl font-black text-white tracking-wide">
-                            {formatPrice(price)}
-                        </span>
+                    {/* Price Tag Overlay */}
+                    <div className="absolute bottom-4 left-4">
+                        <div className="bg-white/95 dark:bg-brand-navy/95 backdrop-blur-md px-5 py-2.5 rounded-2xl shadow-xl border border-white/20">
+                            <span className="text-xl font-bold text-brand-orange leading-none">
+                                {formatPrice(price)}
+                            </span>
+                        </div>
                     </div>
                 </div>
 
-                <div className="p-6 pt-2">
-                    <h3 className="text-xl font-bold text-white mb-2 line-clamp-1 group-hover:text-accent transition-colors">
+                {/* Content Section */}
+                <div className="p-6 text-left">
+                    <h3 className="text-xl font-bold text-brand-navy dark:text-white mb-2 line-clamp-1 group-hover:text-brand-orange-text transition-colors duration-300">
                         {title}
                     </h3>
 
-                    <div className="flex items-center text-sm text-gray-400 mb-6 font-medium">
-                        <MapPin className="mr-1.5 h-3.5 w-3.5 text-accent" />
-                        <span className="truncate">{location}</span>
+                    <div className="flex items-center text-gray-500 dark:text-gray-400 text-sm mb-6">
+                        <MapPin size={16} className="mr-1.5 text-brand-orange-text" aria-hidden="true" />
+                        <span className="truncate font-medium">{location}</span>
                     </div>
 
-                    <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/5">
-                        <div className="flex items-center gap-1.5">
-                            <Bed className="h-4 w-4 text-gray-500" />
-                            <span className="text-sm font-bold text-gray-300">{beds} <span className="text-gray-500 font-medium">Bed</span></span>
+                    <div className="grid grid-cols-3 gap-4 pt-6 border-t border-gray-100 dark:border-white/5">
+                        <div className="flex flex-col items-center gap-1 bg-gray-50 dark:bg-white/5 rounded-2xl py-3 px-2">
+                            <Bed size={18} className="text-brand-orange-text" aria-hidden="true" />
+                            <span className="text-xs font-bold text-brand-navy dark:text-white">{beds} BHK</span>
                         </div>
-                        <div className="flex items-center gap-1.5">
-                            <Bath className="h-4 w-4 text-gray-500" />
-                            <span className="text-sm font-bold text-gray-300">{baths} <span className="text-gray-500 font-medium">Bath</span></span>
+                        <div className="flex flex-col items-center gap-1 bg-gray-50 dark:bg-white/5 rounded-2xl py-3 px-2">
+                            <Bath size={18} className="text-brand-orange-text" aria-hidden="true" />
+                            <span className="text-xs font-bold text-brand-navy dark:text-white">{baths} Bath</span>
                         </div>
-                        <div className="flex items-center gap-1.5">
-                            <Move className="h-4 w-4 text-gray-500" />
-                            <span className="text-sm font-bold text-gray-300">{area.toLocaleString()} <span className="text-gray-500 font-medium">sqft</span></span>
+                        <div className="flex flex-col items-center gap-1 bg-gray-50 dark:bg-white/5 rounded-2xl py-3 px-2">
+                            <Move size={18} className="text-brand-orange-text" aria-hidden="true" />
+                            <span className="text-xs font-bold text-brand-navy dark:text-white truncate">{area} Sqft</span>
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                            {builder || 'Independent'}
-                        </span>
-
-                        <div className="flex items-center gap-1.5 text-sm font-bold text-accent group/btn">
-                            View Details
-                            <span className="transition-transform group-hover/btn:translate-x-1">→</span>
+                    <div className="mt-8 flex items-center justify-between">
+                        <div className="flex flex-col">
+                            <span className="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Builder</span>
+                            <span className="text-sm font-bold text-brand-navy dark:text-white">{builder || 'Independent'}</span>
+                        </div>
+                        <div className="w-10 h-10 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange group-hover:bg-brand-orange group-hover:text-white transition-all duration-300">
+                            <span className="text-lg font-bold" aria-hidden="true">→</span>
                         </div>
                     </div>
                 </div>
             </Link>
+
+            {/* Wishlist Button - Moved outside Link to avoid nesting interactive elements */}
+            <button
+                onClick={toggleLike}
+                aria-label={isLiked ? "Remove from favorites" : "Add to favorites"}
+                className={`absolute top-4 right-4 p-2.5 rounded-full backdrop-blur-md border border-white/20 transition-all duration-300 hover:scale-110 active:scale-95 z-20 ${isLiked ? 'bg-brand-orange text-white border-brand-orange' : 'bg-brand-navy/20 text-white hover:bg-brand-navy/40'
+                    }`}
+            >
+                <Heart size={20} className={isLiked ? 'fill-current' : ''} aria-hidden="true" />
+            </button>
         </div>
     );
 }

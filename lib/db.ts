@@ -1,6 +1,10 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/markfeet-realty';
+const MONGODB_URI =
+    process.env.MONGODB_URI ??
+    (process.env.NODE_ENV !== 'production'
+        ? 'mongodb://localhost:27017/markfeet-realty'
+        : undefined);
 
 if (!MONGODB_URI) {
     console.error('MONGODB_URI is not defined');
@@ -23,13 +27,13 @@ interface MongooseCache {
 }
 
 declare global {
-    var mongoose: MongooseCache;
+    var mongooseCache: MongooseCache;
 }
 
-let cached = global.mongoose;
+let cached = global.mongooseCache;
 
 if (!cached) {
-    cached = global.mongoose = { conn: null, promise: null };
+    cached = global.mongooseCache = { conn: null, promise: null };
 }
 
 async function dbConnect() {
@@ -42,7 +46,7 @@ async function dbConnect() {
             bufferCommands: false,
         };
 
-        cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+        cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
             return mongoose.connection;
         });
     }

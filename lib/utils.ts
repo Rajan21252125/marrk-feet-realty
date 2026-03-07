@@ -10,3 +10,7 @@ export function formatPrice(price: number) {
     if (price >= 100000) return `₹ ${(price / 100000).toFixed(2)} Lac`;
     return `₹ ${price.toLocaleString('en-IN')}`;
 }
+
+export function escapeRegex(string: string) {
+    return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
+}
