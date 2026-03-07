@@ -84,6 +84,46 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
 
     return (
         <div className="min-h-screen bg-white dark:bg-brand-navy pb-20">
+            {/* Structured Data for Search Engines */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "RealEstateListing",
+                        "name": property.title,
+                        "description": property.description,
+                        "url": `https://marrkfeetrealty.in/properties/${property._id}`,
+                        "image": images[0],
+                        "datePosted": property.createdAt,
+                        "address": {
+                            "@type": "PostalAddress",
+                            "addressLocality": property.location,
+                            "addressRegion": "Maharashtra",
+                            "addressCountry": "IN"
+                        },
+                        "offers": {
+                            "@type": "Offer",
+                            "price": property.price,
+                            "priceCurrency": "INR",
+                            "availability": "https://schema.org/InStock",
+                            "url": `https://marrkfeetrealty.in/properties/${property._id}`
+                        },
+                        "amenityFeature": property.tags?.map((tag: string) => ({
+                            "@type": "LocationFeatureSpecification",
+                            "name": tag,
+                            "value": true
+                        })),
+                        "numberOfRooms": property.beds,
+                        "floorSize": {
+                            "@type": "QuantitativeValue",
+                            "value": property.area,
+                            "unitCode": "SFT"
+                        }
+                    })
+                }}
+            />
+
             {/* Ultra-Condensed Header Identity Section */}
             <div className="bg-brand-navy pt-24 pb-8 relative overflow-hidden">
                 {/* Subtle Background Glow */}

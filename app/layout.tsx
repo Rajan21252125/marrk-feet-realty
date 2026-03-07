@@ -3,8 +3,9 @@ import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import Script from "next/script";
 
-import { SITE_NAME } from "@/lib/constants";
+import { SITE_NAME, CONTACT_INFO, SOCIAL_LINKS } from "@/lib/constants";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -97,6 +98,55 @@ export default function RootLayout({
         className={`${inter.variable} ${plusJakartaSans.variable} antialiased`}
         suppressHydrationWarning
       >
+        {/* Global Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "RealEstateAgent",
+              "name": SITE_NAME,
+              "url": "https://marrkfeetrealty.in",
+              "logo": "https://marrkfeetrealty.in/icon.png",
+              "image": "https://marrkfeetrealty.in/icon.png",
+              "description": "MarrkFeet Realty is a premier real estate agency in Mumbai, specializing in residential and commercial properties.",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": CONTACT_INFO.address.line1,
+                "addressLocality": CONTACT_INFO.address.city,
+                "addressRegion": CONTACT_INFO.address.state,
+                "postalCode": "401107",
+                "addressCountry": "IN"
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": "19.2812",
+                "longitude": "72.8550"
+              },
+              "telephone": CONTACT_INFO.phone,
+              "email": CONTACT_INFO.email,
+              "priceRange": "$$",
+              "sameAs": Object.values(SOCIAL_LINKS)
+            })
+          }}
+        />
+
+        {/* Google Analytics */}
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-VZKPHY4MZ6"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-VZKPHY4MZ6');
+          `}
+        </Script>
+
         <AuthProvider>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
             <a href="#main-content" className="skip-link">Skip to Main Content</a>
