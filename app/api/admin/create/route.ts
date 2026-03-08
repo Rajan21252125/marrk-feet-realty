@@ -1,12 +1,15 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
 import dbConnect from '@/lib/db';
 import Admin from '@/models/Admin';
 import logger from '@/lib/logger';
 import bcrypt from 'bcrypt';
 import { sendVerificationEmail } from '@/lib/email';
 import crypto from 'node:crypto';
+import { authOptions } from '@/lib/auth';
 
 const MASTER_KEY = process.env.ADMIN_CREATION_SECRET;
+const SUPER_ADMIN = process.env.SUPER_ADMIN_EMAIL;
 
 const maskEmail = (email: string) => {
     const [local, domain] = email.split('@');
@@ -16,9 +19,17 @@ const maskEmail = (email: string) => {
 
 export async function POST(req: Request) {
     try {
-        if (!MASTER_KEY) {
-            logger.error('Admin creation failed: ADMIN_CREATION_SECRET is not set in environment.');
+        const session = await getServerSession(authOptions);
+
+        if (!MASTER_KEY || !SUPER_ADMIN) {
+            logger.error('Admin creation failed: ADMIN_CREATION_SECRET or SUPER_ADMIN_EMAIL is not set in environment.');
             return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 });
+        }
+
+        // Check permissions: Must be super admin if a session exists
+        if (session && session.user?.email?.toLowerCase() !== SUPER_ADMIN.toLowerCase()) {
+            logger.warn(`Admin creation attempt by non-super admin: ${maskEmail(session.user?.email || 'unknown')}`);
+            return NextResponse.json({ error: 'Only the super admin can create new accounts' }, { status: 403 });
         }
 
         const { masterKey, email, password } = await req.json();

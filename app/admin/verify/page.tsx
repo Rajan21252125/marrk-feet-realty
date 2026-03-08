@@ -39,13 +39,9 @@ export default function VerifyPage() {
         if (status === 'authenticated') {
             if (user?.isVerified) {
                 router.push('/admin/dashboard');
-            } else if (!hasAutoSent.current) {
-                // Auto-trigger code generation on mount if not verified (only once)
-                hasAutoSent.current = true;
-                resendCode(true);
             }
         }
-    }, [status, session, router, resendCode]);
+    }, [status, session, router]);
 
     const handleVerify = async (e: React.FormEvent) => {
         e.preventDefault();

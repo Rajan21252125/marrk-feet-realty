@@ -104,17 +104,41 @@ export const authOptions: NextAuthOptions = {
             },
         }),
     ],
+    session: {
+        strategy: 'jwt',
+        maxAge: 24 * 60 * 60, // 1 day in seconds
+    },
     callbacks: {
         async jwt({ token, user, trigger, session }) {
-            // Update token if trigger is 'update'
+            // 1. Initial sign-in: If user object is present, populate token with user data
+            if (user) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                token.role = (user as any).role;
+                token.id = user.id;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                token.isVerified = (user as any).isVerified;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                token.sessionVersion = (user as any).sessionVersion;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                token.name = (user as any).name;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                token.picture = (user as any).profileImage;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                token.companyName = (user as any).companyName;
+
+                // Return immediately on new login to avoid DB sync issues with old session version
+                return token;
+            }
+
+            // 2. Client-side updates
             if (trigger === 'update') {
                 if (session?.isVerified !== undefined) token.isVerified = session.isVerified;
                 if (session?.name !== undefined) token.name = session.name;
-                if (session?.image !== undefined) token.picture = session.image; // NextAuth uses 'picture'
+                if (session?.image !== undefined) token.picture = session.image;
                 if (session?.companyName !== undefined) token.companyName = session.companyName;
             }
 
-            // Always fetch latest admin data if email exists to ensure role/verification/session is synced
+            // 3. Keep token in sync with database (Session Invalidation / Role Sync)
             if (token.email) {
                 try {
                     await dbConnect();
@@ -140,25 +164,10 @@ export const authOptions: NextAuthOptions = {
                         return { ...token, error: 'SessionInvalid' };
                     }
                 } catch (error) {
-                    console.error('Error fetching user in JWT callback:', error);
+                    logger.error(`Error fetching user in JWT callback: ${error}`);
                 }
             }
 
-            if (user) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                token.role = (user as any).role;
-                token.id = user.id;
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                token.isVerified = (user as any).isVerified;
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                token.sessionVersion = (user as any).sessionVersion;
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                token.name = (user as any).name;
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                token.picture = (user as any).profileImage;
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                token.companyName = (user as any).companyName;
-            }
             return token;
         },
         async session({ session, token }) {
@@ -187,12 +196,10 @@ export const authOptions: NextAuthOptions = {
     pages: {
         signIn: '/admin/login',
     },
-    session: {
-        strategy: 'jwt',
-    },
     secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST };
+export const GET = handler;
+export const POST = handler;
