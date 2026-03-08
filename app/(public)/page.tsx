@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { SITE_NAME } from '@/lib/constants';
 import { Hero } from "@/components/sections/Hero";
 import { Partners } from "@/components/sections/Partners";
 import { Listings } from "@/components/sections/Listings";
@@ -7,7 +8,7 @@ import { Contact } from "@/components/sections/Contact";
 
 export const metadata: Metadata = {
     title: 'Home',
-    description: 'Discover premium residential and commercial properties in Mumbai. MarrkFeet Realty offers expert guidance for buying, selling, and renting real estate along the Western Line.',
+    description: `Discover premium residential and commercial properties in Mumbai. ${SITE_NAME} offers expert guidance for buying, selling, and renting real estate along the Western Line.`,
 };
 
 export default function Home() {

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { SITE_NAME, LEADERSHIP_TEAM, SITE_STATS } from '@/lib/constants';
 import { Target, Users, Shield, Award, ChevronRight, Mail } from 'lucide-react';
 import { FadeIn } from '@/components/ui/FadeIn';
+import { Partners } from '@/components/sections/Partners';
 
 export default function AboutPage() {
     return (
@@ -92,7 +93,7 @@ export default function AboutPage() {
                     <div className="max-w-3xl mx-auto text-center mb-20">
                         <FadeIn direction="down">
                             <span className="text-brand-orange font-bold tracking-[0.4em] text-xs uppercase bg-brand-orange/10 px-4 py-2 rounded-full mb-6 inline-block">The Leadership Team</span>
-                            <h2 className="text-4xl md:text-6xl font-bold mt-4 leading-tight">Visionaries Behind <br /> <span className="text-brand-orange">MarrkFeet Realty</span></h2>
+                            <h2 className="text-4xl md:text-6xl font-bold mt-4 leading-tight">Visionaries Behind <br /> <span className="text-brand-orange">{SITE_NAME}</span></h2>
                             <p className="text-gray-400 mt-6 text-lg">Leading with transparency, innovation, and a commitment to excellence in the Mumbai real estate landscape.</p>
                         </FadeIn>
                     </div>
@@ -163,6 +164,8 @@ export default function AboutPage() {
                     </div>
                 </div>
             </section>
+
+            <Partners />
 
             {/* Core Values */}
             <section className="py-24 bg-white dark:bg-brand-navy/10">

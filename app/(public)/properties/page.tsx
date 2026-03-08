@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { SITE_NAME } from '@/lib/constants';
 import { Suspense } from 'react';
 import dbConnect from '@/lib/db';
 import Property from '@/models/Property';
@@ -6,7 +7,7 @@ import PropertiesContent from './PropertiesContent';
 
 export const metadata: Metadata = {
     title: 'Properties in Mumbai | Buy & Rent',
-    description: 'Explore the best residential and commercial properties in Mumbai. Filter by BHK, location (Andheri, Mira Road, Borivali), and budget to find your perfect home with MarrkFeet Realty.',
+    description: `Explore the best residential and commercial properties in Mumbai. Filter by BHK, location (Andheri, Mira Road, Borivali), and budget to find your perfect home with ${SITE_NAME}.`,
     keywords: ["Properties in Mumbai", "Buy Home Mumbai", "Rent Apartment Mumbai", "Mira Road Properties", "Real Estate Listings Mumbai"],
 };
 

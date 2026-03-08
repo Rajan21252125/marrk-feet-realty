@@ -22,10 +22,10 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
     default: `${SITE_NAME} 🏠 | Real Estate Agency in Mumbai`,
   },
-  description: 'MarrkFeet Realty is your premier real estate agency in Mumbai. Buy, rent, or sell properties in Mira Road, Andheri, and across Mumbai. Find your dream home with us!',
+  description: `${SITE_NAME} is your premier real estate agency in Mumbai. Buy, rent, or sell properties in Mira Road, Andheri, and across Mumbai. Find your dream home with us!`,
   keywords: [
     "Real Estate in Mumbai",
-    "MarrkFeet Realty",
+    SITE_NAME,
     "Buy Property Mumbai",
     "Rent Apartment Mumbai",
     "Real Estate Agency Mumbai",
@@ -34,9 +34,9 @@ export const metadata: Metadata = {
     "Mumbai Western Line Properties",
     "Real Estate Consultant Mumbai"
   ],
-  authors: [{ name: "MarrkFeet Realty" }],
-  creator: "MarrkFeet Realty",
-  publisher: "MarrkFeet Realty",
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
   formatDetection: {
     email: false,
     address: false,
@@ -58,7 +58,6 @@ export const metadata: Metadata = {
       {
         url: "/favicon/favicon.svg",
         href: "/favicon/favicon.svg",
-        type: "image/svg+xml",
       },
     ],
     shortcut: "/favicon/favicon.ico",
@@ -71,8 +70,8 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: `MarrkFeet Realty | Buy & Rent Properties in Mumbai`,
-    description: 'Find your dream home in Mumbai with MarrkFeet Realty. Expert guidance for residential and commercial property transactions.',
+    title: `${SITE_NAME} | Buy & Rent Properties in Mumbai`,
+    description: `Find your dream home in Mumbai with ${SITE_NAME}. Expert guidance for residential and commercial property transactions.`,
     url: 'https://marrkfeetrealty.in',
     siteName: SITE_NAME,
     images: [
@@ -80,7 +79,7 @@ export const metadata: Metadata = {
         url: '/icon.png',
         width: 800,
         height: 600,
-        alt: 'MarrkFeet Realty Logo',
+        alt: `${SITE_NAME} Logo`,
       },
     ],
     locale: 'en_IN',
@@ -88,7 +87,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: `MarrkFeet Realty | Real Estate Mumbai`,
+    title: `${SITE_NAME} | Real Estate Mumbai`,
     description: 'Expert property consulting and management in Mumbai.',
     images: ['/icon.png'],
   },
@@ -116,7 +115,7 @@ export default function RootLayout({
               "url": "https://marrkfeetrealty.in",
               "logo": "https://marrkfeetrealty.in/icon.png",
               "image": "https://marrkfeetrealty.in/icon.png",
-              "description": "MarrkFeet Realty is a premier real estate agency in Mumbai, specializing in residential and commercial properties.",
+              "description": `${SITE_NAME} is a premier real estate agency in Mumbai, specializing in residential and commercial properties.`,
               "address": {
                 "@type": "PostalAddress",
                 "streetAddress": CONTACT_INFO.address.line1,

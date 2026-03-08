@@ -5,7 +5,7 @@ import { Mail, MapPin, Phone, Send, MessageSquare, Clock, ShieldCheck, ChevronRi
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { CONTACT_INFO } from '@/lib/constants';
+import { CONTACT_INFO, SITE_NAME } from '@/lib/constants';
 import { FadeIn } from '@/components/ui/FadeIn';
 import { SuccessModal } from '@/components/ui/SuccessModal';
 
@@ -205,7 +205,7 @@ export default function ContactPage() {
 
                                     <div className="h-[400px] w-full rounded-[2.5rem] overflow-hidden border-8 border-white dark:border-white/5 shadow-2xl">
                                         <iframe
-                                            title="MarrkFeet Realty office location map"
+                                            title={`${SITE_NAME} office location map`}
                                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15065.98661605658!2d72.8441!3d19.2812!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7b06821814e51%3A0x64323d85fd7db926!2sShanti%20Park%2C%20Mira%20Road%2C%20Mira%20Bhayandar%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1707328492021!5m2!1sen!2sin"
                                             width="100%"
                                             height="100%"
