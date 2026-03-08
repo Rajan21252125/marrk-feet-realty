@@ -41,7 +41,7 @@ export default function AdminLayout({
         { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { href: '/admin/properties', label: 'Properties', icon: Building },
         { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
-        { href: '/admin/logs', label: 'Logs', icon: FileText },
+        { href: '/admin/activity-logs', label: 'Logs', icon: FileText },
         { href: '/admin/settings', label: 'Settings', icon: Settings },
     ];
 

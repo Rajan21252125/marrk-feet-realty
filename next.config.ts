@@ -52,7 +52,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://images.unsplash.com https://res.cloudinary.com https://i.pravatar.cc https://encrypted-tbn0.gstatic.com https://lh3.googleusercontent.com https://*.google.com https://*.googleapis.com https://i.ytimg.com; font-src 'self' data:; connect-src 'self' https://res.cloudinary.com; frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com;",
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://images.unsplash.com https://res.cloudinary.com https://i.pravatar.cc https://encrypted-tbn0.gstatic.com https://lh3.googleusercontent.com https://*.google.com https://*.googleapis.com https://i.ytimg.com; font-src 'self' data:; connect-src 'self' https://res.cloudinary.com https://api.cloudinary.com; frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com;",
           },
         ],
       },

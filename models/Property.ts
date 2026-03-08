@@ -53,7 +53,16 @@ const PropertySchema: Schema = new Schema(
         baths: { type: Number, required: true },
         area: { type: Number, required: true },
         tags: { type: [String], default: [] },
-        images: { type: [String], required: true },
+        images: {
+            type: [String],
+            required: [true, 'At least one image is required'],
+            validate: {
+                validator: function (v: string[]) {
+                    return v && v.length > 0;
+                },
+                message: 'At least one image is required'
+            }
+        },
         isActive: { type: Boolean, default: true },
         furnishType: { type: String, enum: ['Fully Furnished', 'Semi Furnished', 'Unfurnished'] },
         coveredParking: { type: Number },

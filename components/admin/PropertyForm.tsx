@@ -179,6 +179,7 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
         if (previewImages.length === 0) return [];
 
         const uploadedUrls: string[] = [];
+        const errors: string[] = [];
 
         for (const { file } of previewImages) {
             try {
@@ -194,7 +195,7 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                     body: JSON.stringify({ paramsToSign }),
                 });
 
-                if (!signRes.ok) throw new Error('Signature failed');
+                if (!signRes.ok) throw new Error(`Signature failed for ${file.name}`);
                 const { signature } = await signRes.json();
 
                 // 2. Upload to Cloudinary
@@ -216,7 +217,7 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
                 if (!uploadRes.ok) {
                     const err = await uploadRes.json();
                     console.error('Cloudinary error:', err);
-                    throw new Error('Image upload failed');
+                    throw new Error(`Upload failed for ${file.name}: ${err.error?.message || 'Unknown error'}`);
                 }
 
                 const data = await uploadRes.json();
@@ -225,9 +226,15 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
 
             } catch (error) {
                 console.error('Upload error:', error);
-                toast.error(`Failed to upload ${file.name}`);
+                const message = error instanceof Error ? error.message : `Failed to upload ${file.name}`;
+                errors.push(message);
             }
         }
+
+        if (errors.length > 0) {
+            throw new Error(errors.join('\n'));
+        }
+
         return uploadedUrls;
     };
 
@@ -305,7 +312,8 @@ export default function PropertyForm({ initialData }: PropertyFormProps) {
             router.refresh();
         } catch (error) {
             console.error(error);
-            toast.error('Something went wrong');
+            const message = error instanceof Error ? error.message : 'Something went wrong';
+            toast.error(message);
         } finally {
             setLoading(false);
             setUploading(false);
