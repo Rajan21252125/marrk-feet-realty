@@ -149,7 +149,7 @@ export const getVerificationEmailHtml = (code: string) => {
                     <p><strong>${SITE_NAME}</strong></p>
                     <p>${CONTACT_INFO.address.full}</p>
                     <p>Support: ${CONTACT_INFO.supportEmail} | Phone: ${CONTACT_INFO.phone}</p>
-                    <p style="margin-top: 15px;">&copy; ${new Date().getFullYear()} MarrkFeet Realty. All rights reserved.</p>
+                    <p style="margin-top: 15px;">&copy; ${new Date().getFullYear()} ${SITE_NAME}. All rights reserved.</p>
                 </div>
             </div>
         </div>
@@ -323,7 +323,7 @@ export const getInquiryNotificationEmailHtml = (data: {
             </div>
             <div class="footer">
                 <p><strong>${SITE_NAME} - Automated Lead Notification</strong></p>
-                <p>&copy; ${new Date().getFullYear()} MarrkFeet Realty. All rights reserved.</p>
+                <p>&copy; ${new Date().getFullYear()} ${SITE_NAME}. All rights reserved.</p>
             </div>
         </div>
     </div>

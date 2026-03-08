@@ -1,4 +1,4 @@
-export const SITE_NAME = "MarrkFeet Realty";
+export const SITE_NAME = "Marrkfeet Realty";
 
 const ESTABLISHED_DATE = new Date('2024-10-12');
 
@@ -16,8 +16,8 @@ export const CONTACT_INFO = {
     email: "info@marrkfeetrealty.in",
     supportEmail: "Marrkfeetrealty2024@gmail.com",
     phone: "9326914511",
-    landline: "022-31480202",
-    rera: "A51700044832",
+    landline: "022-314802024",
+    rera: "A031332500322",
     address: {
         line1: "Office No.13, Bldg No 39, Shanti Plaza, near BOI Bank",
         line2: "Shanti Park, Mira Road East, Mumbai - 401107",
@@ -106,9 +106,9 @@ export const SITE_STATS = [
 ];
 
 export const SOCIAL_LINKS = {
-    facebook: "https://facebook.com/marrkfeetrealty",
-    instagram: "https://instagram.com/marrkfeetrealty",
-    twitter: "https://twitter.com/marrkfeetrealty",
-    linkedin: "https://linkedin.com/company/marrkfeetrealty",
-    youtube: "https://youtube.com/@marrkfeetrealty"
+    facebook: "https://www.facebook.com/share/1Qyz3nqAZd/",
+    instagram: "https://www.instagram.com/marrk_feet_realty?utm_source=qr&igsh=bnBsa2gwNDdzNnJ1",
+    twitter: "",
+    linkedin: "https://www.linkedin.com/company/marrk-feet-realty/",
+    youtube: "https://www.youtube.com/@MarrkFeetRealty"
 };

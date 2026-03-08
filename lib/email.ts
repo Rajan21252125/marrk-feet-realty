@@ -95,7 +95,7 @@ export async function sendInquiryNotification(data: {
         Boolean(process.env.SMTP_USER) &&
         Boolean(process.env.SMTP_PASS);
 
-    const adminEmail = 'info@marrkfeetrealty.in';
+    const adminEmail = CONTACT_INFO.email;
 
     try {
         if (!isDev) {

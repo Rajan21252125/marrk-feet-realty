@@ -114,7 +114,7 @@ export function Header() {
                         <Link href="/" className="flex items-center gap-2 group z-50">
                             <Image
                                 src="/logo.png"
-                                alt="MarrkFeet Realty - Mumbai's Premium Real Estate Agency"
+                                alt={`${SITE_NAME} - Mumbai's Premium Real Estate Agency`}
                                 width={40}
                                 height={40}
                                 className="object-contain"

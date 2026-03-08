@@ -35,7 +35,7 @@ export function Partners() {
                             key={i}
                             className="mx-8 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 flex items-center justify-center min-w-[220px] h-32 hover:border-brand-orange/50 transition-all group"
                         >
-                            <div className="relative w-full h-full grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-center">
+                            <div className="relative w-full h-full opacity-60 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-center">
                                 <Image
                                     src={partner.logo}
                                     alt={partner.name}

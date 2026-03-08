@@ -25,7 +25,7 @@ export function Footer() {
                             />
                             <div className="flex flex-col">
                                 <span className="text-2xl font-black tracking-tighter text-white leading-none">
-                                    MarkFeet
+                                    MarrkFeet
                                 </span>
                                 <span className="text-[10px] font-black tracking-[0.4em] uppercase text-brand-orange-text">
                                     Realty
@@ -152,7 +152,7 @@ export function Footer() {
 
                 <div className="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
-                        © {new Date().getFullYear()} MarkFeet Realty. All rights reserved.
+                        © {new Date().getFullYear()} {SITE_NAME}. All rights reserved.
                     </p>
                     <div className="flex items-center gap-8">
                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-orange bg-brand-orange/5 px-4 py-2 rounded-full border border-brand-orange/10">

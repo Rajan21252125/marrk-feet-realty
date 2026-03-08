@@ -6,6 +6,7 @@ import { Search, MapPin, Building2, ChevronDown, IndianRupee } from "lucide-reac
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 import { OptionGroup } from "@/components/ui/OptionGroup";
+import { CONTACT_INFO } from "@/lib/constants";
 
 export function Hero() {
     const [activeTab, setActiveTab] = useState<'buy' | 'rent'>('buy');
@@ -44,7 +45,7 @@ export function Hero() {
                 <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full mb-8 animate-fade-in">
                     <div className="w-2 h-2 rounded-full bg-brand-orange animate-pulse" />
                     <span className="text-white/90 text-xs font-bold tracking-widest uppercase">
-                        RERA Registered: A51700044832
+                        RERA Registered: {CONTACT_INFO.rera}
                     </span>
                 </div>
 
