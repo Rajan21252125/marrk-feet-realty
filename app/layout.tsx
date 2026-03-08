@@ -42,24 +42,31 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
+  manifest: "/favicon/site.webmanifest",
   icons: {
     icon: [
       {
-        url: "/title-logo.png",
-        href: "/title-logo.png",
+        url: "/favicon/favicon.ico",
+        href: "/favicon/favicon.ico",
+      },
+      {
+        url: "/favicon/favicon-96x96.png",
+        href: "/favicon/favicon-96x96.png",
+        type: "image/png",
+        sizes: "96x96",
+      },
+      {
+        url: "/favicon/favicon.svg",
+        href: "/favicon/favicon.svg",
+        type: "image/svg+xml",
       },
     ],
-    shortcut: "/title-logo.png",
+    shortcut: "/favicon/favicon.ico",
     apple: [
       {
-        url: "/title-logo.png",
-        href: "/title-logo.png",
-      },
-    ],
-    other: [
-      {
-        rel: 'apple-touch-icon-precomposed',
-        url: '/title-logo.png',
+        url: "/favicon/apple-touch-icon.png",
+        href: "/favicon/apple-touch-icon.png",
+        sizes: "180x180",
       },
     ],
   },
