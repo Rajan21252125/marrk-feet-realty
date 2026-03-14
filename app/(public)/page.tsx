@@ -1,10 +1,12 @@
 import { Metadata } from 'next';
 import { SITE_NAME } from '@/lib/constants';
 import { Hero } from "@/components/sections/Hero";
-import { Partners } from "@/components/sections/Partners";
-import { Listings } from "@/components/sections/Listings";
-import { Testimonials } from "@/components/sections/Testimonials";
-import { Contact } from "@/components/sections/Contact";
+import dynamic from 'next/dynamic';
+
+const Partners = dynamic(() => import('@/components/sections/Partners').then((mod) => mod.Partners));
+const Listings = dynamic(() => import('@/components/sections/Listings').then((mod) => mod.Listings));
+const Testimonials = dynamic(() => import('@/components/sections/Testimonials').then((mod) => mod.Testimonials));
+const Contact = dynamic(() => import('@/components/sections/Contact').then((mod) => mod.Contact));
 
 export const metadata: Metadata = {
     title: 'Home',

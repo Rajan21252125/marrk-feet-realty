@@ -103,9 +103,11 @@ export function Header() {
     return (
         <>
             <header
-                className={`fixed top-0 z-50 w-full transition-all duration-300 ${isScrolled
-                    ? "bg-white/95 backdrop-blur-md shadow-sm dark:bg-brand-navy/95 border-b border-gray-100 dark:border-white/5"
-                    : "bg-transparent"
+                className={`fixed top-0 z-50 w-full transition-all duration-300 ${isMobileMenuOpen
+                    ? "bg-transparent"
+                    : isScrolled
+                        ? "bg-white/95 backdrop-blur-md shadow-sm dark:bg-brand-navy/95 border-b border-gray-100 dark:border-white/5"
+                        : "bg-transparent"
                     }`}
             >
                 <div className="container mx-auto px-4 md:px-6">
@@ -150,9 +152,10 @@ export function Header() {
 
                         {/* Right Actions */}
                         <div className="hidden lg:flex items-center gap-5">
+                            {/* Hidden for now */}
                             <button
                                 onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-                                className={`p-2 rounded-full transition-colors ${!isScrolled && transparentHeaderPages.includes(pathname)
+                                className={`hidden p-2 rounded-full transition-colors ${!isScrolled && transparentHeaderPages.includes(pathname)
                                     ? 'text-white hover:bg-white/10'
                                     : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5'
                                     }`}
@@ -193,13 +196,22 @@ export function Header() {
 
                         {/* Mobile Toggle */}
                         <div className="flex lg:hidden items-center gap-4 z-50">
+                            {/* Hidden for now */}
                             <button
                                 onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-                                className={`p-2 ${!isScrolled && transparentHeaderPages.includes(pathname) && !isMobileMenuOpen ? 'text-white' : 'text-brand-navy dark:text-white'}`}
+                                className={`hidden p-2 ${!isScrolled && transparentHeaderPages.includes(pathname) && !isMobileMenuOpen ? 'text-white' : 'text-brand-navy dark:text-white'}`}
                                 aria-label={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}
                             >
                                 {resolvedTheme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
                             </button>
+
+                            <Link
+                                href="/favorites"
+                                className={`p-2 transition-colors ${!isScrolled && transparentHeaderPages.includes(pathname) && !isMobileMenuOpen ? 'text-white' : 'text-brand-navy dark:text-white'}`}
+                                aria-label="View favorite properties"
+                            >
+                                <Heart size={24} />
+                            </Link>
                             <button
                                 id="mobile-menu-toggle"
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -213,59 +225,59 @@ export function Header() {
                         </div>
                     </div>
                 </div>
+            </header>
 
-                {/* Mobile Menu Overlay */}
-                <div
-                    id="mobile-menu"
-                    role="dialog"
-                    aria-modal="true"
-                    aria-label="Navigation menu"
-                    className={`
+            {/* Mobile Menu Overlay */}
+            <div
+                id="mobile-menu"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Navigation menu"
+                className={`
                     fixed inset-0 z-40 bg-brand-navy dark:bg-black transition-all duration-500 ease-in-out lg:hidden
                     ${isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}
                 `}>
-                    {/* Background Decorative Element */}
-                    <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,var(--tw-gradient-stops))] from-brand-orange/10 to-transparent pointer-events-none" />
+                {/* Background Decorative Element */}
+                <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,var(--tw-gradient-stops))] from-brand-orange/10 to-transparent pointer-events-none" />
 
-                    <div className="flex flex-col h-full pt-32 px-10 pb-12 relative z-10">
-                        <nav className="flex flex-col gap-8">
-                            {navLinks.map((link, i) => (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className={`text-4xl font-bold tracking-tight transition-all duration-300 hover:text-brand-orange ${pathname === link.href ? 'text-brand-orange translate-x-4' : 'text-white'
-                                        }`}
-                                    style={{ transitionDelay: `${i * 50}ms` }}
-                                >
-                                    {link.label}
-                                </Link>
-                            ))}
-                        </nav>
-
-                        <div className="mt-auto space-y-8">
-                            <div className="h-px bg-white/10 w-full" />
-                            <div className="space-y-4">
-                                <p className="text-gray-400 text-xs font-bold uppercase tracking-[0.2em]">Contact Us</p>
-                                <a
-                                    href={`tel:${CONTACT_INFO.phone}`}
-                                    className="flex items-center gap-4 text-3xl font-bold text-white hover:text-brand-orange transition-colors"
-                                >
-                                    <div className="w-12 h-12 bg-brand-orange/10 rounded-full flex items-center justify-center text-brand-orange">
-                                        <Phone size={24} />
-                                    </div>
-                                    {CONTACT_INFO.phone}
-                                </a>
-                            </div>
-                            <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)}>
-                                <Button className="w-full h-16 bg-brand-orange hover:bg-brand-orange/90 text-white text-xl font-bold rounded-2xl shadow-xl shadow-brand-orange/20">
-                                    Enquire Now
-                                </Button>
+                <div className="flex flex-col h-full pt-32 px-10 pb-12 relative z-10">
+                    <nav className="flex flex-col gap-8">
+                        {navLinks.map((link, i) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className={`text-4xl font-bold tracking-tight transition-all duration-300 hover:text-brand-orange ${pathname === link.href ? 'text-brand-orange translate-x-4' : 'text-white'
+                                    }`}
+                                style={{ transitionDelay: `${i * 50}ms` }}
+                            >
+                                {link.label}
                             </Link>
+                        ))}
+                    </nav>
+
+                    <div className="mt-auto space-y-8">
+                        <div className="h-px bg-white/10 w-full" />
+                        <div className="space-y-4">
+                            <p className="text-gray-400 text-xs font-bold uppercase tracking-[0.2em]">Contact Us</p>
+                            <a
+                                href={`tel:${CONTACT_INFO.phone}`}
+                                className="flex items-center gap-4 text-3xl font-bold text-white hover:text-brand-orange transition-colors"
+                            >
+                                <div className="w-12 h-12 bg-brand-orange/10 rounded-full flex items-center justify-center text-brand-orange">
+                                    <Phone size={24} />
+                                </div>
+                                {CONTACT_INFO.phone}
+                            </a>
                         </div>
+                        <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)}>
+                            <Button className="w-full h-16 bg-brand-orange hover:bg-brand-orange/90 text-white text-xl font-bold rounded-2xl shadow-xl shadow-brand-orange/20">
+                                Enquire Now
+                            </Button>
+                        </Link>
                     </div>
                 </div>
-            </header>
+            </div>
         </>
     );
 }

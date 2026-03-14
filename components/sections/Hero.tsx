@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 import { OptionGroup } from "@/components/ui/OptionGroup";
 import { CONTACT_INFO } from "@/lib/constants";
+import Image from "next/image";
 
 export function Hero() {
     const [activeTab, setActiveTab] = useState<'buy' | 'rent'>('buy');
@@ -33,9 +34,12 @@ export function Hero() {
         <section className="relative min-h-[90vh] flex items-center justify-center pt-20 overflow-hidden">
             {/* Background Image with Navy Overlay */}
             <div className="absolute inset-0 z-0">
-                <div
-                    className="h-full w-full bg-cover bg-center transition-transform duration-1000 md:scale-105"
-                    style={{ backgroundImage: "url('/hero-background.jpeg')" }}
+                <Image
+                    src="/hero-background.jpeg"
+                    alt="Mumbai Real Estate Background"
+                    fill
+                    priority
+                    className="object-cover transition-transform duration-1000 md:scale-105"
                 />
                 <div className="absolute inset-0 bg-brand-navy/80 backdrop-blur-[2px]"></div>
             </div>
